@@ -3,14 +3,18 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "clinic")
 @NamedQuery(name="Clinic.findAll", query="SELECT c FROM Clinic c")
 public class Clinic implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -19,20 +23,40 @@ public class Clinic implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "ID_CLINIC")
     private int clinicId;
-    /*
+
+    @NotNull
+    @Column(name = "NAME")
     private String name;
 
     @ManyToOne()
     @JoinColumn(name="ID_CITY")
-    private int cityId;
+    private City city;
 
+    @NotNull
+    @Column(name = "STREET")
     private String street;
 
-    private Time worktimeStart;
+    @NotNull
+    @Column(name =  "WORKTIME_START")
+    private DateTime worktimeStart;
 
-    private Time worktimeEnd;
+    @NotNull
+    @Column(name = "WORKTIME_END")
+    private DateTime worktimeEnd;
 
+    @Column(name = "DESCRIPTION")
     private String description;
 
-    private boolean deleted;*/
+    @Column(name = "DELETED")
+    private boolean deleted;
+
+    @OneToMany(mappedBy = "clinic")
+    private List<User> users;
+
+    @OneToMany(mappedBy = "clinic")
+    private List<Room> rooms;
+
+    @OneToMany(mappedBy = "clinic")
+    private List<PriceList> priceLists;
+
 }

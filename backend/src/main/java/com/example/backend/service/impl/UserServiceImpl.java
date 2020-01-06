@@ -5,9 +5,11 @@ import com.example.backend.dto.request.LoginRequestDTO;
 import com.example.backend.dto.request.RegisterRequestDTO;
 import com.example.backend.exception.*;
 import com.example.backend.model.City;
+import com.example.backend.model.Clinic;
 import com.example.backend.model.Role;
 import com.example.backend.model.User;
 import com.example.backend.repository.CityRepository;
+import com.example.backend.repository.ClinicRepository;
 import com.example.backend.repository.RoleRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
@@ -31,6 +33,8 @@ public class UserServiceImpl implements UserService {
 
     private final CityRepository cityRepository;
 
+    private final ClinicRepository clinicRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final JwtTokenProvider tokenProvider;
@@ -38,13 +42,15 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
                            RoleRepository roleRepository, CityRepository cityRepository,
-                           PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
+                           PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider,
+                           ClinicRepository clinicRepository) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.cityRepository = cityRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
+        this.clinicRepository = clinicRepository;
     }
 
     @Override
@@ -80,18 +86,24 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        // Finds role with name USER
-        final Role userRole = roleRepository.findById(5).orElseThrow(() -> new ApiException("User Role not set."));
+        // Finds role
+        final Role userRole = roleRepository.findById(registerRequestDTO.getRoleIdd()).orElseThrow(() -> new ApiException("User Role not set."));
 
         // Create address for user
         final City city = cityRepository.findById(registerRequestDTO.getCityId()).orElseThrow(() -> new ApiException("City not set!"));
 
+        // Find clinic
+        Clinic clinic = null;
+        if(registerRequestDTO.getClinicId() != 0)
+            clinic = clinicRepository.findById(registerRequestDTO.getClinicId()).orElseThrow(() -> new ApiException("Clinic not set!"));
 
         // Creating user's account
         User user = new User(registerRequestDTO);
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setRole(userRole);
         user.setCity(city);
+        if(clinic != null)
+            user.setClinic(clinic);
         userRepository.save(user);
 
         return user;

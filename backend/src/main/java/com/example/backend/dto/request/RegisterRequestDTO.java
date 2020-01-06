@@ -38,7 +38,7 @@ public class RegisterRequestDTO {
     @NotNull
     private int gender;
 
-   @Size(min = 6, max = 20)
+    @Size(min = 6, max = 20)
     private String phone;
 
     @NotNull
@@ -50,5 +50,10 @@ public class RegisterRequestDTO {
 
     @Size(min = 13, max = 13)
     private String jbo;
+
+    @NotNull
+    private int roleIdd;
+
+    private int clinicId;
 }
 

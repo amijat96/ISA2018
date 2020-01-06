@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -71,6 +72,9 @@ public class User implements UserDetails, Serializable {
     @Column(name = "GENDER")
     private int gender;
 
+    @Column(name = "DATE_OF_BIRTH")
+    private Date dateOfBirth;
+
     @Column(name = "ADMIN_APPROVED")
     private boolean adminApproved;
 
@@ -89,6 +93,21 @@ public class User implements UserDetails, Serializable {
     @OneToOne
     @JoinColumn(name = "ID_MEDICAL_RECORD")
     private MedicalRecord medicalRecord;
+
+    @OneToMany(mappedBy = "examination")
+    private List<Examination> examinations;
+
+    @ManyToMany(mappedBy = "examinationmedicalstaff")
+    private List<User> medicalStaff;
+
+    @ManyToMany(mappedBy = "doctorspecialization")
+    private List<TypeOfExamination> doctorSpecialization;
+
+    @OneToMany(mappedBy = "schedule")
+    private List<Schedule> schedules;
+
+    @OneToMany(mappedBy = "vacation")
+    private List<Vacation> vacations;
 
     public User(RegisterRequestDTO registerRequestDto) {
         this.username = registerRequestDto.getUsername();

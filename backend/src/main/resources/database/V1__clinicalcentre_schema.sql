@@ -139,12 +139,9 @@ create table EXEMENATION
 create table MEDICAL_RECORD
 (
    ID_MEDICAL_RECORD    int not null AUTO_INCREMENT,
-   ID_USER              int not null,
    BLOOD_TYPE_RH        varchar(3) not null,
    HEIGHT               decimal not null,
    WEIGHT               decimal not null,
-   AGE                  int not null,
-   GENDER               bool not null,
    RACE                 varchar(1024) not null,
    DELETED              bool not null,
    primary key (ID_MEDICAL_RECORD)
@@ -181,7 +178,6 @@ create table PRICELIST
 create table REPORT
 (
    ID_REPORT            int not null AUTO_INCREMENT,
-   ID_EXEMENATION       int,
    ID_USER              int,
    DESCRIPTION          varchar(1024),
    MEDICINE_CERTIFIED   bool not null,
@@ -228,7 +224,7 @@ create table ROOM
    ID_CLINIC            int not null,
    ID_ROOM_TYPE         int not null,
    NUMBER               varchar(1024) not null,
-   FLOR                 int not null,
+   FLOOR                 int not null,
    DELETED              bool not null,
    primary key (ID_ROOM)
 );
@@ -291,6 +287,7 @@ create table USER
    VERIFIED             bool not null,
    DELETED              bool not null,
    USERNAME             varchar(128) not null,
+   DATE_OF_BIRTH        date not null,
    ADMIN_APPROVED       bool not null
    primary key (ID_USER)
 );
@@ -340,9 +337,6 @@ alter table EXEMENATION add constraint FK_RELATIONSHIP_25 foreign key (ID_ROOM_T
 alter table EXEMENATION add constraint FK_RELATIONSHIP_5 foreign key (ID_ROOM)
       references ROOM (ID_ROOM) on delete restrict on update restrict;
 
-alter table MEDICAL_RECORD add constraint FK_PATIENTMEDICALRECORD2 foreign key (ID_USER)
-      references USER (ID_USER) on delete restrict on update restrict;
-
 alter table PRICELIST add constraint FK_RELATIONSHIP_20 foreign key (ID_CLINIC)
       references CLINIC (ID_CLINIC) on delete restrict on update restrict;
 
@@ -351,9 +345,6 @@ alter table PRICELIST add constraint FK_RELATIONSHIP_21 foreign key (ID_TYPE_OF_
 
 alter table REPORT add constraint FK_AUTHENTICATION foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
-
-alter table REPORT add constraint FK_RELATIONSHIP_15 foreign key (ID_EXEMENATION)
-      references EXEMENATION (ID_EXEMENATION) on delete restrict on update restrict;
 
 alter table REPORTDIAGNOSIS add constraint FK_REPORTDIAGNOSIS foreign key (ID_DIAGNOSIS)
       references DIAGNOSIS (ID_DIAGNOSIS) on delete restrict on update restrict;

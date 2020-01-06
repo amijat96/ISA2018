@@ -32,6 +32,8 @@ public class UserResponseDTO {
 
     private String street;
 
+    private String clinic;
+
     public UserResponseDTO(User user) {
         this.userId = user.getUserId();
         this.username = user.getUsername();
@@ -44,5 +46,7 @@ public class UserResponseDTO {
         this.cityName = user.getCity().getName();
         this.street = user.getStreet();
         this.jbo = user.getJbo();
+        if(user.getClinic() != null)
+            this.cityName = user.getClinic().getName();
     }
 }

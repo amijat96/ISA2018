@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,4 +27,7 @@ public class Role implements Serializable {
     @NotNull
     @Column(name = "NAME")
     private String name;
+
+    @OneToMany(mappedBy = "role")
+    private List<User> users;
 }

@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "city")
 @NamedQuery(name="City.findAll", query="SELECT c FROM City c")
 public class City implements Serializable {
 
@@ -26,5 +28,12 @@ public class City implements Serializable {
     @ManyToOne()
     @JoinColumn(name="ID_COUNTRY")
     private Country country;
+
+    @OneToMany(mappedBy = "user")
+    private List<User> users;
+
+    @OneToMany(mappedBy = "clinic")
+    private List<Clinic> clinics;
+
 
 }
