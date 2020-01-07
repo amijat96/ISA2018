@@ -94,19 +94,28 @@ public class User implements UserDetails, Serializable {
     @JoinColumn(name = "ID_MEDICAL_RECORD")
     private MedicalRecord medicalRecord;
 
-    @OneToMany(mappedBy = "examination")
+    @OneToMany(mappedBy = "user")
     private List<Examination> examinations;
 
-    @ManyToMany(mappedBy = "examinationmedicalstaff")
-    private List<User> medicalStaff;
+    @ManyToMany(mappedBy = "medicalStaff")
+    private List<Examination> medicalStaff;
 
-    @ManyToMany(mappedBy = "doctorspecialization")
+    @ManyToMany
+    @JoinTable(
+            name = "doctorspecialization"
+            , joinColumns={
+            @JoinColumn(name="ID_TYPE_OF_EXAMINATION")
+        }
+            , inverseJoinColumns={
+            @JoinColumn(name="ID_USER")
+        }
+    )
     private List<TypeOfExamination> doctorSpecialization;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "user")
     private List<Schedule> schedules;
 
-    @OneToMany(mappedBy = "vacation")
+    @OneToMany(mappedBy = "user")
     private List<Vacation> vacations;
 
     public User(RegisterRequestDTO registerRequestDto) {

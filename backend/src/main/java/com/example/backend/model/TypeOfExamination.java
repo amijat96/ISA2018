@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "typeofexamination")
+@NamedQuery(name = "TypeOfExamination.findAll", query = "SELECT toe FROM TypeOfExamination toe")
 public class TypeOfExamination implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -23,7 +24,6 @@ public class TypeOfExamination implements Serializable {
     @Column(name = "ID_TYPE_OF_EXAMINATION")
     private int typeOfExaminationId;
 
-    @Temporal(TemporalType.TIME)
     @Column(name = "DURATION")
     private DateTime duration;
 
@@ -36,9 +36,9 @@ public class TypeOfExamination implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @ManyToMany(mappedBy = "typeofexamination")
+    @ManyToMany(mappedBy = "doctorSpecialization")
     private List<User> doctors;
 
-    @OneToMany(mappedBy = "typeofexamination")
+    @OneToMany(mappedBy = "typeOfExamination")
     private List<PriceList> priceLists;
 }

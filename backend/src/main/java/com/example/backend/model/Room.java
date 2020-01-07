@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "room")
-@NamedQuery(name = "Room.findAll", query = "SELECT r FROM ROOM r")
+@NamedQuery(name = "Room.findAll", query = "SELECT r FROM Room r")
 public class Room implements Serializable {
     private static final long serialVersionUID = 1L;
 

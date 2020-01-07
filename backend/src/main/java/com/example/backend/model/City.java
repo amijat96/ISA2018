@@ -29,10 +29,10 @@ public class City implements Serializable {
     @JoinColumn(name="ID_COUNTRY")
     private Country country;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "city")
     private List<User> users;
 
-    @OneToMany(mappedBy = "clinic")
+    @OneToMany(mappedBy = "city")
     private List<Clinic> clinics;
 
 

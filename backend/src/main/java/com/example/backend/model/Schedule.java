@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "schedule")
-@NamedQuery(name = "Schedule.findAll", query = "SELECT s FROM SCHEDULE s")
+@NamedQuery(name = "Schedule.findAll", query = "SELECT s FROM Schedule s")
 public class Schedule implements Serializable {
 
     private static final long serialVersionUID = 1L;

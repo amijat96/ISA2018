@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "pricelist")
-@NamedQuery(name = "PriceList.findAll", query = "SELECT pl FROM PRICELIST pl")
+@NamedQuery(name = "PriceList.findAll", query = "SELECT pl FROM PriceList pl")
 public class PriceList implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,7 +21,7 @@ public class PriceList implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "ID_PRICELIST")
-    private int medicineId;
+    private int priceListId;
 
     @ManyToOne()
     @JoinColumn(name = "ID_CLINIC")
@@ -31,6 +31,6 @@ public class PriceList implements Serializable {
     @JoinColumn(name = "ID_TYPE_OF_EXAMINATION")
     private TypeOfExamination typeOfExamination;
 
-    @OneToMany(mappedBy = "pricelist")
+    @OneToMany(mappedBy = "priceList")
     private List<Examination> examinations;
 }
