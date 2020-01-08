@@ -9,10 +9,12 @@ public interface ClinicService {
 
     List<Clinic> getClinics();
 
-    Clinic getClinic(int id);
+    Clinic getClinic(Integer id);
 
     Clinic createClinic(ClinicRequestDTO clinicRequestDTO);
 
-    Clinic updateClinic(int id, ClinicRequestDTO clinicRequestDTO);
+    Clinic updateClinic(Integer id, ClinicRequestDTO clinicRequestDTO);
+
+    boolean deleteClinic(Integer id);
 
 }

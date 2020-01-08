@@ -2,6 +2,9 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ClinicRequestDTO;
 import com.example.backend.exception.CityNotFoundException;
+import com.example.backend.exception.ClinicNotFoundException;
+import com.example.backend.exception.DeletionException;
+import com.example.backend.model.City;
 import com.example.backend.model.Clinic;
 import com.example.backend.repository.CityRepository;
 import com.example.backend.repository.ClinicRepository;
@@ -30,8 +33,9 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public Clinic getClinic(int id) {
-        return null;
+    public Clinic getClinic(Integer id) {
+        return clinicRepository.findById(id)
+                .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id"));
     }
 
     @Override
@@ -50,7 +54,40 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public Clinic updateClinic(int id, ClinicRequestDTO clinicRequestDTO) {
-        return null;
+    @Transactional(rollbackFor = Exception.class)
+    public Clinic updateClinic(Integer id, ClinicRequestDTO clinicRequestDTO) {
+        Clinic clinic = clinicRepository.findById(id)
+                .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
+        clinic.setName(clinicRequestDTO.getName());
+        clinic.setWorkTimeStart(clinicRequestDTO.getWorkTimeStart());
+        clinic.setWorkTimeEnd(clinicRequestDTO.getWorkTimeEnd());
+        clinic.setStreet(clinicRequestDTO.getStreet());
+        clinic.setDescription(clinicRequestDTO.getDescription());
+        City city = cityRepository.findById(clinicRequestDTO.getCityId())
+                .orElseThrow(() -> new CityNotFoundException("Could not fin dcity with given id."));
+        clinic.setCity(city);
+        clinicRepository.save(clinic);
+        return clinic;
+    }
+
+    @Override
+    public boolean deleteClinic(Integer id) {
+        Clinic clinic = clinicRepository.findById(id)
+                .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
+        if (clinic.getUsers().size() > 0) {
+            throw new DeletionException("Could not delete clinic with given id.");
+        }
+        if(clinic.getRooms().size() > 0) {
+            throw new DeletionException("Could not delete clinic with given id.");
+        }
+        if(clinic.getPriceLists().size() > 0) {
+            throw new DeletionException("Could not delete clinic with given id.");
+        }
+        try {
+            clinicRepository.delete(clinic);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

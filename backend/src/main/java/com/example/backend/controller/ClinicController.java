@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.ClinicRequestDTO;
 import com.example.backend.dto.response.ClinicResponseDTO;
 import com.example.backend.service.ClinicService;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,9 +35,33 @@ public class ClinicController {
             .collect(Collectors.toList()));
     }
 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<ClinicResponseDTO> getClinic(@PathVariable Integer id) {
+        return ResponseEntity.ok(new ClinicResponseDTO(clinicService.getClinic(id)));
+    }
+
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_SYSTEM')")
     public ResponseEntity<ClinicResponseDTO> createClinic(@Valid @RequestBody ClinicRequestDTO clinicRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ClinicResponseDTO(clinicService.createClinic(clinicRequestDTO)));
     }
+
+    @PutMapping(path = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
+    public ResponseEntity<ClinicResponseDTO> updateClinic(@PathVariable Integer id, @Valid @RequestBody ClinicRequestDTO clinicRequestDTO) {
+        return ResponseEntity.ok(new ClinicResponseDTO(clinicService.updateClinic(id, clinicRequestDTO)));
+    }
+
+    @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_ADMIN_SYSTEM')")
+    public ResponseEntity<ApiResponse> deleteClinic(@PathVariable Integer id) {
+        if(clinicService.deleteClinic(id)) {
+            return ResponseEntity.ok(new ApiResponse(true, "Clinic deleted successfully.", new ArrayList<>()));
+        }
+        else {
+            return ResponseEntity.ok(new ApiResponse(false, "Could not delete clinic with given id.", new ArrayList<>()));
+        }
+    }
+
+
 }
