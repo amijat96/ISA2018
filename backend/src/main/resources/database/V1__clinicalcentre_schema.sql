@@ -12,11 +12,11 @@ drop table if exists COUNTRY;
 
 drop table if exists DIAGNOSIS;
 
-drop table if exists DOCTORSPECALIZATION;
+drop table if exists DOCTORSPECIALIZATION;
 
 drop table if exists EXAMINATIONMEDICALSTAFF;
 
-drop table if exists EXEMENATION;
+drop table if exists EXAMINATION;
 
 drop table if exists MEDICAL_RECORD;
 
@@ -94,9 +94,9 @@ create table DIAGNOSIS
 );
 
 /*==============================================================*/
-/* Table: DOCTORSPECALIZATION                                   */
+/* Table: DOCTORSPECIALIZATION                                   */
 /*==============================================================*/
-create table DOCTORSPECALIZATION
+create table DOCTORSPECIALIZATION
 (
    ID_TYPE_OF_EXAMINATION int not null AUTO_INCREMENT,
    ID_USER              int not null,
@@ -109,16 +109,16 @@ create table DOCTORSPECALIZATION
 create table EXAMINATIONMEDICALSTAFF
 (
    ID_USER              int not null AUTO_INCREMENT,
-   ID_EXEMENATION       int not null,
-   primary key (ID_USER, ID_EXEMENATION)
+   ID_EXAMINATION       int not null,
+   primary key (ID_USER, ID_EXAMINATION)
 );
 
 /*==============================================================*/
-/* Table: EXEMENATION                                           */
+/* Table: EXAMINATION                                           */
 /*==============================================================*/
-create table EXEMENATION
+create table EXAMINATION
 (
-   ID_EXEMENATION       int not null AUTO_INCREMENT,
+   ID_EXAMINATION       int not null AUTO_INCREMENT,
    ID_USER              int not null,
    ID_ROOM              int not null,
    ID_ROOM_TYPE         int not null,
@@ -130,7 +130,7 @@ create table EXEMENATION
    GRADE_CLINIC         decimal,
    GRADE_DOCTOR         decimal,
    DELETED              bool not null,
-   primary key (ID_EXEMENATION)
+   primary key (ID_EXAMINATION)
 );
 
 /*==============================================================*/
@@ -259,6 +259,7 @@ create table SCHEDULE
 create table TYPEOFEXAMINATION
 (
    ID_TYPE_OF_EXAMINATION int not null AUTO_INCREMENT,
+   ID_TYPE              int not null,
    DURATION             time not null,
    NAME                 varchar(1024) not null,
    DESCRIPTION          varchar(1024),
@@ -313,28 +314,28 @@ alter table CITY add constraint FK_RELATIONSHIP_12 foreign key (ID_COUNTRY)
 alter table CLINIC add constraint FK_RELATIONSHIP_14 foreign key (ID_CITY)
       references CITY (ID_CITY) on delete restrict on update restrict;
 
-alter table DOCTORSPECALIZATION add constraint FK_DOCTORSPECALIZATION foreign key (ID_TYPE_OF_EXAMINATION)
+alter table DOCTORSPECIALIZATION add constraint FK_DOCTORSPECIALIZATION foreign key (ID_TYPE_OF_EXAMINATION)
       references TYPEOFEXAMINATION (ID_TYPE_OF_EXAMINATION) on delete restrict on update restrict;
 
-alter table DOCTORSPECALIZATION add constraint FK_DOCTORSPECALIZATION2 foreign key (ID_USER)
+alter table DOCTORSPECIALIZATION add constraint FK_DOCTORSPECIALIZATION2 foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
 
 alter table EXAMINATIONMEDICALSTAFF add constraint FK_EXAMINATIONMEDICALSTAFF foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
 
-alter table EXAMINATIONMEDICALSTAFF add constraint FK_EXAMINATIONMEDICALSTAFF2 foreign key (ID_EXEMENATION)
-      references EXEMENATION (ID_EXEMENATION) on delete restrict on update restrict;
+alter table EXAMINATIONMEDICALSTAFF add constraint FK_EXAMINATIONMEDICALSTAFF2 foreign key (ID_EXAMINATION)
+      references EXAMINATION (ID_EXAMINATION) on delete restrict on update restrict;
 
-alter table EXEMENATION add constraint FK_EXAMINATIONPATIENT foreign key (ID_USER)
+alter table EXAMINATION add constraint FK_EXAMINATIONPATIENT foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
 
-alter table EXEMENATION add constraint FK_RELATIONSHIP_24 foreign key (ID_PRICELIST)
+alter table EXAMINATION add constraint FK_RELATIONSHIP_24 foreign key (ID_PRICELIST)
       references PRICELIST (ID_PRICELIST) on delete restrict on update restrict;
 
-alter table EXEMENATION add constraint FK_RELATIONSHIP_25 foreign key (ID_ROOM_TYPE)
+alter table EXAMINATION add constraint FK_RELATIONSHIP_25 foreign key (ID_ROOM_TYPE)
       references ROOMTYPE (ID_ROOM_TYPE) on delete restrict on update restrict;
 
-alter table EXEMENATION add constraint FK_RELATIONSHIP_5 foreign key (ID_ROOM)
+alter table EXAMINATION add constraint FK_RELATIONSHIP_5 foreign key (ID_ROOM)
       references ROOM (ID_ROOM) on delete restrict on update restrict;
 
 alter table PRICELIST add constraint FK_RELATIONSHIP_20 foreign key (ID_CLINIC)
@@ -362,6 +363,9 @@ alter table ROOM add constraint FK_CLINICROOM foreign key (ID_CLINIC)
       references CLINIC (ID_CLINIC) on delete restrict on update restrict;
 
 alter table ROOM add constraint FK_RELATIONSHIP_26 foreign key (ID_ROOM_TYPE)
+      references ROOMTYPE (ID_ROOM_TYPE) on delete restrict on update restrict;
+
+alter table TYPEOFEXAMINATION add constraint FK_TYPEOFEXAMINATIONROOMTYPE foreign key (ID_TYPE)
       references ROOMTYPE (ID_ROOM_TYPE) on delete restrict on update restrict;
 
 alter table SCHEDULE add constraint FK_RELATIONSHIP_22 foreign key (ID_USER)

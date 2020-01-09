@@ -32,4 +32,7 @@ public class RoomType implements Serializable {
     @OneToMany(mappedBy = "roomType")
     private List<Examination> examinations;
 
+    @OneToMany(mappedBy = "type")
+    private List<TypeOfExamination> typeOfExaminations;
+
 }

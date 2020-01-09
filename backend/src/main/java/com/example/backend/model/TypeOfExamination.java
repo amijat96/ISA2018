@@ -3,10 +3,10 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.List;
 
 @Data
@@ -25,7 +25,7 @@ public class TypeOfExamination implements Serializable {
     private int typeOfExaminationId;
 
     @Column(name = "DURATION")
-    private DateTime duration;
+    private Time duration;
 
     @Column(name = "NAME")
     private String name;
@@ -41,4 +41,8 @@ public class TypeOfExamination implements Serializable {
 
     @OneToMany(mappedBy = "typeOfExamination")
     private List<PriceList> priceLists;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_TYPE")
+    private RoomType type;
 }
