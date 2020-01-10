@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -62,6 +64,13 @@ public class Examination implements Serializable {
 
     @Column(name = "DELETED")
     private boolean deleted;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATE")
+    private Date date;
+
+    @Column(name = "TIME")
+    private Time startTime;
 
     @ManyToMany
     @JoinTable(

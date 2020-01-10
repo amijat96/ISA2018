@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,10 @@ public class ExaminationResponseDTO {
 
     private boolean accepted;
 
+    private Date date;
+
+    private Time startTime;
+
     private List<Integer> medicalStaffIds;
 
     public ExaminationResponseDTO(Examination examination) {
@@ -49,6 +55,8 @@ public class ExaminationResponseDTO {
         this.gradeClinic = examination.getGradeClinic();
         this.gradeDoctor = examination.getGradeDoctor();
         this.accepted = examination.isAccepted();
+        this.date = examination.getDate();
+        this.startTime = examination.getStartTime();
         this.medicalStaffIds = examination.getMedicalStaff()
                 .stream()
                 .map(m -> m.getUserId())

@@ -6,4 +6,6 @@ import com.example.backend.model.Examination;
 public interface ExaminationService {
 
     Examination createExamination(String username, ExaminationRequestDTO examinatioRequestDTO);
+
+    Examination confirmExamination(Integer id, ExaminationRequestDTO examinationRequestDTO);
 }

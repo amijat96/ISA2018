@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h2 th:text="${title}">Title</h2>
+<h4 style="display: inline-block;">Hello <h4 th:text="${firstName}" style="display: inline-block;"></h4>,<br/>
+    Your examination is approved.
+    Examination <h4 th:text="${typeOfExamination}" style="display: inline-block;"></h4>,
+    on <h4 th:text="${date}" style="display: inline-block;"></h4> at <h4 th:text="${time}" style="display: inline-block;"></h4>,
+    will be performed in room <h4 th:text="${roomNumber}" style="display: inline-block;"></h4>.
+</h4>
+</br>
+<h4>Best regards!</h4>
+</br>
+<p style="display: inline-block;">Clinic <p text="${clinicName}" style="display: inline-block;"></p></h4>
+<br/>
+</body>
+</html>

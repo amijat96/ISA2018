@@ -1,7 +1,7 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ClinicRequestDTO;
-import com.example.backend.exception.CityNotFoundException;
+import com.example.backend.exception.ExaminationNotFoundException;
 import com.example.backend.exception.ClinicNotFoundException;
 import com.example.backend.exception.DeletionException;
 import com.example.backend.model.City;
@@ -43,7 +43,7 @@ public class ClinicServiceImpl implements ClinicService {
     public Clinic createClinic(ClinicRequestDTO clinicRequestDTO) {
         Clinic clinic = new Clinic();
         clinic.setCity(cityRepository.findById(clinicRequestDTO.getCityId())
-                .orElseThrow(() -> new CityNotFoundException("Could not find city with given id")));
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not find city with given id")));
         clinic.setName(clinicRequestDTO.getName());
         clinic.setDescription(clinicRequestDTO.getDescription());
         clinic.setStreet(clinicRequestDTO.getStreet());
@@ -64,7 +64,7 @@ public class ClinicServiceImpl implements ClinicService {
         clinic.setStreet(clinicRequestDTO.getStreet());
         clinic.setDescription(clinicRequestDTO.getDescription());
         City city = cityRepository.findById(clinicRequestDTO.getCityId())
-                .orElseThrow(() -> new CityNotFoundException("Could not fin dcity with given id."));
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not fin dcity with given id."));
         clinic.setCity(city);
         clinicRepository.save(clinic);
         return clinic;

@@ -2,7 +2,9 @@ package com.example.backend.service.impl;
 
 import com.example.backend.config.ConfigProperties;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.model.Examination;
 import com.example.backend.model.User;
+import com.example.backend.repository.ExaminationRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.EmailService;
@@ -37,21 +39,29 @@ public class EmailServiceImpl implements EmailService {
 
     private final UserRepository userRepository;
 
+    private final ExaminationRepository examinationRepository;
+
     @Autowired
     public EmailServiceImpl(ConfigProperties configProperties, UserRepository userRepository,
                             JavaMailSender javaMailSender, ServletContext servletContext,
-                            JwtTokenProvider tokenProvider, SpringTemplateEngine templateEngine) {
+                            JwtTokenProvider tokenProvider, SpringTemplateEngine templateEngine,
+                            ExaminationRepository examinationRepository) {
         this.javaMailSender = javaMailSender;
         this.servletContext = servletContext;
         this.configProperties = configProperties;
         this.tokenProvider = tokenProvider;
         this.templateEngine = templateEngine;
         this.userRepository = userRepository;
+        this.examinationRepository = examinationRepository;
     }
 
     @Async
-    void sendMail(String email, String subject, Context context) {
-        final String body = templateEngine.process("email_confirmation.html", context);
+    void sendMail(String email, String subject, Context context, boolean examinationMail) {
+        final String body;
+        if(!examinationMail)
+            body = templateEngine.process("email_confirmation.html", context);
+        else
+            body = templateEngine.process("email_confirmation_examination.html", context);
 
         final MimeMessage message = javaMailSender.createMimeMessage();
         final MimeMessageHelper mimeHelper;
@@ -76,6 +86,21 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("firstName", user.getName());
         context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/confirm-email?token=" + tokenProvider.generateConfirmationToken(user.getUserId()));
 
-        sendMail(user.getEmail(), configProperties.getConfirmSubject(), context);
+        sendMail(user.getEmail(), configProperties.getConfirmSubject(), context, false);
+    }
+
+    @Override
+    public void sendConfirmationMailToPatient(Examination examination) {
+        final User user = userRepository.findByUsername(examination.getUser().getUsername());
+        logger.info(String.format("Sending confirmation mail for examination to %s email.", user.getEmail()));
+        Context context = new Context();
+        context.setVariable("title", configProperties.getExaminationConfirmed());
+        context.setVariable("firstName", user.getName());
+        context.setVariable("typeOfExamination", examination.getPriceList().getTypeOfExamination().getName());
+        context.setVariable("date", examination.getDate().toString());
+        context.setVariable("time", examination.getStartTime());
+        context.setVariable("roomNumber", examination.getRoom().getNumber());
+        context.setVariable("clinicName", examination.getRoom().getClinic().getName());
+        sendMail(user.getEmail(), configProperties.getExaminationConfirmed(), context, true);
     }
 }
