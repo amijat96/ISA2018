@@ -7,4 +7,6 @@ public interface EmailService {
     void sendConfirmationMailToUser(int id);
 
     void sendConfirmationMailToPatient(Examination examination);
+
+    void sendConfirmationMailToMedicalStaff(Integer examinationId);
 }

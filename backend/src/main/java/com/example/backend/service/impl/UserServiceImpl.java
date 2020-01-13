@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean confirmMail(String confirmToken) {
         if(tokenProvider.validateToken(confirmToken)) {
-            final int userId = tokenProvider.getUserIdFromJwt(confirmToken);
+            final int userId = tokenProvider.getIdFromJwt(confirmToken);
             final User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(String.format("User with id %s not found.", Integer.toString(userId))));
             user.setVerified(true);

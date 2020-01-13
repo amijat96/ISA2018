@@ -56,7 +56,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Integer getUserIdFromJwt(String token) {
+    public String generateExaminationConfirmationToken(Integer examinationId) {
+        return Jwts.builder()
+                .setSubject(Integer.toString(examinationId))
+                .signWith(SignatureAlgorithm.HS512, configProperties.getJwtSecret())
+                .compact();
+    }
+
+    public Integer getIdFromJwt(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(configProperties.getJwtSecret())
                 .parseClaimsJws(token)

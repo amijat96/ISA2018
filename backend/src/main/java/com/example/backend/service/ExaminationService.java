@@ -7,5 +7,7 @@ public interface ExaminationService {
 
     Examination createExamination(String username, ExaminationRequestDTO examinatioRequestDTO);
 
-    Examination confirmExamination(Integer id, ExaminationRequestDTO examinationRequestDTO);
+    Examination approveExamination(Integer id, ExaminationRequestDTO examinationRequestDTO);
+
+    Integer confirmExamination(String token);
 }

@@ -7,6 +7,7 @@ import com.example.backend.model.PriceList;
 import com.example.backend.model.Schedule;
 import com.example.backend.model.User;
 import com.example.backend.repository.*;
+import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.ExaminationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,15 +34,18 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     private final RoomTypeRepository roomTypeRepository;
 
+    private final JwtTokenProvider tokenProvider;
+
     @Autowired
     public ExaminationServiceImpl(ExaminationRepository examinationRepository, UserRepository userRepository,
                                   PriceListRepository priceListRepository, RoomRepository roomRepository,
-                                  RoomTypeRepository roomTypeRepository) {
+                                  RoomTypeRepository roomTypeRepository, JwtTokenProvider tokenProvider) {
         this.examinationRepository = examinationRepository;
         this.userRepository = userRepository;
         this.priceListRepository = priceListRepository;
         this.roomRepository = roomRepository;
         this.roomTypeRepository = roomTypeRepository;
+        this.tokenProvider = tokenProvider;
     }
     @Override
     public Examination createExamination(String username, ExaminationRequestDTO examinationRequestDTO) {
@@ -66,7 +73,7 @@ public class ExaminationServiceImpl implements ExaminationService {
 
         examination.setDate(examinationRequestDTO.getDate());
         examination.setStartTime(examinationRequestDTO.getStartTime());
-        
+
         Integer loggedUserRoleId = userRepository.findByUsername(username).getRole().getRoleId();
         
         //if logged user is doctor 
@@ -77,23 +84,20 @@ public class ExaminationServiceImpl implements ExaminationService {
         else if(loggedUserRoleId == 2)
         {
             examination.setPredefined(true);
-            examination.setAccepted(true);
             examination.setDiscount(examinationRequestDTO.getDiscount());
         }
         examination.setMedicalStaff(medicalStaff
                                         .stream()
                                         .collect(Collectors.toList()));
 
-
         examinationRepository.save(examination);
         return examination;
     }
 
     @Override
-    public Examination confirmExamination(Integer id, ExaminationRequestDTO examinationRequestDTO) {
+    public Examination approveExamination(Integer id, ExaminationRequestDTO examinationRequestDTO) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
-        examination.setAccepted(true);
         examination.setRoom(roomRepository.findById(examinationRequestDTO.getRoomId())
                 .orElseThrow(() -> new RoomNotFoundException("Could not find room with given id.")));
         List<User> medicalStaff = new ArrayList<>();
@@ -170,4 +174,40 @@ public class ExaminationServiceImpl implements ExaminationService {
         }
     }
 
+    @Override
+    public Integer confirmExamination(String token){
+        Integer examinationId = tokenProvider.getIdFromJwt(token);
+        Examination examination = examinationRepository.findById(examinationId)
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
+        java.util.Date now = new Date();
+
+        /**
+         * Change java.util.Date and java.sql.Time libraries(outdated)
+         */
+        Date date = examination.getDate();
+        Time time = examination.getStartTime();
+        // Construct date and time objects
+        Calendar dateCal = Calendar.getInstance();
+        dateCal.setTime(date);
+        Calendar timeCal = Calendar.getInstance();
+        timeCal.setTime(time);
+
+        // Extract the time of the "time" object to the "date"
+        dateCal.set(Calendar.HOUR_OF_DAY, timeCal.get(Calendar.HOUR_OF_DAY));
+        dateCal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
+        dateCal.set(Calendar.SECOND, timeCal.get(Calendar.SECOND));
+
+        // Get the time value!
+        date = dateCal.getTime();
+
+        long days = TimeUnit.DAYS.convert(Math.abs(now.getTime() - date.getTime()), TimeUnit.MILLISECONDS);
+        if(days > 0) {
+            examination.setAccepted(true);
+            examinationRepository.save(examination);
+        }
+        else {
+            throw new ExaminationModificationTimeExpiredException("Can't modify examination now.");
+        }
+        return examinationId;
+    };
 }

@@ -73,6 +73,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth/**")
                 .permitAll()
+                .antMatchers("/examination/confirm-examination**")
+                .permitAll()
                 .antMatchers("/users/checkUsernameAvailability", "/users/checkEmailAvailability")
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/city/**", "/country")

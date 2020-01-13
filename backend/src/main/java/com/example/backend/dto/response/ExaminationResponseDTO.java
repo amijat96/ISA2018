@@ -46,7 +46,8 @@ public class ExaminationResponseDTO {
     public ExaminationResponseDTO(Examination examination) {
         this.examinationId = examination.getExaminationId();
         this.userId = examination.getUser().getUserId();
-        this.roomId = examination.getRoom().getRoomId();
+        if(examination.getRoom() != null)
+            this.roomId = examination.getRoom().getRoomId();
         this.typeId = examination.getRoomType().getRoomTypeId();
         this.priceListId = examination.getPriceList().getPriceListId();
         this.predefined = examination.isPredefined();
