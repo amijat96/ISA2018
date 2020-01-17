@@ -104,16 +104,6 @@ create table DOCTORSPECIALIZATION
 );
 
 /*==============================================================*/
-/* Table: EXAMINATIONMEDICALSTAFF                               */
-/*==============================================================*/
-create table EXAMINATIONMEDICALSTAFF
-(
-   ID_USER              int not null AUTO_INCREMENT,
-   ID_EXAMINATION       int not null,
-   primary key (ID_USER, ID_EXAMINATION)
-);
-
-/*==============================================================*/
 /* Table: EXAMINATION                                           */
 /*==============================================================*/
 create table EXAMINATION
@@ -122,6 +112,7 @@ create table EXAMINATION
    ID_USER              int not null,
    ID_ROOM              int not null,
    ID_ROOM_TYPE         int not null,
+   ID_DOCTOR            int not null,
    ID_PRICELIST         int,
    PREDEFINED           bool not null,
    FINISHED             bool not null,
@@ -130,6 +121,8 @@ create table EXAMINATION
    GRADE_CLINIC         decimal,
    GRADE_DOCTOR         decimal,
    DELETED              bool not null,
+   CANCELED             bool not null,
+   DATE_TIME            datetime not null,
    primary key (ID_EXAMINATION)
 );
 
@@ -246,9 +239,10 @@ create table SCHEDULE
 (
    ID_SCHEDULE          int not null AUTO_INCREMENT,
    ID_USER              int,
-   SHIFT_SCHEDULE       int not null,
    START_DATE_SCHEDULE  date not null,
    END_DATE_SCHEDULE    date not null,
+   SHIFT_START_TIME     time not null,
+   SHIFT_END_TIME       time not null,
    DELETED              bool not null,
    primary key (ID_SCHEDULE)
 );
@@ -320,14 +314,11 @@ alter table DOCTORSPECIALIZATION add constraint FK_DOCTORSPECIALIZATION foreign 
 alter table DOCTORSPECIALIZATION add constraint FK_DOCTORSPECIALIZATION2 foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
 
-alter table EXAMINATIONMEDICALSTAFF add constraint FK_EXAMINATIONMEDICALSTAFF foreign key (ID_USER)
-      references USER (ID_USER) on delete restrict on update restrict;
-
-alter table EXAMINATIONMEDICALSTAFF add constraint FK_EXAMINATIONMEDICALSTAFF2 foreign key (ID_EXAMINATION)
-      references EXAMINATION (ID_EXAMINATION) on delete restrict on update restrict;
-
 alter table EXAMINATION add constraint FK_EXAMINATIONPATIENT foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
+
+alter table EXAMINATION add constraint FK_EXAMINATIONDOCTOR foreign key (ID_DOCTOR)
+references USER (ID_USER) on delete restrict on update restrict;
 
 alter table EXAMINATION add constraint FK_RELATIONSHIP_24 foreign key (ID_PRICELIST)
       references PRICELIST (ID_PRICELIST) on delete restrict on update restrict;

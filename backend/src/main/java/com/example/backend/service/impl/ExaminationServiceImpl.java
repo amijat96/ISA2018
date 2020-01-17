@@ -9,16 +9,13 @@ import com.example.backend.model.User;
 import com.example.backend.repository.*;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.ExaminationService;
+import org.joda.time.DateTime;
+import org.joda.time.Hours;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,43 +50,26 @@ public class ExaminationServiceImpl implements ExaminationService {
         if(examinationRequestDTO.getUserId() != 0)
             examination.setUser(userRepository.findById(examinationRequestDTO.getUserId())
                     .orElseThrow(() -> new UserNotFoundException("Could not find user with given id.")));
-        /*examination.setRoom(roomRepository.findById(examinationRequestDTO.getRoomId())
-                .orElseThrow(() -> new RoomNotFoundException("Could not find room with given id.")));*/
         examination.setRoomType(roomTypeRepository.findById(examinationRequestDTO.getTypeId())
                 .orElseThrow(() -> new RoomTypeNotFoundException("Could not find type with given id.")));
-        PriceList priceList = priceListRepository.findById(examinationRequestDTO.getPriceListId())
+        User doctor = userRepository.findById(examinationRequestDTO.getDoctorId())
+                .orElseThrow(() -> new UserNotFoundException("Could not find user with given id."));
+        PriceList priceList = priceListRepository.findById(1)
                 .orElseThrow(() -> new PriceListNotFoundException("Could not find price list with given id."));
-        examination.setPriceList(priceList);
-        
-        // set medical staff to examination
-        List<User> medicalStaff = new ArrayList<>();
-        for (Integer userId: examinationRequestDTO.getMedicalStaffIds()) {
-            User user = userRepository.findById(userId)
-                                    .orElseThrow(() -> new UserNotFoundException("Could not find user with given id."));
-            isDoctorWork(user, examinationRequestDTO);
-            isDoctorFree(user, examinationRequestDTO, priceList);
-            medicalStaff.add(user);
-        }
 
-        examination.setDate(examinationRequestDTO.getDate());
-        examination.setStartTime(examinationRequestDTO.getStartTime());
+        isDoctorWork(doctor, examinationRequestDTO);
+        isDoctorFree(doctor, examinationRequestDTO, priceList);
+        examination.setDoctor(doctor);
+        examination.setPriceList(priceList);
+        examination.setDateTime(examinationRequestDTO.getDateTime());
 
         Integer loggedUserRoleId = userRepository.findByUsername(username).getRole().getRoleId();
-        
-        //if logged user is doctor 
-        if(loggedUserRoleId == 3) {
-            medicalStaff.add(userRepository.findByUsername(username));
-        }
         //if logged user is clinic admin
-        else if(loggedUserRoleId == 2)
+        if(loggedUserRoleId == 2)
         {
             examination.setPredefined(true);
             examination.setDiscount(examinationRequestDTO.getDiscount());
         }
-        examination.setMedicalStaff(medicalStaff
-                                        .stream()
-                                        .collect(Collectors.toList()));
-
         examinationRepository.save(examination);
         return examination;
     }
@@ -100,71 +80,53 @@ public class ExaminationServiceImpl implements ExaminationService {
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
         examination.setRoom(roomRepository.findById(examinationRequestDTO.getRoomId())
                 .orElseThrow(() -> new RoomNotFoundException("Could not find room with given id.")));
-        List<User> medicalStaff = new ArrayList<>();
-        for (Integer userId: examinationRequestDTO.getMedicalStaffIds()) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new UserNotFoundException("Could not find user with given id."));
-            medicalStaff.add(user);
-        }
-        examination.setMedicalStaff(medicalStaff);
-        examination.setStartTime(examinationRequestDTO.getStartTime());
+        User doctor = userRepository.findById(examinationRequestDTO.getDoctorId())
+                .orElseThrow(() -> new UserNotFoundException("Could not find user with given id."));
+        examination.setDoctor(doctor);
+        examination.setDateTime(examinationRequestDTO.getDateTime());
         examinationRepository.save(examination);
         return examination;
     }
 
     public void isDoctorWork(User user, ExaminationRequestDTO examinationRequestDTO) {
-        // check if doctor/nurse is work
-        List <Schedule> schedules = user.getSchedules()
+        // check doctors schedule
+        Schedule schedule = user.getSchedules()
                 .stream()
-                .filter(s -> s.getStartDateSchedule().before(examinationRequestDTO.getDate()) &&
-                        s.getEndDateSchedule().after(examinationRequestDTO.getDate()))
-                .collect(Collectors.toList());
-        if(schedules.size() > 0) {
-            Schedule schedule = schedules.get(0);
-            Integer shift = schedule.getShiftSchedule();
-            if(examinationRequestDTO.getStartTime().getHours() >= 8 && examinationRequestDTO.getStartTime().getHours() < 16 && shift != 1){
-                throw new DoctorNotWorkException("Doctor with given id doesn't work at that time. Shift 1");
-            }
-            else if(examinationRequestDTO.getStartTime().getHours() >= 16 && examinationRequestDTO.getStartTime().getHours() < 24 && shift != 2){
-                throw new DoctorNotWorkException("Doctor with given id doesn't work at that time. Shift 2");
-            }
-            else if (examinationRequestDTO.getStartTime().getHours() >= 0 && examinationRequestDTO.getStartTime().getHours() < 8 && shift != 3){
-                throw new DoctorNotWorkException("Doctor with given id doesn't work at that time.");
-            }
+                .filter(s -> s.getStartDateSchedule().isBefore(examinationRequestDTO.getDateTime().toLocalDate()) &&
+                        s.getEndDateSchedule().isAfter(examinationRequestDTO.getDateTime().toLocalDate()))
+                .findFirst()
+                .orElseThrow(() -> new DoctorNotWorkException("Doctor with given id doesn't work that day."));
 
+        //Start and end time of shift of day when user want's examination
+        DateTime startDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftStartTime());
+        DateTime endDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftEndTime());
+
+        if(examinationRequestDTO.getDateTime().getMillis() <= startDateTime.getMillis() || examinationRequestDTO.getDateTime().getMillis() > endDateTime.getMillis()){
+            throw new DoctorNotWorkException("Doctor with given id doesn't work at that time.");
         }
-        else {
-            throw new DoctorNotWorkException("Doctor with given id doesn't work that day.");
-        }
-    };
+
+    }
 
     public void isDoctorFree(User user, ExaminationRequestDTO examinationRequestDTO, PriceList priceList){
         //check if term is free
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-        
-        List<Examination> oldExaminations = user.getMedicalStaff()
+        List<Examination> oldExaminations = user.getDoctorExaminations()
                 .stream()
-                .filter(e -> e.getDate().compareTo(examinationRequestDTO.getDate()) == 0)
+                .filter(e -> e.getDateTime().toLocalDate().compareTo(examinationRequestDTO.getDateTime().toLocalDate()) == 0)
+                .sorted(Comparator.comparing(Examination::getDateTime))
                 .collect(Collectors.toList());
         
-        Time newExaminationEndTime = new Time(0);
-        newExaminationEndTime.setMinutes(examinationRequestDTO.getStartTime().getMinutes() + priceList.getTypeOfExamination().getDuration().getMinutes());
-        newExaminationEndTime.setHours(examinationRequestDTO.getStartTime().getHours() + priceList.getTypeOfExamination().getDuration().getHours());
+        DateTime newExaminationEndTime = examinationRequestDTO.getDateTime().plus(priceList.getTypeOfExamination().getDuration().getMillisOfDay());
 
         for(Examination oldExamination: oldExaminations) {
-            PriceList ePriceList = priceListRepository.findById(oldExamination.getPriceList().getPriceListId())
-                    .orElseThrow(() -> new PriceListNotFoundException("Could not find price list with given id."));
-            Time oldExaminationEndTime = new Time(0);
-            oldExaminationEndTime.setMinutes(oldExamination.getStartTime().getMinutes() + ePriceList.getTypeOfExamination().getDuration().getMinutes());
-            oldExaminationEndTime.setHours(oldExamination.getStartTime().getHours() + ePriceList.getTypeOfExamination().getDuration().getHours());
-            Integer difference = examinationRequestDTO.getStartTime().compareTo(oldExamination.getStartTime());
+            DateTime oldExaminationEndTime = oldExamination.getEndTime();
+            long difference = examinationRequestDTO.getDateTime().getMillis() - oldExamination.getDateTime().getMillis();
             if(difference > 0) {
-                if (examinationRequestDTO.getStartTime().before(oldExaminationEndTime) || examinationRequestDTO.getStartTime().equals(oldExaminationEndTime)) {
+                if (examinationRequestDTO.getDateTime().getMillis() <= oldExaminationEndTime.getMillis()) {
                     throw new DoctorNotFreeException("Doctor with given id is not free at required time.");
                 }
             }
             else if (difference < 0) {
-                if(!newExaminationEndTime.before(oldExamination.getStartTime()) || newExaminationEndTime.equals(oldExamination.getStartTime())) {
+                if(newExaminationEndTime.getMillis() >= oldExamination.getDateTime().getMillis() ) {
                     throw new DoctorNotFreeException("Doctor with given id is not free at required time.");
                 }
             }
@@ -179,29 +141,11 @@ public class ExaminationServiceImpl implements ExaminationService {
         Integer examinationId = tokenProvider.getIdFromJwt(token);
         Examination examination = examinationRepository.findById(examinationId)
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
-        java.util.Date now = new Date();
 
-        /**
-         * Change java.util.Date and java.sql.Time libraries(outdated)
-         */
-        Date date = examination.getDate();
-        Time time = examination.getStartTime();
-        // Construct date and time objects
-        Calendar dateCal = Calendar.getInstance();
-        dateCal.setTime(date);
-        Calendar timeCal = Calendar.getInstance();
-        timeCal.setTime(time);
+        DateTime dateTime = examination.getDateTime();
+        DateTime now = new DateTime();
 
-        // Extract the time of the "time" object to the "date"
-        dateCal.set(Calendar.HOUR_OF_DAY, timeCal.get(Calendar.HOUR_OF_DAY));
-        dateCal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
-        dateCal.set(Calendar.SECOND, timeCal.get(Calendar.SECOND));
-
-        // Get the time value!
-        date = dateCal.getTime();
-
-        long days = TimeUnit.DAYS.convert(Math.abs(now.getTime() - date.getTime()), TimeUnit.MILLISECONDS);
-        if(days > 0) {
+        if(Hours.hoursBetween(dateTime, now).getHours() >= 24) {
             examination.setAccepted(true);
             examinationRepository.save(examination);
         }

@@ -4,11 +4,7 @@ import com.example.backend.model.Examination;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.Time;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.joda.time.DateTime;
 
 @Data
 @NoArgsConstructor
@@ -37,11 +33,9 @@ public class ExaminationResponseDTO {
 
     private boolean accepted;
 
-    private Date date;
+    private DateTime dateTime;
 
-    private Time startTime;
-
-    private List<Integer> medicalStaffIds;
+    private Integer doctor;
 
     public ExaminationResponseDTO(Examination examination) {
         this.examinationId = examination.getExaminationId();
@@ -56,11 +50,7 @@ public class ExaminationResponseDTO {
         this.gradeClinic = examination.getGradeClinic();
         this.gradeDoctor = examination.getGradeDoctor();
         this.accepted = examination.isAccepted();
-        this.date = examination.getDate();
-        this.startTime = examination.getStartTime();
-        this.medicalStaffIds = examination.getMedicalStaff()
-                .stream()
-                .map(m -> m.getUserId())
-                .collect(Collectors.toList());
+        this.dateTime = examination.getDateTime();
+        this.doctor = examination.getDoctor().getUserId();
     }
 }

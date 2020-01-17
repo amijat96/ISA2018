@@ -53,7 +53,7 @@ public class ExaminationController {
     public ResponseEntity<ApiResponse> confirmExamination(@PathParam("token") String token) {
         Integer examinationId = examinationService.confirmExamination(token);
         if(examinationId != 0) {
-            emailService.sendConfirmationMailToMedicalStaff(examinationId);
+            emailService.sendConfirmationMailToDoctor(examinationId);
             return ResponseEntity.ok(new ApiResponse(true, "Examination confirmed successfully.", new ArrayList<>()));
         }
         else {

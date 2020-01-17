@@ -1,8 +1,12 @@
 package com.example.backend.dto.request;
 
+import com.example.backend.miscellaneous.MyDateFormat;
+import com.example.backend.miscellaneous.MyJsonDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalDate;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -52,8 +56,12 @@ public class RegisterRequestDTO {
     private String jbo;
 
     @NotNull
-    private int roleIdd;
+    private int roleId;
 
     private int clinicId;
+
+    @MyDateFormat
+    @JsonSerialize(using = MyJsonDateSerializer.class)
+    private LocalDate dateOfBirth;
 }
 

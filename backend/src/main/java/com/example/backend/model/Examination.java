@@ -3,12 +3,10 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Time;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -40,10 +38,6 @@ public class Examination implements Serializable {
     @JoinColumn(name = "ID_PRICELIST")
     private PriceList priceList;
 
-    @OneToOne()
-    @JoinColumn(name = "ID_REPORT")
-    private Report report;
-
     @Column(name = "DISCOUNT")
     private double discount;
 
@@ -65,23 +59,17 @@ public class Examination implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "DATE")
-    private Date date;
+    @Column(name = "CANCELED")
+    private boolean canceled;
 
-    @Column(name = "TIME")
-    private Time startTime;
+    @Column(name = "DATE_TIME")
+    private DateTime dateTime;
 
-    @ManyToMany
-    @JoinTable(
-            name = "examinationmedicalstaff"
-            , joinColumns={
-            @JoinColumn(name="ID_EXAMINATION")
-        }
-            , inverseJoinColumns={
-            @JoinColumn(name="ID_USER")
-        }
-    )
-    private List<User> medicalStaff;
+    @ManyToOne
+    @JoinColumn(name = "ID_DOCTOR")
+    private User doctor;
 
+    public DateTime getEndTime() {
+        return dateTime.plus(this.priceList.getTypeOfExamination().getDuration().getMillisOfDay());
+    }
 }

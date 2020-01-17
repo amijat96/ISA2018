@@ -4,6 +4,7 @@ import com.example.backend.dto.request.RegisterRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +14,6 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -73,7 +73,7 @@ public class User implements UserDetails, Serializable {
     private int gender;
 
     @Column(name = "DATE_OF_BIRTH")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "ADMIN_APPROVED")
     private boolean adminApproved;
@@ -97,8 +97,8 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user")
     private List<Examination> examinations;
 
-    @ManyToMany(mappedBy = "medicalStaff")
-    private List<Examination> medicalStaff;
+    @OneToMany(mappedBy = "doctor")
+    private List<Examination> doctorExaminations;
 
     @ManyToMany
     @JoinTable(
@@ -128,6 +128,7 @@ public class User implements UserDetails, Serializable {
         this.jbo = registerRequestDto.getJbo();
         this.phone = registerRequestDto.getPhone();
         this.street = registerRequestDto.getStreet();
+        this.dateOfBirth = registerRequestDto.getDateOfBirth();
     }
 
     @Override

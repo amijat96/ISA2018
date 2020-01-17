@@ -96,12 +96,11 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendConfirmationMailToMedicalStaff(Integer examinationId) {
+    public void sendConfirmationMailToDoctor(Integer examinationId) {
         Examination examination = examinationRepository.findById(examinationId)
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not fin examination with given id."));
-        for(User user: examination.getMedicalStaff()) {
-            sendNotificationMail(user, examination);
-        }
+        sendNotificationMail(examination.getDoctor(), examination);
+
     }
 
     void sendNotificationMail(User user, Examination examination) {
@@ -111,8 +110,8 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("title", configProperties.getExaminationConfirmed());
         context.setVariable("firstName", user.getName());
         context.setVariable("typeOfExamination", examination.getPriceList().getTypeOfExamination().getName());
-        context.setVariable("date", examination.getDate().toString());
-        context.setVariable("time", examination.getStartTime());
+        context.setVariable("date", examination.getDateTime().toLocalDate().toString());
+        context.setVariable("time", examination.getDateTime().toLocalTime().toString());
         context.setVariable("roomNumber", examination.getRoom().getNumber());
         context.setVariable("clinicName", examination.getRoom().getClinic().getName());
         context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/examination/confirm-examination?token=" + tokenProvider.generateExaminationConfirmationToken(examination.getExaminationId()));

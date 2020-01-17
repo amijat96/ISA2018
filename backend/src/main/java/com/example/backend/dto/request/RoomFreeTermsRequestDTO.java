@@ -7,32 +7,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.DateTime;
-
-import javax.validation.constraints.NotNull;
+import org.joda.time.LocalTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExaminationRequestDTO {
+public class RoomFreeTermsRequestDTO {
 
-    private Integer userId;
+    Integer clinicId;
 
-    private Integer roomId;
+    Integer roomTypeId;
 
-    @NotNull
-    private Integer doctorId;
-
-    @NotNull
-    private Integer typeId;
-
-    @NotNull
-    private Integer priceListId;
-
-    private double discount;
-
+    Integer doctorId;
 
     @MyDateTimeFormat
     @JsonSerialize(using = MyJsonDateTimeSerializer.class)
-    private DateTime dateTime;
+    DateTime dateTime;
+
+    LocalTime duration;
 
 }

@@ -3,11 +3,11 @@ package com.example.backend.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalTime;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.sql.Time;
 
 @Data
 @NoArgsConstructor
@@ -26,10 +26,10 @@ public class ClinicRequestDTO {
     private String street;
 
     @NotNull
-    private Time workTimeStart;
+    private LocalTime workTimeStart;
 
     @NotNull
-    private Time workTimeEnd;
+    private LocalTime workTimeEnd;
 
     @Size(max = 1024)
     private String description;

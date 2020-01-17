@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -31,14 +30,11 @@ public class Vacation implements Serializable {
     @Column(name = "ACCEPTED")
     private boolean accepted;
 
-    @Column(name = "DURATION")
-    private DateTime duration;
-
     @Column(name = "START_DATE")
-    private Date startDate;
+    private DateTime startDate;
 
     @Column(name = "END_DATE")
-    private Date endDate;
+    private DateTime endDate;
 
     @Column(name = "DESCRIPTION")
     private String description;

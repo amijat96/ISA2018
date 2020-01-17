@@ -1,7 +1,9 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
+import com.example.backend.dto.request.RoomFreeTermsRequestDTO;
 import com.example.backend.dto.request.RoomRequestDTO;
+import com.example.backend.dto.response.RoomFreeTermsResponseDTO;
 import com.example.backend.dto.response.RoomResponseDTO;
 import com.example.backend.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,12 @@ public class RoomController {
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
     public ResponseEntity<RoomResponseDTO> getRoom(@PathVariable Integer id) {
         return ResponseEntity.ok(new RoomResponseDTO(roomService.getRoomById(id)));
+    }
+
+    @GetMapping(path = "/free-terms")
+    @PreAuthorize("hasRole('ADMIN_CLINIC')")
+    public ResponseEntity<List<RoomFreeTermsResponseDTO>> getFreeTerms(@Valid @RequestBody RoomFreeTermsRequestDTO roomFreeTermsRequestDTO) {
+        return ResponseEntity.ok(roomService.getClinicFreeTerms(roomFreeTermsRequestDTO));
     }
 
     @PostMapping

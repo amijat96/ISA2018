@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.ClinicRequestDTO;
 import com.example.backend.dto.response.ClinicResponseDTO;
+import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,15 @@ public class ClinicController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<ClinicResponseDTO> getClinic(@PathVariable Integer id) {
         return ResponseEntity.ok(new ClinicResponseDTO(clinicService.getClinic(id)));
+    }
+
+    @GetMapping(path = "/{id}/patients")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_DOCTOR')")
+    public ResponseEntity<List<UserResponseDTO>> getClinicPatients(@PathVariable Integer id) {
+        return ResponseEntity.ok(clinicService.getClinicPatients(id)
+                .stream()
+                .map(UserResponseDTO::new)
+                .collect(Collectors.toList()));
     }
 
     @PostMapping

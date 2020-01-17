@@ -3,10 +3,10 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.List;
 
 @Data
@@ -25,7 +25,7 @@ public class TypeOfExamination implements Serializable {
     private int typeOfExaminationId;
 
     @Column(name = "DURATION")
-    private Time duration;
+    private LocalTime duration;
 
     @Column(name = "NAME")
     private String name;

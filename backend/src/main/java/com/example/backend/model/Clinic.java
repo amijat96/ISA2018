@@ -3,11 +3,11 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.List;
 
 @Data
@@ -38,11 +38,11 @@ public class Clinic implements Serializable {
 
     @NotNull
     @Column(name =  "WORKTIME_START")
-    private Time workTimeStart;
+    private LocalTime workTimeStart;
 
     @NotNull
     @Column(name = "WORKTIME_END")
-    private Time workTimeEnd;
+    private LocalTime workTimeEnd;
 
     @Column(name = "DESCRIPTION")
     private String description;

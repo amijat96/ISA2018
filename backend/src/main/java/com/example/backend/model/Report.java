@@ -23,6 +23,10 @@ public class Report implements Serializable {
     @Column(name = "ID_REPORT")
     private int reportId;
 
+    @OneToOne
+    @JoinColumn(name = "ID_EXAMINATION")
+    private Examination examination;
+
     @ManyToOne()
     @JoinColumn(name = "ID_USER")
     private User nurse;

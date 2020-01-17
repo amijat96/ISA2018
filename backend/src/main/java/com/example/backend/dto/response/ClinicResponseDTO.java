@@ -4,8 +4,8 @@ import com.example.backend.model.Clinic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalTime;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,9 +23,9 @@ public class ClinicResponseDTO {
 
     private String street;
 
-    private Time workTimeStart;
+    private LocalTime workTimeStart;
 
-    private Time workTimeEnd;
+    private LocalTime workTimeEnd;
 
     private String description;
 

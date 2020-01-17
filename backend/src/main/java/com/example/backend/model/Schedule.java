@@ -3,10 +3,11 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -27,16 +28,17 @@ public class Schedule implements Serializable {
     @JoinColumn(name = "ID_USER")
     private User user;
 
-    @Column(name = "SHIFT_SCHEDULE")
-    private int shiftSchedule;
-
-    @Temporal(TemporalType.DATE)
     @Column(name = "START_DATE_SCHEDULE")
-    private Date startDateSchedule;
+    private LocalDate startDateSchedule;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "END_DATE_SCHEDULE")
-    private Date endDateSchedule;
+    private LocalDate endDateSchedule;
+
+    @Column(name = "SHIFT_START_TIME")
+    private LocalTime shiftStartTime;
+
+    @Column(name = "SHIFT_END_TIME")
+    private LocalTime shiftEndTime;
 
     @Column(name = "DELETED")
     private boolean deleted;

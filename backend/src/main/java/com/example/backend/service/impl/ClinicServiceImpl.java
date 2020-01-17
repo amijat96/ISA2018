@@ -1,11 +1,13 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ClinicRequestDTO;
-import com.example.backend.exception.ExaminationNotFoundException;
 import com.example.backend.exception.ClinicNotFoundException;
 import com.example.backend.exception.DeletionException;
+import com.example.backend.exception.ExaminationNotFoundException;
 import com.example.backend.model.City;
 import com.example.backend.model.Clinic;
+import com.example.backend.model.Room;
+import com.example.backend.model.User;
 import com.example.backend.repository.CityRepository;
 import com.example.backend.repository.ClinicRepository;
 import com.example.backend.service.ClinicService;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClinicServiceImpl implements ClinicService {
@@ -90,4 +94,22 @@ public class ClinicServiceImpl implements ClinicService {
             return false;
         }
     }
+
+    @Override
+    public List<User> getClinicPatients(Integer id) {
+        List<User> patients = new ArrayList<>();
+        Clinic clinic = getClinic(id);
+        List<Room> rooms = clinic.getRooms();
+        for(Room room : rooms) {
+            patients.addAll(room.getExaminations()
+                    .stream()
+                    .map(e -> e.getUser())
+                    .distinct()
+                    .collect(Collectors.toList()));
+        }
+        return patients.stream()
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }
+

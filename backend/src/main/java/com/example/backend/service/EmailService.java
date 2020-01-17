@@ -8,5 +8,5 @@ public interface EmailService {
 
     void sendConfirmationMailToPatient(Examination examination);
 
-    void sendConfirmationMailToMedicalStaff(Integer examinationId);
+    void sendConfirmationMailToDoctor(Integer examinationId);
 }
