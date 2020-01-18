@@ -23,6 +23,12 @@ public class PriceList implements Serializable {
     @Column(name = "ID_PRICELIST")
     private int priceListId;
 
+    @Column(name = "PRICE")
+    private double price;
+
+    @Column(name = "DELETED")
+    private boolean deleted;
+
     @ManyToOne()
     @JoinColumn(name = "ID_CLINIC")
     private Clinic clinic;

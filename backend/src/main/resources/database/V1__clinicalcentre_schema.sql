@@ -160,7 +160,7 @@ create table PRICELIST
    ID_PRICELIST         int not null AUTO_INCREMENT,
    ID_CLINIC            int not null,
    ID_TYPE_OF_EXAMINATION int not null,
-   PRICE                decimal(8) not null,
+   PRICE                decimal(8,2) not null,
    DELETED              bool not null,
    primary key (ID_PRICELIST)
 );
