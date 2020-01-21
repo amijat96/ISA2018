@@ -1,19 +1,21 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.JwtAuthDto;
+import com.example.backend.dto.request.DoctorFreeTermsRequestDTO;
 import com.example.backend.dto.request.LoginRequestDTO;
 import com.example.backend.dto.request.RegisterRequestDTO;
+import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
 import com.example.backend.exception.*;
-import com.example.backend.model.City;
-import com.example.backend.model.Clinic;
-import com.example.backend.model.Role;
-import com.example.backend.model.User;
+import com.example.backend.model.*;
 import com.example.backend.repository.CityRepository;
 import com.example.backend.repository.ClinicRepository;
 import com.example.backend.repository.RoleRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.UserService;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +23,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -87,7 +94,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Finds role
-        final Role userRole = roleRepository.findById(registerRequestDTO.getRoleIdd()).orElseThrow(() -> new ApiException("User Role not set."));
+        final Role userRole = roleRepository.findById(registerRequestDTO.getRoleId()).orElseThrow(() -> new ApiException("User Role not set."));
 
         // Create address for user
         final City city = cityRepository.findById(registerRequestDTO.getCityId()).orElseThrow(() -> new ApiException("City not set!"));
@@ -98,6 +105,7 @@ public class UserServiceImpl implements UserService {
             clinic = clinicRepository.findById(registerRequestDTO.getClinicId()).orElseThrow(() -> new ApiException("Clinic not set!"));
 
         // Creating user's account
+        System.out.println("Date : " + registerRequestDTO.getDateOfBirth());
         User user = new User(registerRequestDTO);
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setRole(userRole);
@@ -112,7 +120,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean confirmMail(String confirmToken) {
         if(tokenProvider.validateToken(confirmToken)) {
-            final int userId = tokenProvider.getUserIdFromJwt(confirmToken);
+            final int userId = tokenProvider.getIdFromJwt(confirmToken);
             final User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(String.format("User with id %s not found.", Integer.toString(userId))));
             user.setVerified(true);
@@ -136,6 +144,80 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         return true;
+    }
+
+    @Override
+    public List<DoctorFreeTermsResponseDTO> getDoctorFreeTerms(DoctorFreeTermsRequestDTO doctorFreeTermsRequestDTO) {
+
+        List<DoctorFreeTermsResponseDTO> freeTerms = new ArrayList<>();
+        final User doctor = userRepository.findById(doctorFreeTermsRequestDTO.getDoctorId())
+                .orElseThrow(() -> new UserNotFoundException("No user with given username or email found!"));
+        LocalDate dateIterator = doctorFreeTermsRequestDTO.getDateTime().toLocalDate();
+
+        //Find doctor schedules
+        List<Schedule> schedules = doctor.getSchedules()
+                .stream()
+                .filter(s -> s.getEndDateSchedule().isAfter(doctorFreeTermsRequestDTO.getDateTime().toLocalDate()))
+                .collect(Collectors.toList());
+
+        //Find free terms on each day of the schedule
+        for(Schedule schedule : schedules) {
+            while(dateIterator.isBefore(schedule.getEndDateSchedule()) || dateIterator.isEqual(schedule.getEndDateSchedule())) {
+                LocalDate date = dateIterator;
+
+                //define start and end dateTime for shift
+                DateTime startTime = createDateTime(date, schedule.getShiftStartTime());
+                DateTime endTime;
+
+                //if shift end next, day add 1 day to date
+                if(schedule.getShiftEndTime().isAfter(schedule.getShiftStartTime())) {
+                    endTime = createDateTime(date, schedule.getShiftEndTime());
+                }
+                else {
+                    endTime = createDateTime(date.plusDays(1), schedule.getShiftEndTime());
+                }
+
+                //copy values  to new variables because variables used in lambda expressions should be final or effectively final. Same thing with date and dateIterator
+                DateTime startTimeFinal = startTime;
+                DateTime endTimeFinal = endTime;
+
+                //Get doctors examinations in shift
+                List<Examination> examinations = doctor.getDoctorExaminations()
+                        .stream()
+                        .filter(e -> (e.getDateTime().isAfter(startTimeFinal) || e.getDateTime().isEqual(startTimeFinal)) && e.getDateTime().isBefore(endTimeFinal))
+                        .collect(Collectors.toList());
+                examinations.sort(Comparator.comparing(Examination::getDateTime));
+
+                //If there is no examinations on DATE, then every TERM on that DATE is free.
+                //If there is examinations, then check if there is enough time between two examinations,
+                // between START TIME of shift and first examination
+                // or between last examination and END TIME od shift.
+                // FOR loop find terms between two examinations and between START TIME of shift and first examination, if they exist.
+                if(examinations.size() != 0) {
+                    for (Examination examination : examinations) {
+                        if (examination.getEndTime().toLocalTime().getMillisOfDay() - startTime.getMillisOfDay() > doctorFreeTermsRequestDTO.getDuration().getMillisOfDay()) {
+                            freeTerms.add(new DoctorFreeTermsResponseDTO(startTime, examination.getDateTime().minus(doctorFreeTermsRequestDTO.getDuration().getMillisOfDay()).minusMinutes(1)));
+                        }
+                        startTime = examination.getEndTime().plusMinutes(1);
+                    }
+                    //Check if there is free term between last examination and end time.
+                    if (endTime.getMillisOfDay() - startTime.getMillisOfDay() > doctorFreeTermsRequestDTO.getDuration().getMillisOfDay()) {
+                        freeTerms.add(new DoctorFreeTermsResponseDTO(startTime, endTime.minus(doctorFreeTermsRequestDTO.getDuration().getMillisOfDay()).minusMinutes(1)));
+                    }
+                }
+                else {
+                    freeTerms.add(new DoctorFreeTermsResponseDTO(startTime, endTime.minus(doctorFreeTermsRequestDTO.getDuration().getMillisOfDay()).minusMinutes(1)));
+                }
+                dateIterator = date.plusDays(1);
+            }
+        }
+
+        return freeTerms;
+    }
+
+    public static DateTime createDateTime(LocalDate date, LocalTime time) {
+        return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
+                time.getHourOfDay(), time.getMinuteOfHour());
     }
 
 

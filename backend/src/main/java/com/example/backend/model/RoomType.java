@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "roomtype")
-@NamedQuery(name = "RoomType.findAll", query = "SELECT rt FROM ROOMTYPE rt")
+@NamedQuery(name = "RoomType.findAll", query = "SELECT rt FROM RoomType rt")
 public class RoomType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,10 +26,13 @@ public class RoomType implements Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(mappedBy = "roomtype")
+    @OneToMany(mappedBy = "roomType")
     private List<Room> rooms;
 
-    @OneToMany(mappedBy = "roomtype")
+    @OneToMany(mappedBy = "roomType")
     private List<Examination> examinations;
+
+    @OneToMany(mappedBy = "type")
+    private List<TypeOfExamination> typeOfExaminations;
 
 }

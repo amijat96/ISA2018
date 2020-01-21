@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "medicine")
-@NamedQuery(name = "Medicine.findAll", query = "SELECT m FROM MEDICINE m")
+@NamedQuery(name = "Medicine.findAll", query = "SELECT m FROM Medicine m")
 public class Medicine implements Serializable {
     private static final long serialVersionUID = 1L;
 

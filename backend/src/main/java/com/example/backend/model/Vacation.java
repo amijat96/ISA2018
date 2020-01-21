@@ -7,14 +7,13 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "vacation")
-@NamedQuery(name = "Vacation.findAll", query = "SELECT v FROM VACATION v")
+@NamedQuery(name = "Vacation.findAll", query = "SELECT v FROM Vacation v")
 public class Vacation implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,17 +30,11 @@ public class Vacation implements Serializable {
     @Column(name = "ACCEPTED")
     private boolean accepted;
 
-    @Temporal(TemporalType.TIME)
-    @Column(name = "DURATION")
-    private DateTime duration;
-
-    @Temporal(TemporalType.DATE)
     @Column(name = "START_DATE")
-    private Date startDate;
+    private DateTime startDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "END_DATE")
-    private Date endDate;
+    private DateTime endDate;
 
     @Column(name = "DESCRIPTION")
     private String description;

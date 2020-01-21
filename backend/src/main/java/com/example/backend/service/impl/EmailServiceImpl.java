@@ -1,8 +1,11 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.config.ConfigProperties;
+import com.example.backend.exception.ExaminationNotFoundException;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.model.Examination;
 import com.example.backend.model.User;
+import com.example.backend.repository.ExaminationRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.EmailService;
@@ -37,21 +40,29 @@ public class EmailServiceImpl implements EmailService {
 
     private final UserRepository userRepository;
 
+    private final ExaminationRepository examinationRepository;
+
     @Autowired
     public EmailServiceImpl(ConfigProperties configProperties, UserRepository userRepository,
                             JavaMailSender javaMailSender, ServletContext servletContext,
-                            JwtTokenProvider tokenProvider, SpringTemplateEngine templateEngine) {
+                            JwtTokenProvider tokenProvider, SpringTemplateEngine templateEngine,
+                            ExaminationRepository examinationRepository) {
         this.javaMailSender = javaMailSender;
         this.servletContext = servletContext;
         this.configProperties = configProperties;
         this.tokenProvider = tokenProvider;
         this.templateEngine = templateEngine;
         this.userRepository = userRepository;
+        this.examinationRepository = examinationRepository;
     }
 
     @Async
-    void sendMail(String email, String subject, Context context) {
-        final String body = templateEngine.process("email_confirmation.html", context);
+    void sendMail(String email, String subject, Context context, boolean examinationMail) {
+        final String body;
+        if(!examinationMail)
+            body = templateEngine.process("email_confirmation.html", context);
+        else
+            body = templateEngine.process("email_confirmation_examination.html", context);
 
         final MimeMessage message = javaMailSender.createMimeMessage();
         final MimeMessageHelper mimeHelper;
@@ -75,7 +86,36 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("title", configProperties.getConfirmSubject());
         context.setVariable("firstName", user.getName());
         context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/confirm-email?token=" + tokenProvider.generateConfirmationToken(user.getUserId()));
+        sendMail(user.getEmail(), configProperties.getConfirmSubject(), context, false);
+    }
 
-        sendMail(user.getEmail(), configProperties.getConfirmSubject(), context);
+    @Override
+    public void sendConfirmationMailToPatient(Examination examination) {
+        final User patient = userRepository.findByUsername(examination.getUser().getUsername());
+            sendNotificationMail(patient, examination);
+    }
+
+    @Override
+    public void sendConfirmationMailToDoctor(Integer examinationId) {
+        Examination examination = examinationRepository.findById(examinationId)
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not fin examination with given id."));
+        sendNotificationMail(examination.getDoctor(), examination);
+
+    }
+
+    void sendNotificationMail(User user, Examination examination) {
+        logger.info(String.format("Sending confirmation mail for examination/operation to %s email.", user.getEmail()));
+        Context context = new Context();
+        context.setVariable("type", examination.getRoomType().getName().toLowerCase());
+        context.setVariable("title", configProperties.getExaminationConfirmed());
+        context.setVariable("firstName", user.getName());
+        context.setVariable("typeOfExamination", examination.getPriceList().getTypeOfExamination().getName());
+        context.setVariable("date", examination.getDateTime().toLocalDate().toString());
+        context.setVariable("time", examination.getDateTime().toLocalTime().toString());
+        context.setVariable("roomNumber", examination.getRoom().getNumber());
+        context.setVariable("clinicName", examination.getRoom().getClinic().getName());
+        context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/examination/confirm-examination?token=" + tokenProvider.generateExaminationConfirmationToken(examination.getExaminationId()));
+        context.setVariable("patient", user.getRole().getRoleId() != 5);
+        sendMail(user.getEmail(), configProperties.getExaminationConfirmed(), context, true);
     }
 }

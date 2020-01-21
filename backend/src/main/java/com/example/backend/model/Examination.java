@@ -3,17 +3,17 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "examination")
-@NamedQuery(name = "Examination.findAll", query = "SELECT e FROM EXAMINATION e")
+@NamedQuery(name = "Examination.findAll", query = "SELECT e FROM Examination e")
 public class Examination implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -38,10 +38,6 @@ public class Examination implements Serializable {
     @JoinColumn(name = "ID_PRICELIST")
     private PriceList priceList;
 
-    @OneToOne()
-    @JoinColumn(name = "ID_REPORT")
-    private Report report;
-
     @Column(name = "DISCOUNT")
     private double discount;
 
@@ -63,16 +59,17 @@ public class Examination implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @ManyToMany
-    @JoinTable(
-            name = "examinationmedicalstaff"
-            , joinColumns={
-            @JoinColumn(name="ID_EXAMINATION")
-        }
-            , inverseJoinColumns={
-            @JoinColumn(name="ID_USER")
-        }
-    )
-    private List<User> medicalStaff;
+    @Column(name = "CANCELED")
+    private boolean canceled;
 
+    @Column(name = "DATE_TIME")
+    private DateTime dateTime;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_DOCTOR")
+    private User doctor;
+
+    public DateTime getEndTime() {
+        return dateTime.plus(this.priceList.getTypeOfExamination().getDuration().getMillisOfDay());
+    }
 }

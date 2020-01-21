@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "report")
-@NamedQuery(name = "Report.findAll", query = "SELECT r FROM REPORT r")
+@NamedQuery(name = "Report.findAll", query = "SELECT r FROM Report r")
 public class Report implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,6 +22,10 @@ public class Report implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "ID_REPORT")
     private int reportId;
+
+    @OneToOne
+    @JoinColumn(name = "ID_EXAMINATION")
+    private Examination examination;
 
     @ManyToOne()
     @JoinColumn(name = "ID_USER")
@@ -36,10 +40,10 @@ public class Report implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @ManyToMany(mappedBy = "report")
+    @ManyToMany(mappedBy = "reports")
     private List<Diagnosis> diagnoses;
 
-    @ManyToMany(mappedBy = "report")
+    @ManyToMany(mappedBy = "reports")
     private List<Medicine> medicines;
 
 }

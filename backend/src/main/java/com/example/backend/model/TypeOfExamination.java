@@ -3,7 +3,7 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "typeofexamination")
+@NamedQuery(name = "TypeOfExamination.findAll", query = "SELECT toe FROM TypeOfExamination toe")
 public class TypeOfExamination implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -23,9 +24,8 @@ public class TypeOfExamination implements Serializable {
     @Column(name = "ID_TYPE_OF_EXAMINATION")
     private int typeOfExaminationId;
 
-    @Temporal(TemporalType.TIME)
     @Column(name = "DURATION")
-    private DateTime duration;
+    private LocalTime duration;
 
     @Column(name = "NAME")
     private String name;
@@ -36,9 +36,13 @@ public class TypeOfExamination implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @ManyToMany(mappedBy = "typeofexamination")
+    @ManyToMany(mappedBy = "doctorSpecialization")
     private List<User> doctors;
 
-    @OneToMany(mappedBy = "typeofexamination")
+    @OneToMany(mappedBy = "typeOfExamination")
     private List<PriceList> priceLists;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_TYPE")
+    private RoomType type;
 }

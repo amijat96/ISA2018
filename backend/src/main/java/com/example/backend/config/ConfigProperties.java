@@ -19,6 +19,8 @@ public class ConfigProperties {
 
     private String confirmSubject;
 
+    private String examinationConfirmed;
+
     private int confirmExpiry;
 
     private String frontBaseUrl;
