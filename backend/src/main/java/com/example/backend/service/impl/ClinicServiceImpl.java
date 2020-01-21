@@ -4,13 +4,11 @@ import com.example.backend.dto.request.ClinicRequestDTO;
 import com.example.backend.exception.ClinicNotFoundException;
 import com.example.backend.exception.DeletionException;
 import com.example.backend.exception.ExaminationNotFoundException;
-import com.example.backend.model.City;
-import com.example.backend.model.Clinic;
-import com.example.backend.model.Room;
-import com.example.backend.model.User;
+import com.example.backend.model.*;
 import com.example.backend.repository.CityRepository;
 import com.example.backend.repository.ClinicRepository;
 import com.example.backend.service.ClinicService;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,13 +76,13 @@ public class ClinicServiceImpl implements ClinicService {
     public boolean deleteClinic(Integer id) {
         Clinic clinic = clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
-        if (clinic.getUsers().size() > 0) {
+        if (clinic.getUsers().stream().filter(u -> !u.isDeleted()).collect(Collectors.toList()).size() > 0) {
             throw new DeletionException("Could not delete clinic with given id.");
         }
-        if(clinic.getRooms().size() > 0) {
+        if(clinic.getRooms().stream().filter(r -> !r.isDeleted()).collect(Collectors.toList()).size() > 0) {
             throw new DeletionException("Could not delete clinic with given id.");
         }
-        if(clinic.getPriceLists().size() > 0) {
+        if(clinic.getPriceLists().stream().filter(pl -> !pl.isDeleted()).collect(Collectors.toList()).size() > 0) {
             throw new DeletionException("Could not delete clinic with given id.");
         }
         try {
@@ -110,6 +108,32 @@ public class ClinicServiceImpl implements ClinicService {
         return patients.stream()
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public double getClinicRevenues(Integer clinicId, LocalDate startDate, LocalDate endDate) {
+       return getClinicExaminations(clinicId, startDate, endDate).stream().filter(e -> e.isFinished()).map(e -> e.getPriceList().getPrice()).collect(Collectors.summingDouble(Double::doubleValue));
+    }
+
+    @Override
+    public List<Examination> getClinicExaminations(Integer clinicId, LocalDate startDate, LocalDate endDate) {
+        List<Room> rooms = getClinic(clinicId).getRooms();
+        List<Examination> examinations = new ArrayList<>();
+        for(Room room : rooms) {
+            examinations.addAll(room.getExaminations()
+                    .stream()
+                    .filter(e -> (e.getDateTime().toLocalDate().isAfter(startDate) || e.getDateTime().toLocalDate().isEqual(startDate)) &&
+                            (e.getDateTime().toLocalDate().isEqual(endDate) || e.getDateTime().toLocalDate().isBefore(endDate)))
+                    .collect(Collectors.toList()));
+        }
+        return examinations;
+    }
+
+    @Override
+    public double getClinicGrade(Integer clinicId) {
+        List<Examination> examinations = getClinicExaminations(clinicId, new LocalDate(1970, 1, 1) , LocalDate.now());
+        return examinations.stream().map(e -> e.getGradeClinic()).collect(Collectors.summingDouble(Double::doubleValue))
+                /examinations.stream().filter(e -> e.getGradeClinic() != 0).collect(Collectors.toList()).size();
     }
 }
 

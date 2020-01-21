@@ -3,7 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.PriceListRequestDTO;
 import com.example.backend.dto.response.PriceListResponseDTO;
-import com.example.backend.service.impl.PriceListServiceImpl;
+import com.example.backend.service.PriceListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/priceList")
 public class PriceListController {
 
-    private final PriceListServiceImpl priceListService;
+    private final PriceListService priceListService;
 
     @Autowired
-    public PriceListController(PriceListServiceImpl priceListService) {
+    public PriceListController(PriceListService priceListService) {
         this.priceListService = priceListService;
     }
 

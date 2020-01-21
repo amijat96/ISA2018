@@ -100,7 +100,7 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.9.0.pr2</version>
 		</dependency>
-	</dependencies>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>

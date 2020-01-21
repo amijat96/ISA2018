@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,10 +31,11 @@ public class RoomController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN_CLINIC')")
-    public ResponseEntity<List<RoomResponseDTO>> getRoomsByClinic(@RequestParam Integer id) {
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
+    public ResponseEntity<List<RoomResponseDTO>> getRoomsByClinic() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(roomService
-                .getRoomByClinicId(id)
+                .getRoomByClinic(authentication.getName())
                 .stream()
                 .map(RoomResponseDTO::new)
                 .collect(Collectors.toList()));

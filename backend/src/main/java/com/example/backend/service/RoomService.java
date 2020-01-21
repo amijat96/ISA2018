@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface RoomService {
 
-    List<Room> getRoomByClinicId(Integer id);
+    List<Room> getRoomByClinic(String usernamed);
 
     Room getRoomById(Integer id);
 

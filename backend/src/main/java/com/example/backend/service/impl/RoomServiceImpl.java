@@ -42,10 +42,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> getRoomByClinicId(Integer id) {
-        return roomRepository.findAll()
-                .stream()
-                .filter(r -> r.getClinic().getClinicId() == id)
+    public List<Room> getRoomByClinic(String username) {
+        System.out.println("Username : " + username);
+        Clinic clinic = userRepository.findByUsername(username).getClinic();
+        return clinic.getRooms().stream()
                 .filter(r -> !r.isDeleted())
                 .collect(Collectors.toList());
     }

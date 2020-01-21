@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping(path = "/examination")
+@RequestMapping(path = "/**/examination")
 public class ExaminationController {
 
     private final ExaminationService examinationService;
