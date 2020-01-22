@@ -1,12 +1,28 @@
-<mdb-carousel class="carousel slide carousel-fade" [animation]="'fade'">
-  <mdb-carousel-item>
-    <video class="video-fluid" autoplay loop muted>
-      <source src="https://mdbootstrap.com/img/video/Tropical.mp4" type="video/mp4" />
-    </video>
-  </mdb-carousel-item>
-  <mdb-carousel-item>
-    <video class="video-fluid" autoplay loop muted>
-      <source src="https://mdbootstrap.com/img/video/forest.mp4" type="video/mp4" />
-    </video>
-  </mdb-carousel-item>
-</mdb-carousel>
+<!-- Just an image -->
+<div style="background-image: url(https://www.jakpost.travel/wimages/large/63-636649_hospital-background-wallpaper-photo-hd-wallpaper-for-hospital.jpg);">
+<mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark transparent">
+  <mdb-navbar-brand width="5%">
+      <a class="navbar-brand" >
+          <img src="\assets\images\logo2.png" height="50" alt="">
+      </a>
+  </mdb-navbar-brand>
+    <!-- Links -->
+  <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+          <a><h2 style="color: white;">Clinical<a style="color: grey;">Center</a></h2><span class="sr-only">(current)</span></a>
+      </li>
+  </ul>
+</mdb-navbar>
+<router-outlet></router-outlet>
+<!-- Footer -->
+<footer class="page-footer font-small transparent">
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">© 2020 Copyright:
+    <a href="https://mdbootstrap.com/education/angular/"> ClinicalCenter.com</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+</div>
+<!-- Footer -->
