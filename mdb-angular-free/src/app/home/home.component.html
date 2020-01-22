@@ -20,6 +20,7 @@
 
               <div class="col-md-6 col-xl-5 offset-xl-1">
                 <!--Form-->
+                <form #loginForm="ngForm" (ngSubmit)="onLogin()">
                 <mdb-card class="wow fadeInRight" data-wow-delay="0.3s">
                   <mdb-card-body>
                     <!--Header-->
@@ -30,20 +31,21 @@
                     </div>
                     <!--Body-->
                     <div class="md-form">
-                      <i class="fas fa-envelope prefix text-white active"></i>
-                      <input type="email" id="form2" class="text-white form-control" mdbInput>
-                      <label for="form2" class="text-white">Your email</label>
+                      <i class="fas fa-user prefix text-white active"></i>
+                      <input type="text" [(ngModel)]="login.usernameOrEmail" name="username" id="form2" class="text-white form-control" mdbInput>
+                      <label for="form2"  class="text-white">Your username or email</label>
                     </div>
                     <div class="md-form">
                       <i class=" fas fa-lock prefix text-white active"></i>
-                      <input type="password" id="form4" class="text-white form-control" mdbInput>
+                      <input type="password"  [(ngModel)]="login.password" name="password" id="form4" class="text-white form-control" mdbInput>
                       <label for="form4" class="text-white">Your password</label>
                     </div>
                     <div class="text-center mt-4">
-                      <button mdbBtn color="indigo" mdbWavesEffect>Sign up</button>
+                      <button mdbBtn color="primary" type="submit" mdbWavesEffect>Sign up</button>
                     </div>
                   </mdb-card-body>
                 </mdb-card>
+              </form>
                 <!--/.Form-->
               </div>
             </div>
