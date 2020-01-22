@@ -20,21 +20,21 @@ public class UserResponseDTO {
 
     private String name;
 
-    private String lastname;
+    private String lastName;
 
     private String phone;
 
     private int gender;
 
-    private String roleName;
+    private Integer roleId;
 
     private String jbo;
 
-    private String cityName;
+    private Integer cityId;
 
     private String street;
 
-    private String clinic;
+    private Integer clinicId;
 
     private LocalDate dateOfBirth;
 
@@ -43,15 +43,15 @@ public class UserResponseDTO {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.name = user.getName();
-        this.lastname = user.getLastName();
+        this.lastName = user.getLastName();
         this.phone = user.getPhone();
         this.gender = user.getGender();
-        this.roleName = user.getRole().getName();
-        this.cityName = user.getCity().getName();
+        this.roleId = user.getRole().getRoleId();
+        this.cityId = user.getCity().getCityId();
         this.street = user.getStreet();
         this.jbo = user.getJbo();
         this.dateOfBirth = user.getDateOfBirth();
         if(user.getClinic() != null)
-            this.clinic = user.getClinic().getName();
+            this.clinicId = user.getClinic().getClinicId();
     }
 }
