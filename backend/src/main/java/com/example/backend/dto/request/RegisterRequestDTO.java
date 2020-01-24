@@ -36,7 +36,7 @@ public class RegisterRequestDTO {
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 20)
+    @Size(min = 8, max = 20)
     private String password;
 
     @NotNull
@@ -54,11 +54,6 @@ public class RegisterRequestDTO {
 
     @Size(min = 13, max = 13)
     private String jbo;
-
-    @NotNull
-    private int roleId;
-
-    private int clinicId;
 
     @MyDateFormat
     @JsonSerialize(using = MyJsonDateSerializer.class)

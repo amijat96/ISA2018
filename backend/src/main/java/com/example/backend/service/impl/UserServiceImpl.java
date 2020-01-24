@@ -94,24 +94,16 @@ public class UserServiceImpl implements UserService {
         }
 
         // Finds role
-        final Role userRole = roleRepository.findById(registerRequestDTO.getRoleId()).orElseThrow(() -> new ApiException("User Role not set."));
+        final Role userRole = roleRepository.findById(5).orElseThrow(() -> new ApiException("User Role not set."));
 
         // Create address for user
         final City city = cityRepository.findById(registerRequestDTO.getCityId()).orElseThrow(() -> new ApiException("City not set!"));
 
-        // Find clinic
-        Clinic clinic = null;
-        if(registerRequestDTO.getClinicId() != 0)
-            clinic = clinicRepository.findById(registerRequestDTO.getClinicId()).orElseThrow(() -> new ApiException("Clinic not set!"));
-
         // Creating user's account
-        System.out.println("Date : " + registerRequestDTO.getDateOfBirth());
         User user = new User(registerRequestDTO);
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setRole(userRole);
         user.setCity(city);
-        if(clinic != null)
-            user.setClinic(clinic);
         userRepository.save(user);
 
         return user;
