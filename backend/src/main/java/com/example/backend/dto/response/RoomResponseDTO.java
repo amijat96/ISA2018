@@ -12,7 +12,7 @@ public class RoomResponseDTO {
 
     private Integer roomId;
 
-    private Integer roomTypeId;
+    private String roomType;
 
     private String number;
 
@@ -20,7 +20,7 @@ public class RoomResponseDTO {
 
     public RoomResponseDTO(Room room) {
         this.roomId = room.getRoomId();
-        this.roomTypeId = room.getRoomType().getRoomTypeId();
+        this.roomType = room.getRoomType().getName();
         this.number = room.getNumber();
         this.floor = room.getFloor();
     }

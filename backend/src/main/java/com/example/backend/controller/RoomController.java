@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/room")
+@RequestMapping(path = "/rooms")
 public class RoomController {
 
     private final RoomService roomService;

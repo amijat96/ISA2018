@@ -14,4 +14,8 @@ public class JwtAuthDto {
     private String accessToken;
 
     private String role;
+
+    private Integer clinicId;
+
+    private String clinicName;
 }

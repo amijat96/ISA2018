@@ -23,6 +23,19 @@ export class AuthService {
     return localStorage.getItem(TOKEN_KEY);
   }
 
+  storeClinic(clinicId: number, clinicName: string) {
+    localStorage.setItem("clinicId", clinicId.toString());
+    localStorage.setItem("clinicName", clinicName);
+  }
+
+  getCliniId() {
+    return localStorage.getItem("clinicId");
+  }
+
+  getClinicName() {
+    return localStorage.getItem("clinicName");
+  }
+
   register(registration: Register) {
     return this.httpClient.post(baseUrl + "auth/register", registration, httpOptions);
   }

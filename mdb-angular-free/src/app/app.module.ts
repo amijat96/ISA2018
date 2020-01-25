@@ -17,6 +17,7 @@ import { AppComponent } from './app.component';
 import { RegisterComponent } from './component/register/register.component';
 import { HomeComponent } from './home/home.component';
 import { AdminComponent } from './component/admin/admin.component';
+import { RoomsComponent } from './component/rooms/rooms.component';
 
 const routes: Routes = [
   {
@@ -25,7 +26,18 @@ const routes: Routes = [
   },
   {
     path: "admin-profile",
-    component: AdminComponent
+    component: AdminComponent,
+    children: [
+      {
+        path: '',
+        redirectTo:'rooms',
+        pathMatch: 'full'
+      },
+      {
+        path: "rooms",
+        component: RoomsComponent
+      }
+    ]
   },
   {
     path: "register",
@@ -39,6 +51,7 @@ const routes: Routes = [
     HomeComponent,
     AdminComponent,
     RegisterComponent,
+    RoomsComponent,
   ],
   imports: [
     BrowserModule,

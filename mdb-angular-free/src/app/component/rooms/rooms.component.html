@@ -1,0 +1,15 @@
+<table mdbTable striped="true">
+    <thead>
+      <tr>
+        <th *ngFor="let head of headElements" scope="col">{{head}} </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr mdbTableCol *ngFor="let room of rooms">
+        <th scope="row">{{room.roomId}}</th>
+        <td>{{room.floor}}</td>
+        <td>{{room.number}}</td>
+        <td>{{room.roomType}}</td>
+      </tr>
+    </tbody>
+  </table>

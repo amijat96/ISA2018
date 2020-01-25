@@ -21,11 +21,10 @@ export class HomeComponent implements OnInit {
 
   onLogin() {
     this.authService.login(this.login).subscribe(
-      (data: { tokenType: string, accessToken: string, role: string }) => { 
-        console.log(data);
-        this.authService.storeToken(data.accessToken); 
+      (data: { tokenType: string, accessToken: string, role: string, clinicId: number, clinicName: string }) => { 
+        this.authService.storeToken(data.accessToken);
         switch(data.role) {
-          case "ROLE_ADMIN_CLINIC": this.router.navigate(["admin-profile"]); break;
+          case "ROLE_ADMIN_CLINIC": this.authService.storeClinic(data.clinicId, data.clinicName); this.router.navigate(["admin-profile"]); break;
           default: this.router.navigate([""]);
         }
       },

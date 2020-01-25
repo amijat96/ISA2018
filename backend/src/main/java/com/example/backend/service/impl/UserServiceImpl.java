@@ -75,7 +75,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("No user with given username or email found!"));
         if(user.isVerified() && user.isAdminApproved()) {
             String jwt = tokenProvider.generateAuthToken(authentication);
-            return new JwtAuthDto(jwt, user.getRole().getName());
+            if(user.getClinic() != null)
+                return new JwtAuthDto(jwt, user.getRole().getName(), user.getClinic().getClinicId(), user.getClinic().getName());
+            else
+                return new JwtAuthDto(jwt, user.getRole().getName(), null, null);
         } else if(!user.isVerified()){
             throw new EmailNotVerifiedException("Mail is not verified.");
         } else {
