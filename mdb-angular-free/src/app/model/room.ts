@@ -4,6 +4,7 @@ export class Room {
         public floor: number = 0,
         public roomType: string ="",
         public clinicId: number = 0,
-        public roomId: number = 0
+        public roomId: number = 0,
+        public roomTypeId?: number
     ) {}
 }

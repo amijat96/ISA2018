@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/roomType")
+@RequestMapping(path = "/roomTypes")
 public class RoomTypeController {
 
     private final RoomTypeService roomTypeService;

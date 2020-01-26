@@ -55,7 +55,7 @@ public class RoomController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
-    public ResponseEntity<RoomResponseDTO> createRoom(@Valid @RequestBody RoomRequestDTO roomRequestDTO) {
+    public ResponseEntity<RoomResponseDTO> createRoom(@RequestBody RoomRequestDTO roomRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new RoomResponseDTO(roomService.createRoom(roomRequestDTO)));
     }
 
