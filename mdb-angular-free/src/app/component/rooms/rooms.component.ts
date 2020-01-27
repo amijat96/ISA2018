@@ -4,7 +4,7 @@ import { Room } from 'src/app/model/room';
 import { RoomType } from 'src/app/model/roomType';
 import { MdbTablePaginationComponent, MdbTableDirective } from 'angular-bootstrap-md';
 import { ModalDirective } from 'angular-bootstrap-md';
-import { RoomRequest } from 'src/app/model/roomRequest';
+import { FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-rooms',
@@ -14,6 +14,8 @@ import { RoomRequest } from 'src/app/model/roomRequest';
 export class RoomsComponent implements OnInit, AfterViewInit{
 
   @ViewChild('newRoomModal', {static: false}) newRoomModal: ModalDirective;
+  @ViewChild('editRoomModal', {static: false}) editRoomModal: ModalDirective;
+  @ViewChild('confirmDeleteRoomModal', {static: false}) confirmDeleteRoomModal: ModalDirective;
   @ViewChild(MdbTablePaginationComponent, { static: true }) mdbTablePagination: MdbTablePaginationComponent;
   @ViewChild(MdbTableDirective, { static: true }) mdbTable: MdbTableDirective
 
@@ -25,9 +27,29 @@ export class RoomsComponent implements OnInit, AfterViewInit{
   searchText: string = '';
   roomTypes: RoomType[];
   room = new Room();
+  roomEdit = new Room();
   errorMessage: string = "";
+  validatingForm: FormGroup;
+  validatingEditForm: FormGroup;
+  deleteRoomId: number;
 
-  constructor(private roomService: RoomService, private cdRef: ChangeDetectorRef) {}
+
+  constructor(private roomService: RoomService, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder) {
+    this.validatingForm = new FormGroup({
+      floorControl: new FormControl(null, [ Validators.required, Validators.min(0), Validators.max(999)]),
+      numberControl: new FormControl(null,[ Validators.required, Validators.maxLength(10)])
+    })
+
+    this.validatingEditForm = new FormGroup({
+      editFloorControl: new FormControl(null, [ Validators.required, Validators.min(0), Validators.max(999)]),
+      editNumberControl: new FormControl(null,[ Validators.required, Validators.maxLength(10)])
+    })
+  }
+
+  get floorInput() { return this.validatingForm.get('floorControl'); }
+  get numberInput() { return this.validatingForm.get('numberControl'); }
+  get editFloorInput() { return this.validatingEditForm.get('editFloorControl'); }
+  get editNumberInput() { return this.validatingEditForm.get('editNumberControl'); }
 
   @HostListener('input') oninput() { this.searchItems(); }
 
@@ -59,17 +81,53 @@ export class RoomsComponent implements OnInit, AfterViewInit{
     }
   }
 
-  newRoom() {
+  //action for showing modal for creating room
+  createRoomModal() {
     this.newRoomModal.show();
     this.roomService.getRoomTypes().subscribe(res => this.roomTypes = res);
   }
 
   createRoom() {
     this.roomService.createRoom(this.room).subscribe(
-      (data: RoomRequest) => console.log('success'),
+      (data: Room) => console.log('success'),
       error => {this.errorMessage = error.error.message;  console.log(this.errorMessage); }
     );
     this.newRoomModal.hide();
+    this.ngOnInit();
+  }
+
+    //action for showing modal for editing room
+  updateRoomModal(room1: Room) {
+    this.roomEdit = room1;
+    this.roomService.getRoomTypes().subscribe(res => {
+      this.roomTypes = res;
+      this.roomTypes.forEach(type => {
+        if(type.name == room1.roomType) this.roomEdit.roomTypeId = type.roomTypeId;
+      });
+      this.editRoomModal.show();
+    });
+  }
+
+  updateRoom() {
+    this.roomService.updateRoom(this.roomEdit).subscribe(
+      (data: Room) => console.log('successfully updated'),
+      error => { this.errorMessage = error.error.message;  console.log(this.errorMessage); }
+    )
+    this.editRoomModal.hide();
     window.location.reload();
+  }
+
+  deleteRoomModal(roomId: number) {
+    this.deleteRoomId = roomId;
+    this.confirmDeleteRoomModal.show();
+  }
+
+  deleteRoom() {
+    this.roomService.deleteRoom(this.deleteRoomId).subscribe(
+      (data: boolean) => { if(data) console.log('successfully updated');
+                            else console.log('can not delete room')}
+    )
+    this.confirmDeleteRoomModal.hide();
+    this.ngOnInit();
   }
 }

@@ -4,7 +4,6 @@ import { baseUrl, httpOptions, TOKEN_KEY } from './constants';
 import { Observable } from 'rxjs';
 import { Room } from 'src/app/model/room';
 import { RoomType } from '../model/roomType';
-import { RoomRequest } from '../model/roomRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +23,14 @@ export class RoomService {
   createRoom(room: Room) {
     room.clinicId = Number(localStorage.getItem('clinicId'));
     return this.httpClient.post(baseUrl +'rooms' , room, httpOptions);
+  }
+
+  updateRoom(room: Room) {
+    room.clinicId = Number(localStorage.getItem('clinicId'));
+    return this.httpClient.put(baseUrl + 'rooms/' + room.roomId, room, httpOptions);
+  }
+
+  deleteRoom(roomId: number) {
+    return this.httpClient.delete(baseUrl + 'rooms/' + roomId, httpOptions);
   }
 }

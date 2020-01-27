@@ -5,6 +5,7 @@ export class Room {
         public roomType: string ="",
         public clinicId: number = 0,
         public roomId: number = 0,
+        public numberOfExaminations: number = 0,
         public roomTypeId?: number
     ) {}
 }
