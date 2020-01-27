@@ -12,6 +12,7 @@ export class User {
         public roleId: number,
         public dateOfBirth: string,
         public jbo: string,
+        public doctorGrade: number,
         public cityId: number,
         public clinicId?: number,
         

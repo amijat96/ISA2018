@@ -96,7 +96,7 @@ export class RoomsComponent implements OnInit, AfterViewInit{
     this.ngOnInit();
   }
 
-    //action for showing modal for editing room
+  //action for showing modal for editing room
   updateRoomModal(room1: Room) {
     this.roomEdit = room1;
     this.roomService.getRoomTypes().subscribe(res => {

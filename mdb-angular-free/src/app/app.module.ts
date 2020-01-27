@@ -18,6 +18,7 @@ import { RegisterComponent } from './component/register/register.component';
 import { HomeComponent } from './home/home.component';
 import { AdminComponent } from './component/admin/admin.component';
 import { RoomsComponent } from './component/rooms/rooms.component';
+import { MedicalStaffComponent } from './component/medical-staff/medical-staff.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
       {
         path: "rooms",
         component: RoomsComponent
+      },
+      {
+        path: "medical-staff",
+        component : MedicalStaffComponent
       }
     ]
   },
@@ -52,6 +57,7 @@ const routes: Routes = [
     AdminComponent,
     RegisterComponent,
     RoomsComponent,
+    MedicalStaffComponent
   ],
   imports: [
     BrowserModule,

@@ -38,6 +38,8 @@ public class UserResponseDTO {
 
     private LocalDate dateOfBirth;
 
+    private double doctorGrade;
+
     public UserResponseDTO(User user) {
         this.userId = user.getUserId();
         this.username = user.getUsername();

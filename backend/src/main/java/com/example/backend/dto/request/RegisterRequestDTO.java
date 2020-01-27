@@ -58,5 +58,8 @@ public class RegisterRequestDTO {
     @MyDateFormat
     @JsonSerialize(using = MyJsonDateSerializer.class)
     private LocalDate dateOfBirth;
+
+    @NotNull
+    private Integer roleId;
 }
 

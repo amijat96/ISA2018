@@ -5,6 +5,7 @@ import com.example.backend.dto.request.DoctorFreeTermsRequestDTO;
 import com.example.backend.dto.request.LoginRequestDTO;
 import com.example.backend.dto.request.RegisterRequestDTO;
 import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
+import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.exception.*;
 import com.example.backend.model.*;
 import com.example.backend.repository.CityRepository;
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Finds role
-        final Role userRole = roleRepository.findById(5).orElseThrow(() -> new ApiException("User Role not set."));
+        final Role userRole = roleRepository.findById(registerRequestDTO.getRoleId()).orElseThrow(() -> new ApiException("User Role not set."));
 
         // Create address for user
         final City city = cityRepository.findById(registerRequestDTO.getCityId()).orElseThrow(() -> new ApiException("City not set!"));
@@ -210,9 +211,46 @@ public class UserServiceImpl implements UserService {
         return freeTerms;
     }
 
+    @Override
+    public List<UserResponseDTO> getClinicMedicalStaff(Integer clinicId) {
+        Clinic clinic = clinicRepository.findById(clinicId)
+                .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id"));
+        List<UserResponseDTO> medicalStaff = clinic.getUsers()
+                .stream()
+                .filter( u -> (u.getRole().getRoleId() ==3 || u.getRole().getRoleId() == 4) && !u.isDeleted())
+                .map(UserResponseDTO::new)
+                .collect(Collectors.toList());
+        for (UserResponseDTO user : medicalStaff) {
+            if(user.getRoleId() == 3) {
+                user.setDoctorGrade(doctorGrade(user));
+            }
+        }
+        return medicalStaff;
+    }
+
     public static DateTime createDateTime(LocalDate date, LocalTime time) {
         return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
                 time.getHourOfDay(), time.getMinuteOfHour());
+    }
+
+    public double doctorGrade(UserResponseDTO user) {
+        List<Examination> examinations = findByUsername(user.getUsername()).getDoctorExaminations()
+                .stream()
+                .filter(e -> e.getGradeDoctor() >= 1)
+                .collect(Collectors.toList());
+        if (examinations.size() > 0) {
+            return examinations
+                    .stream()
+                    .map(e -> e.getGradeDoctor())
+                    .collect(Collectors.summingDouble(Double::doubleValue))
+                    /
+                    examinations
+                            .stream()
+                            .collect(Collectors.toList())
+                            .size();
+        } else {
+            return 0;
+        }
     }
 
 

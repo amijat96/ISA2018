@@ -13,8 +13,8 @@
         <li class="nav-item" [class.active]="rooms()" id="rooms" >
           <a class="nav-link waves-light" href="admin-profile/rooms" mdbWavesEffect >Rooms<span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item" id="medical_staff">
-          <a class="nav-link waves-light" mdbWavesEffect>Medical staff</a>
+        <li class="nav-item" [class.active]="medicalStaff()" id="medical_staff">
+          <a class="nav-link waves-light" href="admin-profile/medical-staff" mdbWavesEffect>Medical staff</a>
         </li>
         <li class="nav-item dropdown" id="examinations" dropdown>
             <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>

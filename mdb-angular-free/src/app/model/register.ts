@@ -11,5 +11,6 @@ export class Register {
         public street: string = "",
         public jbo: string = "",
         public dateOfBirth: string = "",
+        public roleId: number = 5
     ) { }
 }

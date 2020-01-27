@@ -15,6 +15,10 @@ export class AdminComponent implements OnInit {
   }
 
   rooms() {
-    return window.location.href === "http://localhost:4200/admin-profile/rooms"
+    return window.location.href == "http://localhost:4200/admin-profile/rooms"
+  }
+
+  medicalStaff() {
+    return window.location.href == "http://localhost:4200/admin-profile/medical-staff"
   }
 }
