@@ -14,7 +14,7 @@ export class User {
         public jbo: string,
         public doctorGrade: number,
         public cityId: number,
-        public clinicId?: number,
-        
+        public numberOfSchedules: number,    
+        public clinicId?: number
     ) { }
 }

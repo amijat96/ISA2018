@@ -61,5 +61,7 @@ public class RegisterRequestDTO {
 
     @NotNull
     private Integer roleId;
+
+    private Integer clinicId;
 }
 

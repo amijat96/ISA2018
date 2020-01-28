@@ -40,7 +40,16 @@ const routes: Routes = [
       },
       {
         path: "medical-staff",
-        component : MedicalStaffComponent
+        children: [
+          {
+            path: 'register',
+            component: RegisterComponent
+          },
+          {
+            path: '',
+            component: MedicalStaffComponent
+          }
+        ]
       }
     ]
   },

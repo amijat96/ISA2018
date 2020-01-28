@@ -13,8 +13,13 @@
         <li class="nav-item" [class.active]="rooms()" id="rooms" >
           <a class="nav-link waves-light" href="admin-profile/rooms" mdbWavesEffect >Rooms<span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item" [class.active]="medicalStaff()" id="medical_staff">
-          <a class="nav-link waves-light" href="admin-profile/medical-staff" mdbWavesEffect>Medical staff</a>
+        <li class="nav-item dropdown"  [class.active]="medicalStaff()" id="examinations" dropdown>
+          <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
+            Medical staff<span class="caret"></span></a>
+          <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/medical-staff">Show</a>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/medical-staff/register">Register</a>
+          </div>
         </li>
         <li class="nav-item dropdown" id="examinations" dropdown>
             <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
@@ -26,7 +31,8 @@
               <a class="dropdown-item waves-light" mdbWavesEffect href="#">Create predefined</a>
               <a class="dropdown-item waves-light" mdbWavesEffect href="#">Requests</a>
             </div>
-          </li><li class="nav-item">
+          </li>
+          <li class="nav-item">
             <a class="nav-link waves-light" mdbWavesEffect>Price list</a>
         </li>
         <li class="nav-item dropdown" id="schedules" dropdown>
@@ -50,7 +56,7 @@
             <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-1.jpg" alt="" class="img-fluid rounded-circle z-depth-0" style="width: 50px;"></a>
           <div *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown dropdown-primary" role="menu">
             <a class="dropdown-item waves-light" mdbWavesEffect href="#">My account</a>
-            <a class="dropdown-item waves-light" mdbWavesEffect href="#">Log out</a>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="http://localhost:4200/" (click)="logOut()">Log out</a>
           </div>
         </li>
       </ul>

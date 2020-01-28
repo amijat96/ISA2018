@@ -21,4 +21,8 @@ export class AdminComponent implements OnInit {
   medicalStaff() {
     return window.location.href == "http://localhost:4200/admin-profile/medical-staff"
   }
+
+  logOut() {
+    this.authService.logOut();
+  }
 }

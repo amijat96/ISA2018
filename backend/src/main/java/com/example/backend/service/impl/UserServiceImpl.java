@@ -103,11 +103,17 @@ public class UserServiceImpl implements UserService {
         // Create address for user
         final City city = cityRepository.findById(registerRequestDTO.getCityId()).orElseThrow(() -> new ApiException("City not set!"));
 
+
         // Creating user's account
         User user = new User(registerRequestDTO);
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setRole(userRole);
         user.setCity(city);
+        if(registerRequestDTO.getClinicId() != 0) {
+            final Clinic clinic = clinicRepository.findById(registerRequestDTO.getClinicId())
+                    .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
+            user.setClinic(clinic);
+        }
         userRepository.save(user);
 
         return user;
@@ -226,6 +232,26 @@ public class UserServiceImpl implements UserService {
             }
         }
         return medicalStaff;
+    }
+
+    @Override
+    public boolean deleteUser(Integer id) {
+        LocalDate date = LocalDate.now();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %s not found.", Integer.toString(id))));
+        Integer schedules = user.getSchedules()
+                .stream()
+                .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
+                .collect(Collectors.toList())
+                .size();
+        if(schedules != 0) {
+            return false;
+        }
+        else {
+            user.setDeleted(true);
+            userRepository.save(user);
+            return true;
+        }
     }
 
     public static DateTime createDateTime(LocalDate date, LocalTime time) {

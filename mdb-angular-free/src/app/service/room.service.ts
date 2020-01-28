@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { baseUrl, httpOptions, TOKEN_KEY } from './constants';
+import { baseUrl, httpOptions} from './constants';
 import { Observable } from 'rxjs';
 import { Room } from 'src/app/model/room';
 import { RoomType } from '../model/roomType';

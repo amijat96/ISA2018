@@ -14,4 +14,10 @@ export class UserService {
   getMedicalStaff():Observable<User[]> {
     return this.httpClient.get<User[]>(baseUrl + 'users/' + localStorage.getItem('clinicId') + '/medical-staff', httpOptions);
   }
+
+  deleteUser(id: number) {
+    console.log(baseUrl + 'users/' + id);
+    return this.httpClient.delete(baseUrl + 'users/' + id, httpOptions);
+  }
+
 }

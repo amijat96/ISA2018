@@ -28,6 +28,9 @@ export class RegisterComponent implements OnInit {
   countryId: number = 0;
   dateOfBirth: string ="";
   register = new Register();
+  hidden: boolean = !(window.location.href == 'http://localhost:4200/admin-profile/medical-staff/register');
+  doctor: boolean = true;
+  link : string = '/';
 
   constructor(private addressService: AddressService, private authService: AuthService, private formBuilder: FormBuilder) {
     this.getCountries();
@@ -63,6 +66,12 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
+    if(!this.hidden) {
+      this.link ='/admin-profile/medical-staff';
+      this.register.clinicId = Number(localStorage.getItem('clinicId'));
+      if(this.doctor) this.register.roleId = 3;
+      else this.register.roleId = 4;
+    }
     this.register.password = this.passwordForm.controls["passwordControl"].value;
     this.register.dateOfBirth = (moment(this.dateOfBirth).format("YYYY-MM-DD"));
     this.authService.register(this.register).subscribe(
@@ -88,5 +97,9 @@ export class RegisterComponent implements OnInit {
   onCountryChanged(event) {
     this.cities = [];
     this.getCitiesByCountryId(this.countryId);
+  }
+
+  changeRole(r: boolean) {
+    this.doctor = r;
   }
 }

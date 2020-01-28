@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.LocalDate;
 
+import java.util.stream.Collectors;
+
 
 @Data
 @NoArgsConstructor
@@ -40,6 +42,8 @@ public class UserResponseDTO {
 
     private double doctorGrade;
 
+    private Integer numberOfSchedules;
+
     public UserResponseDTO(User user) {
         this.userId = user.getUserId();
         this.username = user.getUsername();
@@ -55,5 +59,11 @@ public class UserResponseDTO {
         this.dateOfBirth = user.getDateOfBirth();
         if(user.getClinic() != null)
             this.clinicId = user.getClinic().getClinicId();
+        LocalDate date = LocalDate.now();
+        this.numberOfSchedules = user.getSchedules()
+                .stream()
+                .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
+                .collect(Collectors.toList())
+                .size();
     }
 }

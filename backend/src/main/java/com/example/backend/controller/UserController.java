@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.DoctorFreeTermsRequestDTO;
 import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
 import com.example.backend.dto.response.UserResponseDTO;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,5 +32,15 @@ public class UserController {
     @GetMapping(path = "/{id}/medical-staff")
     public ResponseEntity<List<UserResponseDTO>> getClinicMedicalStaff(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.getClinicMedicalStaff(id));
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer id) {
+        if(userService.deleteUser(id)) {
+            return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully.", new ArrayList<>()));
+        }
+        else {
+            return ResponseEntity.ok(new ApiResponse(false, "Could not delete user with id : " + id, new ArrayList<>()));
+        }
     }
 }

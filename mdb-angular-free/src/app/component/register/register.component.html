@@ -74,6 +74,23 @@
                       <mat-error *ngIf="register.gender < 0">Please choose country</mat-error>
                     </mat-form-field>
                 </div>
+
+                <!-- Role -->
+                <div class="row mt-0" [hidden]="hidden">
+                  <div class="col">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" class="custom-control-input" id="defaultChecked" [checked]="doctor" (change)="changeRole(true)" name="defaultExampleRadios" mdbInput>
+                      <label class="custom-control-label" for="defaultChecked">Doctor</label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" class="custom-control-input" id="defaultUnchecked" [checked]="!doctor" (change)="changeRole(false)" name="defaultExampleRadios"  mdbInput>
+                      <label class="custom-control-label" for="defaultUnchecked">Nurse</label>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Address -->
                 <div class="row md-form mt-0">
                   <div class="col">
@@ -176,7 +193,7 @@
         </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">
-          <button mdbWavesEffect type="button" class="btn btn-success" routerLink="/">Ok</button>
+          <button mdbWavesEffect type="button" class="btn btn-success" [routerLink]="link">Ok</button>
       </div>
     </div>
   </div>

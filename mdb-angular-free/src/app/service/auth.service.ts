@@ -15,6 +15,10 @@ export class AuthService {
     return this.httpClient.post(baseUrl + "auth/login", login, httpOptions);
   }
 
+  logOut() {
+    localStorage.clear();
+  }
+  
   storeToken(token: string) {
     localStorage.setItem(TOKEN_KEY, token);
   }

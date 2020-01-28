@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, HostLis
 import { User } from 'src/app/model/user';
 import { UserService } from 'src/app/service/user.service';
 import { MdbTablePaginationComponent, MdbTableDirective } from 'angular-bootstrap-md';
+import { ModalDirective } from 'angular-bootstrap-md';
 
 @Component({
   selector: 'app-medical-staff',
@@ -12,12 +13,15 @@ export class MedicalStaffComponent implements OnInit, AfterViewInit {
   
   @ViewChild(MdbTablePaginationComponent, { static: true }) mdbTablePagination: MdbTablePaginationComponent;
   @ViewChild(MdbTableDirective, { static: true }) mdbTable: MdbTableDirective
+  @ViewChild('newMedicalStaffModal', {static: false}) newMedicalStaffModal: ModalDirective;
+  @ViewChild('deleteUserModal', {static: false}) deleteUserModal: ModalDirective;
 
   headElements = ['ID', 'Name', 'Last Name', 'Username', 'E-mail', 'Grade', 'Commands'];
   headElementsModel = ['userId', 'name', 'lastName', 'username', 'email', 'doctorGrade'];
   medicalStaff: User[] = [];
   previous: any = [];
   searchText: string = '';
+  userId: number;
 
   constructor(private userService: UserService, private cdRef: ChangeDetectorRef) { }
 
@@ -49,5 +53,18 @@ export class MedicalStaffComponent implements OnInit, AfterViewInit {
       this.medicalStaff =this.mdbTable.searchLocalDataByMultipleFields(this.searchText, ['name', 'lastName', 'username']); 
       this.mdbTable.setDataSource(prev); 
     }
+  }
+
+  deleteModal(userId: number) {
+    this.deleteUserModal.show();
+    this.userId = userId;
+  }
+
+  deleteUser() {
+    this.userService.deleteUser(this.userId).subscribe(
+      (data: boolean) => { if(data) this.ngOnInit();
+                          else console.log('can not delete room')}
+    );
+    this.deleteUserModal.hide();
   }
 }

@@ -26,4 +26,6 @@ public interface UserService {
 
     List<UserResponseDTO> getClinicMedicalStaff(Integer clinicId);
 
+    boolean deleteUser(Integer id);
+
 }
