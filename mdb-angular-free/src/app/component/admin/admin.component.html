@@ -32,8 +32,8 @@
               <a class="dropdown-item waves-light" mdbWavesEffect href="#">Requests</a>
             </div>
           </li>
-          <li class="nav-item">
-            <a class="nav-link waves-light" mdbWavesEffect>Price list</a>
+          <li class="nav-item" [class.active]="priceList()">
+            <a class="nav-link waves-light" href="admin-profile/price-list" mdbWavesEffect>Price list</a>
         </li>
         <li class="nav-item dropdown" id="schedules" dropdown>
           <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>

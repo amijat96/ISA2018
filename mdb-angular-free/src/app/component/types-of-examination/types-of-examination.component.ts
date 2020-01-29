@@ -18,6 +18,7 @@ export class TypesOfExaminationComponent implements OnInit, AfterViewInit{
   @ViewChild(MdbTableDirective, { static: true }) mdbTable: MdbTableDirective
   @ViewChild('newTypeOfExaminationModal', {static: false}) newTypeOfExaminationModal: ModalDirective;
   @ViewChild('editTypeOfExaminationModal', {static: false}) editTypeOfExaminationModal: ModalDirective;
+  @ViewChild('deleteTypeOfExaminationModal', {static: false}) deleteTypeOfExaminationModal: ModalDirective;
 
   headElements = ['ID', 'Name', 'Duration', 'Description', 'Type', 'Commands'];
   headElementsModel = ['typeOfExaminationId', 'name', 'duration', 'description', 'typeName'];
@@ -30,6 +31,7 @@ export class TypesOfExaminationComponent implements OnInit, AfterViewInit{
   typeOfExaminationEdit = new TypeOfExamination();
   roomTypes: RoomType[];
   errorMessage: string = "";
+  typeOfExaminationId: number = 0;
 
   constructor(private typesOfExaminationService: TypeOfExaminationService, private roomService: RoomService, private cdRef: ChangeDetectorRef) {
     this.validatingForm = new FormGroup({
@@ -104,26 +106,24 @@ export class TypesOfExaminationComponent implements OnInit, AfterViewInit{
         if(type.name == typeOfExamination1.typeName) this.typeOfExaminationEdit.roomTypeId = type.roomTypeId;
       });
       this.editTypeOfExaminationModal.show();
-    console.log(typeOfExamination1.id);
-    console.log(typeOfExamination1.name)
-    console.log(typeOfExamination1.description)
-    console.log(typeOfExamination1.duration)
-    console.log(typeOfExamination1.roomTypeId)
     });
   }
 
   updateTypeOfExamination() {
-    console.log(this.typeOfExaminationEdit.id);
-    console.log(this.typeOfExaminationEdit.name)
-    console.log(this.typeOfExaminationEdit.description)
-    console.log(this.typeOfExaminationEdit.duration)
-    console.log(this.typeOfExaminationEdit.roomTypeId)
-
     this.typesOfExaminationService.updateTypeOfExamination(this.typeOfExaminationEdit).subscribe(
-      (data: TypeOfExamination) => console.log('successfully updated'),
+      (data: TypeOfExamination) =>     this.ngOnInit(),
       error => { this.errorMessage = error.error.message;  console.log(this.errorMessage); }
     )
     this.editTypeOfExaminationModal.hide();
-    //window.location.reload();
+  }
+
+  removeTypeOfExaminationModal(id: number) {
+    this.typeOfExaminationId = id;
+    this.deleteTypeOfExaminationModal.show();
+  }
+
+  removeTypeOfExamination() {
+    this.typesOfExaminationService.deleteTypeOfExamination(this.typeOfExaminationId).subscribe( res => this.ngOnInit())
+    this.deleteTypeOfExaminationModal.hide();
   }
 }

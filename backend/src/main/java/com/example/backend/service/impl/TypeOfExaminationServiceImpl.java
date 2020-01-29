@@ -59,7 +59,7 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
         typeOfExamination.setDuration(typeOfExaminationRequestDTO.getDuration());
         typeOfExamination.setDescription(typeOfExaminationRequestDTO.getDescription());
         RoomType roomType = roomTypeRepository.findById(typeOfExaminationRequestDTO.getRoomTypeId())
-                .orElseThrow(() -> new RoomTypeNotFoundException("COuld not find room type with given id."));
+                .orElseThrow(() -> new RoomTypeNotFoundException("Could not find room type with given id."));
         typeOfExamination.setType(roomType);
         typeOfExaminationRepository.save(typeOfExamination);
         return typeOfExamination;

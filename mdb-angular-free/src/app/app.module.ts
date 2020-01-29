@@ -20,6 +20,7 @@ import { AdminComponent } from './component/admin/admin.component';
 import { RoomsComponent } from './component/rooms/rooms.component';
 import { MedicalStaffComponent } from './component/medical-staff/medical-staff.component';
 import { TypesOfExaminationComponent } from './component/types-of-examination/types-of-examination.component';
+import { PriceListComponent } from './component/price-list/price-list.component';
 
 const routes: Routes = [
   {
@@ -60,6 +61,10 @@ const routes: Routes = [
           component : TypesOfExaminationComponent
           }
         ]
+      },
+      {
+        path: 'price-list',
+        component: PriceListComponent
       }
     ]
   },
@@ -77,7 +82,8 @@ const routes: Routes = [
     RegisterComponent,
     RoomsComponent,
     MedicalStaffComponent,
-    TypesOfExaminationComponent
+    TypesOfExaminationComponent,
+    PriceListComponent
   ],
   imports: [
     BrowserModule,

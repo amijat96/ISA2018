@@ -26,6 +26,11 @@ export class AdminComponent implements OnInit {
   examinations() {
     return window.location.href == "http://localhost:4200/admin-profile/examinations/types-of-examination";
   }
+
+  priceList() {
+    return window.location.href == "http://localhost:4200/admin-profile/price-list";
+  }
+
   logOut() {
     this.authService.logOut();
   }
