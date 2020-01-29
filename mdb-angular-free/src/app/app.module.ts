@@ -19,6 +19,7 @@ import { HomeComponent } from './home/home.component';
 import { AdminComponent } from './component/admin/admin.component';
 import { RoomsComponent } from './component/rooms/rooms.component';
 import { MedicalStaffComponent } from './component/medical-staff/medical-staff.component';
+import { TypesOfExaminationComponent } from './component/types-of-examination/types-of-examination.component';
 
 const routes: Routes = [
   {
@@ -50,6 +51,15 @@ const routes: Routes = [
             component: MedicalStaffComponent
           }
         ]
+      },
+      {
+        path: 'examinations',
+        children : [
+          {
+          path: 'types-of-examination',
+          component : TypesOfExaminationComponent
+          }
+        ]
       }
     ]
   },
@@ -66,7 +76,8 @@ const routes: Routes = [
     AdminComponent,
     RegisterComponent,
     RoomsComponent,
-    MedicalStaffComponent
+    MedicalStaffComponent,
+    TypesOfExaminationComponent
   ],
   imports: [
     BrowserModule,

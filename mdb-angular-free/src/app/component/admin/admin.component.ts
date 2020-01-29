@@ -19,9 +19,13 @@ export class AdminComponent implements OnInit {
   }
 
   medicalStaff() {
-    return window.location.href == "http://localhost:4200/admin-profile/medical-staff"
+    return window.location.href == "http://localhost:4200/admin-profile/medical-staff" ||  
+    window.location.href == "http://localhost:4200/admin-profile/medical-staff/register";
   }
 
+  examinations() {
+    return window.location.href == "http://localhost:4200/admin-profile/examinations/types-of-examination";
+  }
   logOut() {
     this.authService.logOut();
   }

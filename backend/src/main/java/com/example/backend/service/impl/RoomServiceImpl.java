@@ -67,6 +67,7 @@ public class RoomServiceImpl implements RoomService {
             .orElseThrow(() -> new RoomTypeNotFoundException("Could not find room type with given id.")));
         room.setNumber(roomRequestDTO.getNumber());
         room.setFloor(roomRequestDTO.getFloor());
+        room.setExaminations(new ArrayList<>());
         roomRepository.save(room);
         return room;
     }

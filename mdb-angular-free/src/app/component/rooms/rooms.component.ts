@@ -4,7 +4,7 @@ import { Room } from 'src/app/model/room';
 import { RoomType } from 'src/app/model/roomType';
 import { MdbTablePaginationComponent, MdbTableDirective } from 'angular-bootstrap-md';
 import { ModalDirective } from 'angular-bootstrap-md';
-import { FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
+import { FormGroup, Validators, FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-rooms',
@@ -34,7 +34,7 @@ export class RoomsComponent implements OnInit, AfterViewInit{
   deleteRoomId: number;
 
 
-  constructor(private roomService: RoomService, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder) {
+  constructor(private roomService: RoomService, private cdRef: ChangeDetectorRef) {
     this.validatingForm = new FormGroup({
       floorControl: new FormControl(null, [ Validators.required, Validators.min(0), Validators.max(999)]),
       numberControl: new FormControl(null,[ Validators.required, Validators.maxLength(10)])

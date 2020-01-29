@@ -1,0 +1,160 @@
+<div style="min-height: 100vh;">
+    <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div class="md-form">
+      <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect (click)="createTypeOfExaminationModal()">New</button>
+      </div>
+    </div>  
+    <div class="col-md-4 mx-auto">
+      <div class="md-form">
+        <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+        <label for="search">Search by name or type</label>
+      </div>
+    </div>
+    </div>
+    <div class="mx-3">
+    <table #tableEl="mdbTable" mdbTable id="typesOfExaminationTable" style="margin-bottom: 0px;" striped="true">
+        <thead class="black white-text">
+          <tr>
+            <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="typesOfExaminationTable" [mdbTableSort]="typesOfExamination" [sortBy]="headElementsModel[i]">
+              {{head}} <mdb-icon fas *ngIf="i < 5" icon="sort"></mdb-icon>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let type of typesOfExamination; let i = index" style="text-align: center;">
+            <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{type.typeOfExaminationId}}</th>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.name}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.duration}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.description}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.typeName}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" style="width: 250px;">
+              <button mdbBtn color="warning" size="sm" mdbWavesEffect type="button" class="btn-warning btn-sm btn" [disabled]="type.numberOfDoctorsOrPriceLists != 0" (click)="updateTypeOfExaminationModal(type.typeOfExaminationId, type)">Edit</button>
+              <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="type.numberOfDoctorsOrPriceLists != 0">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot class="grey lighten-5 w-100">
+          <tr>
+            <td colspan="6">
+              <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="typesOfExamination"></mdb-table-pagination>
+            </td>
+          </tr>
+        <tfoot>
+      </table>      
+    </div>
+  </div>
+
+  <!-- Create type of examination modal -->
+  <div mdbModal #newTypeOfExaminationModal="mdbModal"  class="modal fade top" id="newTypeOfExaminationModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">New type of examination</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="newTypeOfExaminationModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <form #createTypeOfExaminationForm="ngForm" (ngSubmit)="createTypeOfExamination()">
+        <!--Body-->
+        <div class="modal-body"  >
+          <div class="md-form mt-0" [formGroup]="validatingForm">
+            <input mdbInput mdbValidate [(ngModel)]="typeOfExamination.name" formControlName="nameControl" type="text" id="name" name="name" class="form-control">
+            <label for="name">Name *</label>
+            <mdb-error *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)">Size 2-20 chars</mdb-error>
+            <mdb-success *ngIf="nameInput.valid && (nameInput.dirty || nameInput.touched)">ok</mdb-success>
+          </div>
+          <div class="md-form mt-0" [formGroup]="validatingForm">
+            <textarea type="text" id="description" class="md-textarea form-control" formControlName="descriptionControl"  mdbInput [(ngModel)]="typeOfExamination.description"></textarea>
+            <label for="description">Description</label>
+            <mdb-error *ngIf="descriptionInput.invalid && (descriptionInput.dirty || descriptionInput.touched)">Size max 200 chars</mdb-error>
+            <mdb-success *ngIf="descriptionInput.valid && (descriptionInput.dirty || descriptionInput.touched)">ok</mdb-success>
+          </div>
+          <div class="md-form mt-0" [formGroup]="validatingForm">
+            <input  formControlName="durationControl"
+                type="time"
+                id="duration"
+                class="form-control"
+                [(ngModel)]="typeOfExamination.duration"
+                mdbInput
+                />
+            <label for="duration">Duration *</label>
+          </div>
+          <div class="md-form mt-0">
+            <mat-form-field class="col-12">
+              <mat-select name="roomTypeId" [(ngModel)] ="typeOfExamination.roomTypeId" id="roomTypeId" placeholder="Type" required>
+                <mat-option value="0">--</mat-option>
+                <mat-option *ngFor="let type of roomTypes" [value]="type.roomTypeId">{{type.name}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="typeOfExamination.roomTypeId < 0">Please choose type</mat-error>
+            </mat-form-field>
+          </div>      
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="submit" class="btn btn-primary" [disabled]="!validatingForm.valid || typeOfExamination.roomTypeId == 0" >Create</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+<!-- Update type of examination modal -->
+  <div mdbModal #editTypeOfExaminationModal="mdbModal"  class="modal fade" id="editTypeOfExaminationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-warning" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">Edit type of examination</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="editTypeOfExaminationModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+        
+        <form #editTypeOfExaminationForm="ngForm" (ngSubmit)="updateTypeOfExamination()">
+        <!--Body-->
+            <div class="modal-body"  >
+              <div class="md-form mt-0" [formGroup]="validatingEditForm">
+                <input mdbInput mdbValidate [(ngModel)]="typeOfExaminationEdit.name" formControlName="editNameControl" type="text" id="editName" name="editName" class="form-control">
+                <label for="editName">Name *</label>
+                <mdb-error *ngIf="editNameInput.invalid && (editNameInput.dirty || editNameInput.touched)">Size 2-20 chars</mdb-error>
+                <mdb-success *ngIf="editNameInput.valid && (editNameInput.dirty || editNameInput.touched)">ok</mdb-success>
+              </div>
+              <div class="md-form mt-0" [formGroup]="validatingEditForm">
+                <textarea type="text" [(ngModel)]="typeOfExaminationEdit.description" id="editDescription" class="md-textarea form-control" formControlName="editDescriptionControl"  mdbInput ></textarea>
+                <label for="editDescription">Description</label>
+                <mdb-error *ngIf="editDescriptionInput.invalid && (editDescriptionInput.dirty || editDescriptionInput.touched)">Size max 200 chars</mdb-error>
+                <mdb-success *ngIf="editDescriptionInput.valid && (editDescriptionInput.dirty || editDescriptionInput.touched)">ok</mdb-success>
+              </div>
+              <div class="md-form mt-0" [formGroup]="validatingEditForm">
+                <input  formControlName="editDurationControl"
+                    type="time"
+                    id="editDuration"
+                    class="form-control"
+                    [(ngModel)]="typeOfExaminationEdit.duration"
+                    mdbInput
+                    />
+                <label for="editDuration">Duration *</label>
+              </div>
+              <div class="md-form mt-0">
+                <mat-form-field class="col-12">
+                  <mat-select name="roomTypeId" [(ngModel)] ="typeOfExaminationEdit.roomTypeId" id="roomTypeId" placeholder="Type" required>
+                    <mat-option value="0">--</mat-option>
+                    <mat-option *ngFor="let type of roomTypes" [value]="type.roomTypeId">{{type.name}}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="typeOfExaminationEdit.roomTypeId < 0">Please choose type</mat-error>
+                </mat-form-field>
+              </div>      
+            </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="submit" class="btn btn-warning" [disabled]="!validatingEditForm.valid || typeOfExaminationEdit.roomTypeId == 0">Update</button>
+        </div>
+        </form>
+      </div>
+    </div>
+</div>
+    
+
