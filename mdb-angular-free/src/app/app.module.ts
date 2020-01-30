@@ -12,7 +12,7 @@ import { MatInputModule,
    MatDatepickerModule,
    MatNativeDateModule } from '@angular/material';
 import { httpInterceptorProviders } from './service/auth-interceptor';
-import { AgmCoreModule } from '@agm/core';
+import { AgmCoreModule, GoogleMapsAPIWrapper} from '@agm/core';
 
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './component/register/register.component';
@@ -23,6 +23,7 @@ import { MedicalStaffComponent } from './component/medical-staff/medical-staff.c
 import { TypesOfExaminationComponent } from './component/types-of-examination/types-of-examination.component';
 import { PriceListComponent } from './component/price-list/price-list.component';
 import { ClinicProfileComponent } from './component/clinic-profile/clinic-profile.component';
+import { MyAccountComponent } from './component/my-account/my-account.component';
 
 const routes: Routes = [
   {
@@ -71,6 +72,10 @@ const routes: Routes = [
       {
         path:'clinic-profile',
         component: ClinicProfileComponent
+      },
+      {
+        path: 'my-account',
+        component: MyAccountComponent
       }
     ]
   },
@@ -90,7 +95,8 @@ const routes: Routes = [
     MedicalStaffComponent,
     TypesOfExaminationComponent,
     PriceListComponent,
-    ClinicProfileComponent
+    ClinicProfileComponent,
+    MyAccountComponent
   ],
   imports: [
     BrowserModule,
@@ -106,11 +112,11 @@ const routes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyDvnT8urY3tf-Jp75JgdTDWl5NOOXaW4tA'
+      apiKey: 'AIzaSyDYKwGWasRUj5FlVyAm50hmEOhnlXkCU4w'
     })
   ],
   exports: [RouterModule],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, GoogleMapsAPIWrapper],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

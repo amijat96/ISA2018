@@ -40,6 +40,20 @@
                     <mdb-error *ngIf="descriptionInput.invalid && (descriptionInput.dirty || descriptionInput.touched)">Max size 500 chars</mdb-error>
                     <mdb-success *ngIf="descriptionInput.valid && (descriptionInput.dirty || descriptionInput.touched)">ok</mdb-success>
                 </div>
+                <!-- Worktime start -->
+                <div class="md-form" [formGroup]="validatingForm">   
+                    <input type="time"  id="workTimeStart" [(ngModel)]="clinic.workTimeStart" formControlName="workTimeStartControl" class="form-control" mdbInput />
+                    <label for="workTimeStart" style="text-align: left;">Worktime start</label>
+                    <mdb-error *ngIf="workTimeStartInput.invalid && (workTimeStartInput.dirty || workTimeStartInput.touched)">Worktime start can't be null</mdb-error>
+                    <mdb-success *ngIf="workTimeStartInput.valid && (workTimeStartInput.dirty || workTimeStartInput.touched)">ok</mdb-success>
+                </div>
+                <!-- Worktime end -->
+                <div class="md-form" [formGroup]="validatingForm">   
+                    <input type="time"  id="workTimeEnd" [(ngModel)]="clinic.workTimeEnd" formControlName="workTimeEndControl" class="form-control" mdbInput />
+                    <label for="workTimeEnd" style="text-align: left;">Worktime end</label>
+                    <mdb-error *ngIf="workTimeEndInput.invalid && (workTimeEndInput.dirty || workTimeEndInput.touched)">Worktime end can't be null</mdb-error>
+                    <mdb-success *ngIf="workTimeEndInput.valid && (workTimeEndInput.dirty || workTimeEndInput.touched)">ok</mdb-success>
+                </div> 
                 <!-- Country & City -->
                 <div class="row md-form mt-0">
                     <div class="col-6">
@@ -68,21 +82,13 @@
                     <mdb-error *ngIf="streetInput.invalid && (streetInput.dirty || streetInput.touched)">Size 3-40 chars</mdb-error>
                     <mdb-success *ngIf="streetInput.valid && (streetInput.dirty || streetInput.touched)">ok</mdb-success>
                 </div>
-                <!-- Worktime start -->
-                <div class="md-form" [formGroup]="validatingForm">   
-                    <input type="time"  id="workTimeStart" [(ngModel)]="clinic.workTimeStart" formControlName="workTimeStartControl" class="form-control" mdbInput />
-                    <label for="workTimeStart" style="text-align: left;">Worktime start</label>
-                    <mdb-error *ngIf="workTimeStartInput.invalid && (workTimeStartInput.dirty || workTimeStartInput.touched)">Worktime start can't be null</mdb-error>
-                    <mdb-success *ngIf="workTimeStartInput.valid && (workTimeStartInput.dirty || workTimeStartInput.touched)">ok</mdb-success>
+                <!-- Google Maps -->
+                <div class="md-form">
+                  <agm-map [latitude]="location.lat" [longitude]="location.lng" [zoom]="15" style="height: 300px" (mapready)="geocode()">
+                    <agm-marker [latitude]="location.lat" [longitude]="location.lng" ></agm-marker>
+                  </agm-map>
                 </div>
-                <!-- Worktime end -->
-                <div class="md-form" [formGroup]="validatingForm">   
-                    <input type="time"  id="workTimeEnd" [(ngModel)]="clinic.workTimeEnd" formControlName="workTimeEndControl" class="form-control" mdbInput />
-                    <label for="workTimeEnd" style="text-align: left;">Worktime end</label>
-                    <mdb-error *ngIf="workTimeEndInput.invalid && (workTimeEndInput.dirty || workTimeEndInput.touched)">Worktime end can't be null</mdb-error>
-                    <mdb-success *ngIf="workTimeEndInput.valid && (workTimeEndInput.dirty || workTimeEndInput.touched)">ok</mdb-success>
-                </div> 
-                    <!-- Sign up button -->
+                <!-- Sign up button -->
                 <div class="row">
                     <div class="col-6"></div>
                     <div class="col -6 d-flex justify-content-center">
