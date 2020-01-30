@@ -3,7 +3,7 @@
 <mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark blue lighten-1" [containerInside]="false">
 
     <!-- Navbar brand -->
-    <mdb-navbar-brand><a class="navbar-brand white-text font-weight-bold" style="font-size: 35px;" >{{clinicName}}</a></mdb-navbar-brand><!-- add clinic name as logo -->
+    <mdb-navbar-brand ><a class="navbar-brand font-weight-bold" style="font-size: 35px;" [style.color]="clinicProfile()" href="admin-profile/clinic-profile">{{clinicName}}</a></mdb-navbar-brand><!-- add clinic name as logo -->
   
     <!-- Collapsible content -->
     <links>

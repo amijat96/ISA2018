@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/clinic")
+@RequestMapping(path = "/clinics")
 public class ClinicController {
 
     private final ClinicService clinicService;

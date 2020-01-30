@@ -1,0 +1,151 @@
+<div class="container" style="min-height: 80vh;">
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-md-4"> 
+            <!-- Card -->
+            <mdb-card >
+                <div class="view rgba-white-slight waves-light" mdbWavesEffect>
+                <!-- Card img -->
+                <mdb-card-img src="/assets/images/clinic.jpg" alt="Card image cap"></mdb-card-img>
+                <a>
+                    <div class="mask"></div>
+                </a>
+                </div>
+                <!--Card content-->
+                <mdb-card-body>
+                <!--Title-->
+                <mdb-card-title>
+                    <h4>{{clinic.name}}</h4>
+                </mdb-card-title>
+            
+                <!--Text-->
+                <mdb-card-text> {{clinic.description}}
+                </mdb-card-text>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-md-8 mx-auto">
+            <form class="text-center border border-light p-5 white" (ngSubmit)="updateClinic()">
+                <!-- Name -->
+                <div class="md-form mt-0" [formGroup]="validatingForm">
+                    <input mdbInput mdbValidate type="text" id="name" [(ngModel)]="clinic.name" formControlName="nameControl" class="form-control" class="form-control">
+                    <label for="name">Name *</label>
+                    <mdb-error *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)">Size 2-40 chars</mdb-error>
+                    <mdb-success *ngIf="nameInput.valid && (nameInput.dirty || nameInput.touched)">ok</mdb-success>
+                </div>
+                <!-- Description -->
+                <div class="md-form mt-0" [formGroup]="validatingForm">
+                    <textarea mdbInput mdbValidate type="text" id="description" [(ngModel)]="clinic.description" formControlName="descriptionControl" class="form-control md-textarea"></textarea>
+                    <label for="description">Description</label>
+                    <mdb-error *ngIf="descriptionInput.invalid && (descriptionInput.dirty || descriptionInput.touched)">Max size 500 chars</mdb-error>
+                    <mdb-success *ngIf="descriptionInput.valid && (descriptionInput.dirty || descriptionInput.touched)">ok</mdb-success>
+                </div>
+                <!-- Country & City -->
+                <div class="row md-form mt-0">
+                    <div class="col-6">
+                    <mat-form-field class="form-full-width">
+                        <mat-select [(ngModel)]="clinic.countryId" placeholder="Country" required name="countryId" id="countryId" (selectionChange)="onCountryChanged($event)">
+                        <mat-option value="0">--</mat-option>
+                        <mat-option  *ngFor="let country of countries" [value]="country.countryId">{{country.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="countryId < 1">Please choose country</mat-error>
+                    </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                    <mat-form-field class="form-full-width">
+                        <mat-select [(ngModel)]="clinic.cityId" name="cityId" id="cityId" placeholder="City" required>
+                        <mat-option value="0">--</mat-option>
+                        <mat-option *ngFor="let city of cities" [value]="city.cityId">{{city.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="clinic.cityId < 1">Please choose city</mat-error>
+                    </mat-form-field>
+                    </div>
+                </div>
+                <!-- Street -->
+                <div class="md-form mt-0" [formGroup]="validatingForm">
+                    <input mdbInput mdbValidate type="text" id="street" [(ngModel)]="clinic.street" formControlName="streetControl" class="form-control">
+                    <label for="street">Street *</label>
+                    <mdb-error *ngIf="streetInput.invalid && (streetInput.dirty || streetInput.touched)">Size 3-40 chars</mdb-error>
+                    <mdb-success *ngIf="streetInput.valid && (streetInput.dirty || streetInput.touched)">ok</mdb-success>
+                </div>
+                <!-- Worktime start -->
+                <div class="md-form" [formGroup]="validatingForm">   
+                    <input type="time"  id="workTimeStart" [(ngModel)]="clinic.workTimeStart" formControlName="workTimeStartControl" class="form-control" mdbInput />
+                    <label for="workTimeStart" style="text-align: left;">Worktime start</label>
+                    <mdb-error *ngIf="workTimeStartInput.invalid && (workTimeStartInput.dirty || workTimeStartInput.touched)">Worktime start can't be null</mdb-error>
+                    <mdb-success *ngIf="workTimeStartInput.valid && (workTimeStartInput.dirty || workTimeStartInput.touched)">ok</mdb-success>
+                </div>
+                <!-- Worktime end -->
+                <div class="md-form" [formGroup]="validatingForm">   
+                    <input type="time"  id="workTimeEnd" [(ngModel)]="clinic.workTimeEnd" formControlName="workTimeEndControl" class="form-control" mdbInput />
+                    <label for="workTimeEnd" style="text-align: left;">Worktime end</label>
+                    <mdb-error *ngIf="workTimeEndInput.invalid && (workTimeEndInput.dirty || workTimeEndInput.touched)">Worktime end can't be null</mdb-error>
+                    <mdb-success *ngIf="workTimeEndInput.valid && (workTimeEndInput.dirty || workTimeEndInput.touched)">ok</mdb-success>
+                </div> 
+                    <!-- Sign up button -->
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col -6 d-flex justify-content-center">
+                        <button mdbBtn class="btn btn-info" type="submit" [disabled]="!validatingForm.valid || clinic.cityId == 0 || clinic.countryId == 0">Update</button>
+                        <a type="button" mdbBtn color="info" outline="true" class="waves-effect" mdbWavesEffec (click)="abort()">Abort</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row"><p></p></div>
+</div>
+
+<!--Success modal-->
+<div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-success" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">Price list item successfully created.</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="reload()" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+        <div class="md-form">
+          <label class="m1-0">Clinic updated successfully.</label>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-success" (click)="reload()">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error modal -->
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100">Updating list item failed.</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+          <div class="md-form mb-5">
+            <label class="ml-0">{{errorMessage}}</label>
+          </div>
+        </div>
+  
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+        </div>
+      </div>
+    </div>
+</div>

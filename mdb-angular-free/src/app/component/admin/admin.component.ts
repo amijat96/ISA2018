@@ -30,7 +30,9 @@ export class AdminComponent implements OnInit {
   priceList() {
     return window.location.href == "http://localhost:4200/admin-profile/price-list";
   }
-
+  clinicProfile() {
+    if(window.location.href == "http://localhost:4200/admin-profile/clinic-profile") return '#81d4fa';
+  }
   logOut() {
     this.authService.logOut();
   }
