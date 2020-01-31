@@ -13,6 +13,7 @@ import { MatInputModule,
    MatNativeDateModule } from '@angular/material';
 import { httpInterceptorProviders } from './service/auth-interceptor';
 import { AgmCoreModule, GoogleMapsAPIWrapper} from '@agm/core';
+import { DatePipe } from '@angular/common'
 
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './component/register/register.component';
@@ -24,6 +25,7 @@ import { TypesOfExaminationComponent } from './component/types-of-examination/ty
 import { PriceListComponent } from './component/price-list/price-list.component';
 import { ClinicProfileComponent } from './component/clinic-profile/clinic-profile.component';
 import { MyAccountComponent } from './component/my-account/my-account.component';
+import { ReportComponent } from './component/report/report.component';
 
 const routes: Routes = [
   {
@@ -76,6 +78,10 @@ const routes: Routes = [
       {
         path: 'my-account',
         component: MyAccountComponent
+      },
+      {
+        path: 'report',
+        component: ReportComponent
       }
     ]
   },
@@ -96,7 +102,8 @@ const routes: Routes = [
     TypesOfExaminationComponent,
     PriceListComponent,
     ClinicProfileComponent,
-    MyAccountComponent
+    MyAccountComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,
@@ -116,7 +123,7 @@ const routes: Routes = [
     })
   ],
   exports: [RouterModule],
-  providers: [httpInterceptorProviders, GoogleMapsAPIWrapper],
+  providers: [httpInterceptorProviders, GoogleMapsAPIWrapper, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

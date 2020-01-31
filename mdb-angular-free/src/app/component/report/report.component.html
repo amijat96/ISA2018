@@ -1,0 +1,91 @@
+<div style="display: block; width: 100vw; min-height: 80vh; background-color: white;" class="container">
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Cinic grade:</h4></div>
+        <div class="col-4"></div>
+        <div class="col-3"><h4>{{clinicGrade}}</h4></div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"> 
+        <div class="col-1"></div>
+        <div class="col-3"></div>
+        <div class="col-3">
+            <mat-form-field class="form-full-width">
+              <input matInput [(ngModel)]="fromDate" name="fromDate" [matDatepicker]="picker1" (ngModelChange)="getReport()" placeholder="From date" >
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-3">
+            <mat-form-field class="form-full-width"> 
+              <input matInput [(ngModel)]="toDate" name="toDate" [matDatepicker]="picker" (ngModelChange)="getReport()" placeholder="To date" >
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"> 
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Examinations:</h4></div>
+        <div class="col-7">
+            <canvas mdbChart
+                [chartType]="chartType"
+                [datasets]="chartDatasets"
+                [labels]="chartLabels"
+                [colors]="chartColors"
+                [options]="chartOptions"
+                [legend]="true"
+                (chartHover)="chartHovered($event)"
+                (chartClick)="chartClicked($event)">
+            </canvas>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-5"></div>
+        <div class="col-2">
+            <!-- Default inline 1-->
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" checked class="custom-control-input" id="defaultInline1" name="inlineDefaultRadiosExample" mdbInput (change)="changeFrequency(0)">
+                <label class="custom-control-label" for="defaultInline1">Daily</label>
+            </div>
+        </div>
+        <div class="col-2">
+            <!-- Default inline 2-->
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="defaultInline2" name="inlineDefaultRadiosExample" mdbInput (change)="changeFrequency(1)">
+                <label class="custom-control-label" for="defaultInline2">Weekly</label>
+            </div>
+        </div>
+        <div class="col-2">
+            <!-- Default inline 3-->
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="defaultInline3" name="inlineDefaultRadiosExample" mdbInput (change)="changeFrequency(2)">
+                <label class="custom-control-label" for="defaultInline3">Monthly</label>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Revenues:</h4></div>
+        <div class="col-4"></div>
+        <div class="col-3"><h4>{{revenues}} (€)</h4></div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+</div>

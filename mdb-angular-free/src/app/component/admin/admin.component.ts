@@ -48,7 +48,6 @@ export class AdminComponent implements OnInit {
   rooms() {
     return window.location.href == "http://localhost:4200/admin-profile/rooms"
   }
-
   medicalStaff() {
     return window.location.href == "http://localhost:4200/admin-profile/medical-staff" ||  
     window.location.href == "http://localhost:4200/admin-profile/medical-staff/register";
@@ -64,6 +63,10 @@ export class AdminComponent implements OnInit {
   clinicProfile() {
     if(window.location.href == "http://localhost:4200/admin-profile/clinic-profile") return '#81d4fa';
   }
+  report() {
+    return window.location.href == "http://localhost:4200/admin-profile/report";
+  }
+
   logOut() {
     this.authService.logOut();
   }

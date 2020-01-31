@@ -2,7 +2,10 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.ClinicRequestDTO;
+import com.example.backend.dto.request.ReportRequestDTO;
 import com.example.backend.dto.response.ClinicResponseDTO;
+import com.example.backend.dto.response.ExaminationResponseDTO;
+import com.example.backend.dto.response.ReportResponseDTO;
 import com.example.backend.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +44,16 @@ public class ClinicController {
         return ResponseEntity.ok(new ClinicResponseDTO(clinicService.getClinic(id)));
     }
 
+    @GetMapping(path = "/{id}/grade")
+    public double getClinicGrade(@PathVariable Integer id) {
+        return clinicService.getClinicGrade(id);
+    }
+
+    @PutMapping(path = "/{id}/report")
+    public ResponseEntity<ReportResponseDTO> getClinicReport(@PathVariable Integer id, @Valid @RequestBody ReportRequestDTO reportRequestDTO) {
+        return ResponseEntity.ok(clinicService.getReport(id, reportRequestDTO));
+    }
+
     /*@GetMapping(path = "/{id}/patients")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_DOCTOR')")
     public ResponseEntity<List<UserResponseDTO>> getClinicPatients(@PathVariable Integer id) {
@@ -73,13 +86,13 @@ public class ClinicController {
         }
     }
 
-    /*@GetMapping(path = "/{id}/examination")
+    @GetMapping(path = "/{id}/examinations")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
-    public ResponseEntity<List<ExaminationResponseDTO>> getClinicExaminations(@PathVariable Integer id, @Valid @RequestBody ClinicExaminationsRequestDTO clinicExaminationsRequestDTO) {
-        return ResponseEntity.ok(clinicService.getClinicExaminations(id, clinicExaminationsRequestDTO.getStartDate(), clinicExaminationsRequestDTO.getEndDate())
+    public ResponseEntity<List<ExaminationResponseDTO>> getClinicExaminations(@PathVariable Integer id) {
+        return ResponseEntity.ok(clinicService.getAllClinicExaminations(id)
                 .stream()
                 .map(ExaminationResponseDTO::new)
                 .collect(Collectors.toList()));
-    }*/
+    }
 
 }

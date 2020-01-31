@@ -15,11 +15,19 @@ public class ExaminationResponseDTO {
 
     private Integer userId;
 
+    private String userUsername;
+
     private Integer roomId;
 
-    private Integer typeId;
+    private String roomNumber;
+
+    private Integer roomFloor;
+
+    private String typeName;
 
     private Integer priceListId;
+
+    private double price;
 
     private boolean predefined;
 
@@ -37,20 +45,39 @@ public class ExaminationResponseDTO {
 
     private Integer doctor;
 
+    private String doctorUsername;
+
     public ExaminationResponseDTO(Examination examination) {
         this.examinationId = examination.getExaminationId();
+        //user
         this.userId = examination.getUser().getUserId();
-        if(examination.getRoom() != null)
+        this.userUsername = examination.getUser().getUsername();
+        //room
+        if(examination.getRoom() != null) {
             this.roomId = examination.getRoom().getRoomId();
-        this.typeId = examination.getRoomType().getRoomTypeId();
+            this.roomFloor = examination.getRoom().getFloor();
+            this.roomNumber = examination.getRoom().getNumber();
+        }
+        //type
+        this.typeName = examination.getPriceList().getTypeOfExamination().getName();
+
+        //priceList
         this.priceListId = examination.getPriceList().getPriceListId();
-        this.predefined = examination.isPredefined();
-        this.finished = examination.isFinished();
+        this.price = examination.getPriceList().getPrice() * (1.0 - examination.getDiscount()/100.0);
         this.discount = examination.getDiscount();
+
+        //doctor
+        this.doctor = examination.getDoctor().getUserId();
+        this.doctorUsername = examination.getDoctor().getUsername();
+
+        //grades
         this.gradeClinic = examination.getGradeClinic();
         this.gradeDoctor = examination.getGradeDoctor();
+
+        //other
+        this.predefined = examination.isPredefined();
+        this.finished = examination.isFinished();
         this.accepted = examination.isAccepted();
         this.dateTime = examination.getDateTime();
-        this.doctor = examination.getDoctor().getUserId();
     }
 }
