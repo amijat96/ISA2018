@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserResponseDTO {
 
-    private int userId;
+    private int id;
 
     private String username;
 
@@ -34,6 +34,8 @@ public class UserResponseDTO {
 
     private Integer cityId;
 
+    private Integer countryId;
+
     private String street;
 
     private Integer clinicId;
@@ -44,8 +46,10 @@ public class UserResponseDTO {
 
     private Integer numberOfSchedules;
 
+    private boolean passwordChanged;
+
     public UserResponseDTO(User user) {
-        this.userId = user.getUserId();
+        this.id = user.getUserId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.name = user.getName();
@@ -54,9 +58,11 @@ public class UserResponseDTO {
         this.gender = user.getGender();
         this.roleId = user.getRole().getRoleId();
         this.cityId = user.getCity().getCityId();
+        this.countryId = user.getCity().getCountry().getCountryId();
         this.street = user.getStreet();
         this.jbo = user.getJbo();
         this.dateOfBirth = user.getDateOfBirth();
+        this.passwordChanged = user.isPasswordChanged();
         if(user.getClinic() != null)
             this.clinicId = user.getClinic().getClinicId();
         LocalDate date = LocalDate.now();

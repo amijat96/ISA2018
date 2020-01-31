@@ -133,7 +133,7 @@
               </div>
                    
                 <!-- Sign up button -->
-                <button mdbBtn color="info" block="true" class="my-4" type="submit" mdbWavesEffect [disabled]="!registerForm.form.valid || register.cityId == 0 || register.countryId == 0 || register.gender == -1">Register</button>
+                <button mdbBtn color="info" block="true" class="my-4" type="submit" mdbWavesEffect [disabled]="!registerForm.form.valid || dateOfBirth == null || register.cityId == 0 || register.countryId == 0 || register.gender == -1">Register</button>
                 <hr>
 
                 <!-- Terms of service -->

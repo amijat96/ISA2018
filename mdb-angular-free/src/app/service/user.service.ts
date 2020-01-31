@@ -20,4 +20,15 @@ export class UserService {
     return this.httpClient.delete(baseUrl + 'users/' + id, httpOptions);
   }
 
+  getMyAccount() {
+    return this.httpClient.get<User>(baseUrl + 'users/me', httpOptions);
+  }
+
+  updateUser(user: User) {
+    return this.httpClient.put<User>(baseUrl + 'users/' + user.id, user, httpOptions);
+  }
+
+  changePassword(password: string) {
+    return this.httpClient.put(baseUrl + 'users/change-password/' + password, httpOptions);
+  }
 }

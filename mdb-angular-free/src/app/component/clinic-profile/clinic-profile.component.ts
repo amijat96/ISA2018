@@ -7,7 +7,6 @@ import { AddressService } from 'src/app/service/address.service';
 import { ModalDirective } from 'angular-bootstrap-md';
 import { FormGroup, Validators, FormControl} from '@angular/forms';
 import { MapsAPILoader, AgmMap } from '@agm/core';
-import { stringify } from 'querystring';
 
 declare var google: any;
 

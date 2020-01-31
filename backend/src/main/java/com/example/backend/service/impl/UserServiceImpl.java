@@ -4,6 +4,7 @@ import com.example.backend.dto.JwtAuthDto;
 import com.example.backend.dto.request.DoctorFreeTermsRequestDTO;
 import com.example.backend.dto.request.LoginRequestDTO;
 import com.example.backend.dto.request.RegisterRequestDTO;
+import com.example.backend.dto.request.UserRequestDTO;
 import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
 import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.exception.*;
@@ -252,6 +253,41 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             return true;
         }
+    }
+
+    @Override
+    public User updateUser(UserRequestDTO userRequestDTO) {
+        User user = findByUsername(userRequestDTO.getUsername());
+
+        final City city = cityRepository.findById(userRequestDTO.getCityId())
+                .orElseThrow(() -> new ApiException("City not set!"));
+
+        if( userRepository.findAll()
+                .stream()
+                .filter(u -> u.getUsername() != userRequestDTO.getUsername() && u.getEmail().equals(userRequestDTO.getEmail()))
+                .collect(Collectors.toList())
+                .size() > 0) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        };
+        user.setEmail(userRequestDTO.getEmail());
+        user.setName(userRequestDTO.getName());
+        user.setLastName(userRequestDTO.getLastName());
+        user.setDateOfBirth(userRequestDTO.getDateOfBirth());
+        user.setGender(userRequestDTO.getGender());
+        user.setStreet(userRequestDTO.getStreet());
+        user.setPhone(userRequestDTO.getPhone());
+        user.setCity(city);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    @Override
+    public void changePassword(String username, String password) {
+        User user = findByUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setPasswordChanged(true);
+        userRepository.save(user);
     }
 
     public static DateTime createDateTime(LocalDate date, LocalTime time) {
