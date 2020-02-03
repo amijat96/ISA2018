@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { baseUrl, httpOptions} from './constants';
 import { TypeOfExamination } from '../model/typeOfExamination';
 import { Observable } from 'rxjs';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +28,9 @@ export class TypeOfExaminationService {
     return this.httpClient.delete(baseUrl + 'types-of-examination/' + id, httpOptions);
   }
 
+  getDoctorsBySpecialiyation(id: number) {
+    return this.httpClient.get<User[]>(baseUrl + 'types-of-examination/' + id, httpOptions);
+
+  }
  
 }

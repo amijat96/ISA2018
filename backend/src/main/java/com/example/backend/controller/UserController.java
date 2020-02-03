@@ -33,6 +33,10 @@ public class UserController {
         return ResponseEntity.ok(new UserResponseDTO(userService.findByUsername(authentication.getName())));
     }
 
+    @GetMapping(path = "/{username}")
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(new UserResponseDTO(userService.findByUsername(username)));
+    }
     @GetMapping(path = "/free-terms")
     public ResponseEntity<List<DoctorFreeTermsResponseDTO>> getDoctorFreeTerms(@Valid @RequestBody DoctorFreeTermsRequestDTO doctorFreeTermsRequestDTO) {
         return ResponseEntity.ok(userService.getDoctorFreeTerms(doctorFreeTermsRequestDTO));

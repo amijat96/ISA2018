@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +13,8 @@ import org.joda.time.DateTime;
 public class ExaminationResponseDTO {
 
     private Integer examinationId;
+
+    private LocalTime duration;
 
     private Integer userId;
 
@@ -22,6 +25,10 @@ public class ExaminationResponseDTO {
     private String roomNumber;
 
     private Integer roomFloor;
+
+    private String roomType;
+
+    private Integer typeId;
 
     private String typeName;
 
@@ -43,12 +50,13 @@ public class ExaminationResponseDTO {
 
     private DateTime dateTime;
 
-    private Integer doctor;
+    private Integer doctorId;
 
     private String doctorUsername;
 
     public ExaminationResponseDTO(Examination examination) {
         this.examinationId = examination.getExaminationId();
+        this.duration = examination.getPriceList().getTypeOfExamination().getDuration();
         //user
         this.userId = examination.getUser().getUserId();
         this.userUsername = examination.getUser().getUsername();
@@ -59,15 +67,16 @@ public class ExaminationResponseDTO {
             this.roomNumber = examination.getRoom().getNumber();
         }
         //type
+        this.typeId = examination.getPriceList().getTypeOfExamination().getTypeOfExaminationId();
         this.typeName = examination.getPriceList().getTypeOfExamination().getName();
-
+        this.roomType = examination.getPriceList().getTypeOfExamination().getType().getName();
         //priceList
         this.priceListId = examination.getPriceList().getPriceListId();
         this.price = examination.getPriceList().getPrice() * (1.0 - examination.getDiscount()/100.0);
         this.discount = examination.getDiscount();
 
         //doctor
-        this.doctor = examination.getDoctor().getUserId();
+        this.doctorId = examination.getDoctor().getUserId();
         this.doctorUsername = examination.getDoctor().getUsername();
 
         //grades

@@ -26,6 +26,8 @@ import { PriceListComponent } from './component/price-list/price-list.component'
 import { ClinicProfileComponent } from './component/clinic-profile/clinic-profile.component';
 import { MyAccountComponent } from './component/my-account/my-account.component';
 import { ReportComponent } from './component/report/report.component';
+import { ExaminationsComponent } from './component/examinations/examinations.component';
+import { ExaminationComponent } from './component/examination/examination.component';
 
 const routes: Routes = [
   {
@@ -62,8 +64,24 @@ const routes: Routes = [
         path: 'examinations',
         children : [
           {
+            path:'',
+            component : ExaminationsComponent
+          },
+          {
+            path: 'predefined',
+            component: ExaminationComponent
+          },
+          {
+            path:'requests',
+            component : ExaminationsComponent
+          },
+          {
           path: 'types-of-examination',
           component : TypesOfExaminationComponent
+          },
+          {
+            path: ':id',
+            component: ExaminationComponent
           }
         ]
       },
@@ -103,7 +121,9 @@ const routes: Routes = [
     PriceListComponent,
     ClinicProfileComponent,
     MyAccountComponent,
-    ReportComponent
+    ReportComponent,
+    ExaminationsComponent,
+    ExaminationComponent
   ],
   imports: [
     BrowserModule,

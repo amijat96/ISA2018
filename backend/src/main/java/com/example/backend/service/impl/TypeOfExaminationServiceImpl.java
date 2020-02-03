@@ -5,6 +5,7 @@ import com.example.backend.exception.RoomTypeNotFoundException;
 import com.example.backend.exception.TypeOfExaminationNotFoundException;
 import com.example.backend.model.RoomType;
 import com.example.backend.model.TypeOfExamination;
+import com.example.backend.model.User;
 import com.example.backend.repository.RoomTypeRepository;
 import com.example.backend.repository.TypeOfExaminationRepository;
 import com.example.backend.service.TypeOfExaminationService;
@@ -41,10 +42,9 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
         TypeOfExamination typeOfExamination = new TypeOfExamination();
         typeOfExamination.setName(typeOfExaminationRequestDTO.getName());
         typeOfExamination.setDuration(typeOfExaminationRequestDTO.getDuration());
-        System.out.println("duration : " + typeOfExamination.getDuration());
         typeOfExamination.setDescription(typeOfExaminationRequestDTO.getDescription());
         RoomType roomType = roomTypeRepository.findById(typeOfExaminationRequestDTO.getRoomTypeId())
-                .orElseThrow(() -> new RoomTypeNotFoundException("COuld not find room type with given id."));
+                .orElseThrow(() -> new RoomTypeNotFoundException("Could not find room type with given id."));
         typeOfExamination.setType(roomType);
         typeOfExamination.setDoctors(new ArrayList<>());
         typeOfExamination.setPriceLists(new ArrayList<>());
@@ -77,5 +77,15 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
         else {
             return false;
         }
+    }
+
+    @Override
+    public List<User> getDoctorBySpecialization(Integer id) {
+        TypeOfExamination typeOfExamination = typeOfExaminationRepository.findById(id)
+                .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id."));
+        return typeOfExamination.getDoctors()
+                .stream()
+                .filter(d -> !d.isDeleted())
+                .collect(Collectors.toList());
     }
 }

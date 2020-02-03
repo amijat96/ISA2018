@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.TypeOfExaminationRequestDTO;
 import com.example.backend.dto.response.TypeOfExaminationResponseDTO;
+import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.service.TypeOfExaminationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,14 @@ public class TypeOfExaminationController {
                 .map(TypeOfExaminationResponseDTO::new)
                 .collect(Collectors.toList())
         );
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<List<UserResponseDTO>> getDoctorsBySpecialization(@PathVariable Integer id) {
+        return ResponseEntity.ok(typeOfExaminationService.getDoctorBySpecialization(id)
+                .stream()
+                .map(UserResponseDTO::new)
+                .collect(Collectors.toList()));
     }
 
     @PostMapping

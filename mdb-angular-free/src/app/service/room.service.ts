@@ -4,6 +4,8 @@ import { baseUrl, httpOptions} from './constants';
 import { Observable } from 'rxjs';
 import { Room } from 'src/app/model/room';
 import { RoomType } from '../model/roomType';
+import { FreeTermsRequest } from '../model/freeTermsRequest';
+import { FreeTerm } from '../model/roomFreeTerms';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +34,10 @@ export class RoomService {
 
   deleteRoom(roomId: number) {
     return this.httpClient.delete(baseUrl + 'rooms/' + roomId, httpOptions);
+  }
+
+  getFreeTerms(freeTermRequest: FreeTermsRequest) {
+    freeTermRequest.clinicId = Number(localStorage.getItem('clinicId'));
+    return this.httpClient.put<FreeTerm[]>(baseUrl + 'rooms/free-terms', freeTermRequest, httpOptions);
   }
 }

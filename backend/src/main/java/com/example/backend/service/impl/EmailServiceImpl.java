@@ -9,6 +9,10 @@ import com.example.backend.repository.ExaminationRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.EmailService;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +82,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendConfirmationMailToUser(int id) {
+    public void sendConfirmationMailToUser(Integer id) {
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
         logger.info(String.format("Sending confirmation token to %s email.", user.getEmail()));
@@ -98,22 +102,34 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendConfirmationMailToDoctor(Integer examinationId) {
         Examination examination = examinationRepository.findById(examinationId)
-                .orElseThrow(() -> new ExaminationNotFoundException("Could not fin examination with given id."));
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
         sendNotificationMail(examination.getDoctor(), examination);
 
     }
 
     void sendNotificationMail(User user, Examination examination) {
+        final User doctor = userRepository.findById(examination.getDoctor().getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
         logger.info(String.format("Sending confirmation mail for examination/operation to %s email.", user.getEmail()));
         Context context = new Context();
         context.setVariable("type", examination.getRoomType().getName().toLowerCase());
         context.setVariable("title", configProperties.getExaminationConfirmed());
         context.setVariable("firstName", user.getName());
         context.setVariable("typeOfExamination", examination.getPriceList().getTypeOfExamination().getName());
-        context.setVariable("date", examination.getDateTime().toLocalDate().toString());
-        context.setVariable("time", examination.getDateTime().toLocalTime().toString());
+
+        DateTimeFormatter df = DateTimeFormat.forPattern("dd MM yyyy HH:mm:ss.SSS Z");
+        DateTime temp = new DateTime();
+        DateTimeZone theZone = DateTimeZone.getDefault();
+        DateTimeFormatter df2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSZZ");
+        DateTimeFormatter df3 = df2.withZone(theZone);
+        String dateTime = examination.getDateTime().withZone(theZone).toString();
+
+        context.setVariable("date", dateTime.substring(0,10));
+        context.setVariable("time", dateTime.substring(11));
         context.setVariable("roomNumber", examination.getRoom().getNumber());
         context.setVariable("clinicName", examination.getRoom().getClinic().getName());
+        context.setVariable("doctorName", doctor.getName());
+        context.setVariable("doctorLastName", doctor.getLastName());
         context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/examination/confirm-examination?token=" + tokenProvider.generateExaminationConfirmationToken(examination.getExaminationId()));
         context.setVariable("patient", user.getRole().getRoleId() != 5);
         sendMail(user.getEmail(), configProperties.getExaminationConfirmed(), context, true);

@@ -54,7 +54,7 @@ export class AdminComponent implements OnInit {
   }
 
   examinations() {
-    return window.location.href == "http://localhost:4200/admin-profile/examinations/types-of-examination";
+    return window.location.href.substring(0, 48) == "http://localhost:4200/admin-profile/examinations" ;
   }
 
   priceList() {

@@ -47,7 +47,7 @@ public class RoomController {
         return ResponseEntity.ok(new RoomResponseDTO(roomService.getRoomById(id)));
     }
 
-    @GetMapping(path = "/free-terms")
+    @PutMapping(path = "/free-terms")
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
     public ResponseEntity<List<RoomFreeTermsResponseDTO>> getFreeTerms(@Valid @RequestBody RoomFreeTermsRequestDTO roomFreeTermsRequestDTO) {
         return ResponseEntity.ok(roomService.getClinicFreeTerms(roomFreeTermsRequestDTO));

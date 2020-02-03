@@ -25,11 +25,11 @@
             <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
               Examinations<span class="caret"></span></a>
             <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
-              <a class="dropdown-item waves-light" mdbWavesEffect href="#">Confirmed</a>
+              <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations">Confirmed</a>
               <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations/types-of-examination">Types</a>
               <div class="divider dropdown-divider"></div>
-              <a class="dropdown-item waves-light" mdbWavesEffect href="#">Create predefined</a>
-              <a class="dropdown-item waves-light" mdbWavesEffect href="#">Requests</a>
+              <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations/predefined">Create predefined</a>
+              <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations/requests">Requests</a>
             </div>
           </li>
           <li class="nav-item" [class.active]="priceList()">
@@ -53,8 +53,7 @@
       <ul class="navbar-nav ml-auto nav-flex-icons">
         <li class="nav-item avatar dropdown" dropdown>
           <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
-            <img src="https://lh3.googleusercontent.com/proxy/oBCmZSD_mfHV_iXqT2y3AzioQc4gRzgra-lcz2YK2Mls17J_GF6cRa5kHSbyIKfKuDsJzWa8ZlIM6iB35EEHnmWrXGYDnibMbyb6vm84mIDguK44wVhfHhAF396GNaeCHEGLsZsOUVAs_8z6"
-             alt="" class="img-fluid rounded-circle z-depth-0" style="width: 50px;"></a>
+            <img src="/assets/images/avatar.png" alt="" class="img-fluid rounded-circle z-depth-0" style="width: 50px;"></a>
           <div *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown dropdown-primary" role="menu">
             <a class="dropdown-item waves-light" mdbWavesEffect (click)="changePasswordModal()">Change password</a>
             <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/my-account">My account</a>

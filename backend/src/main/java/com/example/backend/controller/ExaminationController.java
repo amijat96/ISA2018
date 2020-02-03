@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping(path = "/**/examination")
+@RequestMapping(path = "/examinations")
 public class ExaminationController {
 
     private final ExaminationService examinationService;
@@ -41,9 +41,9 @@ public class ExaminationController {
                                                             createExamination(authentication.getName(), examinatioRequestDTO)));
     }
 
-    @PutMapping(path = "/approve-examination")
+    @PutMapping(path = "/approve-examination/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
-    public ResponseEntity<ExaminationResponseDTO> approveExamination(@PathParam("id") Integer id, @Valid @RequestBody ExaminationRequestDTO examinationRequestDTO) {
+    public ResponseEntity<ExaminationResponseDTO> approveExamination(@PathVariable Integer id, @Valid @RequestBody ExaminationRequestDTO examinationRequestDTO) {
         Examination  examination = examinationService.approveExamination(id, examinationRequestDTO);
         emailService.sendConfirmationMailToPatient(examination);
         return ResponseEntity.ok(new ExaminationResponseDTO(examination));
@@ -59,6 +59,10 @@ public class ExaminationController {
         else {
             return new ResponseEntity(new ApiResponse(false, "Examination confirmation failed.", new ArrayList<>()), HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<ExaminationResponseDTO> getExamination(@PathVariable Integer id){
+        return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.getExamination(id)));
     }
 
 

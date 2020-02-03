@@ -98,7 +98,7 @@ create table DIAGNOSIS
 /*==============================================================*/
 create table DOCTORSPECIALIZATION
 (
-   ID_TYPE_OF_EXAMINATION int not null AUTO_INCREMENT,
+   ID_TYPE_OF_EXAMINATION int not null,
    ID_USER              int not null,
    primary key (ID_TYPE_OF_EXAMINATION, ID_USER)
 );

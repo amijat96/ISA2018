@@ -117,15 +117,18 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public double getClinicRevenues(Integer clinicId, LocalDate startDate, LocalDate endDate) {
-       return getClinicExaminations(clinicId, startDate, endDate).stream().filter(e -> e.isFinished()).map(e -> e.getPriceList().getPrice()).collect(Collectors.summingDouble(Double::doubleValue));
+       return getClinicExaminations(clinicId, startDate, endDate).stream().filter(e -> e.isFinished()).map(e -> e.getPriceList().getPrice() *(1.0 - e.getDiscount()/100.0)).collect(Collectors.summingDouble(Double::doubleValue));
     }
 
     @Override
     public List<Examination> getAllClinicExaminations(Integer clinicId) {
-        List<Room> rooms = getClinic(clinicId).getRooms();
+        List<User> users = getClinic(clinicId).getUsers()
+                .stream()
+                .filter(u -> u.getRole().getRoleId() == 3)
+                .collect(Collectors.toList());
         List<Examination> examinations = new ArrayList<>();
-        for(Room room : rooms) {
-            examinations.addAll(room.getExaminations()
+        for(User user : users) {
+            examinations.addAll(user.getDoctorExaminations()
                     .stream()
                     .filter(e -> !e.isDeleted())
                     .collect(Collectors.toList()));
@@ -162,7 +165,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public double getClinicGrade(Integer clinicId) {
-        List<Examination> examinations = getClinicExaminations(clinicId, new LocalDate(1970, 1, 1) , LocalDate.now());
+        List<Examination> examinations = getAllClinicExaminations(clinicId);
         return examinations.stream().map(e -> e.getGradeClinic()).collect(Collectors.summingDouble(Double::doubleValue))
                 /examinations.stream().filter(e -> e.getGradeClinic() != 0).collect(Collectors.toList()).size();
     }

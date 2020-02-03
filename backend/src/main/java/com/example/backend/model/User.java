@@ -103,10 +103,10 @@ public class User implements UserDetails, Serializable {
     @ManyToMany
     @JoinTable(
             name = "doctorspecialization"
-            , joinColumns={
+            , inverseJoinColumns={
             @JoinColumn(name="ID_TYPE_OF_EXAMINATION")
         }
-            , inverseJoinColumns={
+            , joinColumns={
             @JoinColumn(name="ID_USER")
         }
     )

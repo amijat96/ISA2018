@@ -97,7 +97,7 @@ public class RoomServiceImpl implements RoomService {
         //Find all rooms in the clinic, with same type as examination
         List<Room> rooms = clinic.getRooms()
                 .stream()
-                .filter(r -> r.getRoomType().getRoomTypeId() == roomFreeTermsRequestDTO.getRoomTypeId())
+                .filter(r -> r.getRoomType().getRoomTypeId() == roomFreeTermsRequestDTO.getRoomTypeId() && !r.isDeleted())
                 .collect(Collectors.toList());
 
         //Find free terms for every room

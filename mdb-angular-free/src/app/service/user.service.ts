@@ -31,4 +31,9 @@ export class UserService {
   changePassword(password: string) {
     return this.httpClient.put(baseUrl + 'users/change-password/' + password, httpOptions);
   }
+
+  getUserByUsername(username: string) {
+    return this.httpClient.get<User>(baseUrl + 'users/' + username, httpOptions);
+  }
 }
+

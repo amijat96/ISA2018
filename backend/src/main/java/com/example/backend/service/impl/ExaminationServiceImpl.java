@@ -2,10 +2,7 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ExaminationRequestDTO;
 import com.example.backend.exception.*;
-import com.example.backend.model.Examination;
-import com.example.backend.model.PriceList;
-import com.example.backend.model.Schedule;
-import com.example.backend.model.User;
+import com.example.backend.model.*;
 import com.example.backend.repository.*;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.ExaminationService;
@@ -153,5 +150,13 @@ public class ExaminationServiceImpl implements ExaminationService {
             throw new ExaminationModificationTimeExpiredException("Can't modify examination now.");
         }
         return examinationId;
-    };
+    }
+
+    @Override
+    public Examination getExamination(Integer id) {
+        return examinationRepository.findById(id)
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id"));
+    }
+
+    ;
 }
