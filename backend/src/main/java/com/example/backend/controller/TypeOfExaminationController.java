@@ -36,13 +36,16 @@ public class TypeOfExaminationController {
     }
 
     @GetMapping(path = "/{id}")
+    public ResponseEntity<TypeOfExaminationResponseDTO> getTypeOfExamination(@PathVariable Integer id) {
+        return ResponseEntity.ok(new TypeOfExaminationResponseDTO(typeOfExaminationService.getTypeOfExamination(id)));
+    }
+    @GetMapping(path = "/specialization/{id}")
     public ResponseEntity<List<UserResponseDTO>> getDoctorsBySpecialization(@PathVariable Integer id) {
         return ResponseEntity.ok(typeOfExaminationService.getDoctorBySpecialization(id)
                 .stream()
                 .map(UserResponseDTO::new)
                 .collect(Collectors.toList()));
     }
-
     @PostMapping
     @Transactional
     public ResponseEntity<TypeOfExaminationResponseDTO> createTypeOfExamination(@Valid @RequestBody TypeOfExaminationRequestDTO typeOfExaminationRequestDTO) {

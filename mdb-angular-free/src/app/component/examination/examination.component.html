@@ -38,8 +38,18 @@
         <div class="col-1"></div>
         <div class="col-3"><h4>Examination:</h4></div>
         <div class="col-7">
+            <!-- List of available types of examination-->
+            <div class="md-form mt-0" [hidden]="disableDiscount">
+              <mat-form-field class="form-full-width">
+                <mat-select [(ngModel)]="priceListItem" name="typeName" id="typeName" placeholder="Select type" required (selectionChange)="onTypeChanged($event)">
+                  <mat-option value="0">--</mat-option>
+                  <mat-option  *ngFor="let type of priceListItems" [value]="type">{{type.typeOfExaminationName}}</mat-option>
+                </mat-select>
+                <mat-error>Please choose type</mat-error>
+              </mat-form-field>
+            </div>
             <!-- Name -->
-            <div class="md-form mt-0">
+            <div class="md-form mt-0" [hidden]="!disableDiscount">
                 <input mdbInput [(ngModel)]="examination.typeName" type="text" name ="examinationName" id="examinationName" class="form-control" disabled>
                 <label for="examinationName">Name</label>
             </div>
@@ -48,13 +58,20 @@
                 <input mdbInput [(ngModel)]="examination.roomType" type="text" id="examinationType" name="examinationType" class="form-control" disabled>
                 <label for="examinationType">Type</label>
             </div>
+            <div class="md-form mt-0">
+              <mat-form-field class="form-full-width"> 
+                  <input matInput [(ngModel)]="predefinedExaminationDate" name="predefinedExaminationDate" [matDatepicker]="picker1" required placeholder="Date" (dateChange)="OnPredefinedDateChange($event)" [hidden]="disableDiscount">
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+            </div>
             <!-- Duration -->
             <div class="md-form mt-0">
                 <input mdbInput [(ngModel)]="examination.duration" type="text" id="duration" name="duration" class="form-control" disabled>
                 <label for="duration">Duration</label>
             </div>
-            <!-- Type -->
-            <div class="md-form mt-0">
+            <!-- Requested date & time -->
+            <div class="md-form mt-0" [hidden]="!disableDiscount">
                 <input mdbInput [(ngModel)]="requestedDateTime" type="text" id="examinationDateTime" name="examinationDateTime" class="form-control" disabled>
                 <label for="examinationDateTime">Requested date & time</label>
             </div>
@@ -66,11 +83,11 @@
             <!-- Discount -->
             <div class="md-form mt-0"  [hidden]="disableDiscount">
                 <input mdbInput [(ngModel)]="examination.discount" type="text" id="examinationDiscount" name="examinationDiscount" class="form-control">
-                <label for="examinationPrice">Discount</label>
+                <label for="examinationPrice">Discount(%)</label>
             </div>
             <!-- Price with discount -->
             <div class="md-form mt-0"  [hidden]="disableDiscount">
-                <input mdbInput [(ngModel)]="examination.price" type="text" id="examinationPriceWithDiscount" name="examinationPriceWithDiscount" class="form-control">
+                <input mdbInput [value]="examination.price * (1 - examination.discount/100.0)" type="text" id="examinationPriceWithDiscount" name="examinationPriceWithDiscount" class="form-control" disabled>
                 <label for="examinationPrice">Price with discount(€)</label>
             </div>
         </div> 
@@ -149,7 +166,7 @@
                         <td>{{room.number}}</td>
                         <td>{{room.roomType}}</td>
                         <td>
-                          <button mdbBtn size="sm" mdbWavesEffect  class="btn-info btn-sm btn" (click)="getRoomFreeTerms(room)" [disabled]="room.numberOfExaminations != 0">Free terms</button>
+                          <button mdbBtn size="sm" mdbWavesEffect  class="btn-info btn-sm btn" (click)="getRoomFreeTerms(room)">Free terms</button>
                         </td>
                       </tr>
                     </tbody>
@@ -191,7 +208,7 @@
         <div class="col-1"></div>
     </div>
     <hr/>
-    <!-- Choosen date (and discount) -->
+    <!-- Choosen date & time -->
     <div class="row">
         <div class="col-1"></div>
         <div class="col-10"><h4>Chose Date time, from <b>{{termStart}}</b> to <b>{{termEnd}}</b></h4></div>
@@ -219,6 +236,7 @@
         </div>
         <div class="col-1"></div>
     </div>
+    <!-- Confirm button-->
     <div class="row">
         <div class="col-1"></div>
         <div class="col-7"></div>
@@ -228,7 +246,6 @@
         </div>
         <div class="col-1"></div>
     </div>
-    <!-- Confirm button-->
     <div class="row"><p></p></div>
     <div class="row"><p></p></div>
     <div class="row"><p></p></div>
@@ -261,6 +278,7 @@
     </div>
 </div>
 
+<!-- Success modal -->
 <div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-notify modal-success" role="document">
@@ -268,7 +286,7 @@
     <div class="modal-content">
       <!--Header-->
       <div class="modal-header text-center">
-        <h4 class="modal-title white-text w-100 font-weight-bold py-2">Examination approved.</h4>
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">{{succesMessage}}</h4>
         <button type="button" class="close" data-dismiss="modal" (click)="successModal.hide()" aria-label="Close">
           <span aria-hidden="true" class="white-text">&times;</span>
         </button>
@@ -277,7 +295,7 @@
       <!--Body-->
       <div class="modal-body">
         <div class="md-form">
-          <label class="m1-0">Examination approved succesfully.</label>
+          <label class="m1-0">{{succesMessage}}</label>
         </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">

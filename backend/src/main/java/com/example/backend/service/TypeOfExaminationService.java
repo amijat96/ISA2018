@@ -14,6 +14,8 @@ public interface TypeOfExaminationService {
 
     TypeOfExamination updateTypeOfExamination(Integer id, TypeOfExaminationRequestDTO typeOfExaminationRequestDTO);
 
+    TypeOfExamination getTypeOfExamination(Integer id);
+
     boolean deleteTypeOfExamination(Integer id);
 
     List<User> getDoctorBySpecialization(Integer id);

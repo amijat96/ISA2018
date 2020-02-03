@@ -17,4 +17,7 @@ export class ExaminationService {
   approveExamination(examination: Examination) {
     return this.httpClient.put(baseUrl + 'examinations/approve-examination/' + examination.examinationId, examination, httpOptions);
   }
+  createExamination(examination: Examination) {
+    return this.httpClient.post(baseUrl + 'examinations', examination, httpOptions);
+  }
 }

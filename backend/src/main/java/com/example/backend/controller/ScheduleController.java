@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.ScheduleRequestDTO;
+import com.example.backend.dto.request.SchedulesRequestDTO;
 import com.example.backend.dto.response.ScheduleResponseDTO;
 import com.example.backend.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/schedule")
+@RequestMapping(path = "/schedules")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
@@ -29,6 +32,14 @@ public class ScheduleController {
         return ResponseEntity.ok(new ScheduleResponseDTO(scheduleService.getScheduleById(id)));
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_ADMIN')")
+    @PutMapping()
+    public ResponseEntity<List<ScheduleResponseDTO>> getSchedules(SchedulesRequestDTO schedulesRequestDTO) {
+        return ResponseEntity.ok(scheduleService.getSchedules(schedulesRequestDTO)
+                .stream()
+                .map(ScheduleResponseDTO::new)
+                .collect(Collectors.toList()));
+    }
     @PostMapping
     @PreAuthorize("hasRole('ROLE_CLINIC_ADMIN')")
     @Transactional

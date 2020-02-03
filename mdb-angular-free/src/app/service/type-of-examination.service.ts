@@ -29,8 +29,11 @@ export class TypeOfExaminationService {
   }
 
   getDoctorsBySpecialiyation(id: number) {
-    return this.httpClient.get<User[]>(baseUrl + 'types-of-examination/' + id, httpOptions);
+    return this.httpClient.get<User[]>(baseUrl + 'types-of-examination/specialization/' + id, httpOptions);
+  }
 
+  getTypeOfExamination(id: number) {
+    return this.httpClient.get<TypeOfExamination>(baseUrl + 'types-of-examination/' + id, httpOptions);
   }
  
 }

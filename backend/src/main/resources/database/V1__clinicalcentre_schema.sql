@@ -109,11 +109,11 @@ create table DOCTORSPECIALIZATION
 create table EXAMINATION
 (
    ID_EXAMINATION       int not null AUTO_INCREMENT,
-   ID_USER              int not null,
-   ID_ROOM              int not null,
+   ID_USER              int,
+   ID_ROOM              int,
    ID_ROOM_TYPE         int not null,
    ID_DOCTOR            int not null,
-   ID_PRICELIST         int,
+   ID_PRICELIST         int not null,
    PREDEFINED           bool not null,
    FINISHED             bool not null,
    DISCOUNT             decimal not null,

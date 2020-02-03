@@ -66,6 +66,12 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
     }
 
     @Override
+    public TypeOfExamination getTypeOfExamination(Integer id) {
+        return typeOfExaminationRepository.findById(id)
+                .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id."));
+    }
+
+    @Override
     public boolean deleteTypeOfExamination(Integer id) {
         TypeOfExamination typeOfExamination = typeOfExaminationRepository.findById(id)
                 .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id."));

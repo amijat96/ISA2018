@@ -11,8 +11,9 @@ import { MdbTableDirective, ModalDirective } from 'angular-bootstrap-md';
 import { FreeTermsRequest } from 'src/app/model/freeTermsRequest';
 import { TypeOfExamination } from 'src/app/model/typeOfExamination';
 import { FreeTerm } from 'src/app/model/roomFreeTerms';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { PriceListService } from 'src/app/service/price-list.service';
+import { PriceList } from 'src/app/model/priceList';
 
 @Component({
   selector: 'app-examination',
@@ -52,13 +53,19 @@ export class ExaminationComponent implements OnInit {
   examinationTime: string;
   examinationDate: Date;
   disableConfirmButton = true;
+  priceListItems: PriceList[] = [];
+  priceListItem: PriceList;
+  examinationPriceWithDiscount = this.examination.price * (1 - (this.examination.discount / 100.0));
+  predefinedExaminationDate: Date;
+  succesMessage;
 
   constructor(
     private examinationService: ExaminationService, 
     private userService: UserService, 
     private typeOfExaminationService: TypeOfExaminationService, 
     private roomService: RoomService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private priceListService: PriceListService
     ) {
     this.validatingForm = new FormGroup({
       dateControl: new FormControl(null, [ Validators.required]),
@@ -70,7 +77,8 @@ export class ExaminationComponent implements OnInit {
   get timeInput() { return this.validatingForm.get('timeInput'); }
   
   ngOnInit() {
-    if(window.location.href.substring(49, 11) != '/predefined') {
+    //request
+    if(window.location.href.substring(48, window.location.href.length) != '/predefined') {
       this.examinationService.getExamination(Number(window.location.href.substring(49, window.location.href.length))).subscribe(
         (data: Examination) => {
           this.examination = data;
@@ -103,12 +111,17 @@ export class ExaminationComponent implements OnInit {
       )
       
     }
+    //predefined
     else {
-      console.log('predefined');
+      this.examination = new Examination();
+      this.disableDiscount = false;
+      this.priceListService.getPriceList().subscribe(
+        res => this.priceListItems = res
+      )
     }
   }
 
-  @HostListener('input') oninput() { this.searchItems(); }
+  @HostListener('inputRoom') oninput() { this.searchItems(); }
 
   searchItems() { 
     const prev = this.mdbTable.getDataSource();
@@ -123,25 +136,28 @@ export class ExaminationComponent implements OnInit {
   }
 
   onDoctorChanged(event) {
-    this.userService.getUserByUsername(this.examination.doctorUsername).subscribe(res => { 
-      this.doctor = res;
-      var request = new FreeTermsRequest();
-      request.doctorId = res.id;
-      if(this.examination.roomType == 'EXAMINATION') request.roomTypeId = 1;
-      else request.roomTypeId = 2;
-      request.dateTime = this.examination.dateTime;
-      request.duration = this.examination.duration;
-      this.freeTerms = [];
-      this.roomService.getFreeTerms(request).subscribe((res: FreeTerm[]) => this.freeTerms = res,
-        error => { this.errorMessage = error.error.message;  this.errorModal.show()}
-        );
-    });
-    this.selectedRoom = new Room();
-    this.roomFreeTerms = [];
-    this.roomFreeTerms = [];
-    this.dateTimeHidden = true;
-    this.termStart = '';
-    this.termEnd = '';
+    if(this.examination.doctorUsername != null) {
+      this.userService.getUserByUsername(this.examination.doctorUsername).subscribe(res => { 
+        this.doctor = res;
+        var request = new FreeTermsRequest();
+        request.doctorId = res.id;
+        if(this.examination.roomType == 'EXAMINATION') request.roomTypeId = 1;
+        else request.roomTypeId = 2;
+        request.dateTime = this.examination.dateTime;
+        request.duration = this.examination.duration;
+        this.freeTerms = [];
+        this.roomService.getFreeTerms(request).subscribe((res: FreeTerm[]) => this.freeTerms = res,
+          error => { this.errorMessage = error.error.message;  this.errorModal.show()}
+          );
+      });
+      this.selectedRoom = new Room();
+      this.roomFreeTerms = [];
+      this.roomFreeTerms = [];
+      this.dateTimeHidden = true;
+      this.termStart = '';
+      this.termEnd = '';
+      console.log(this.examinationPriceWithDiscount);
+    }
   }
 
   getRoomFreeTerms(room :Room) {
@@ -166,25 +182,92 @@ export class ExaminationComponent implements OnInit {
       var startDate = new Date(this.datePipe.transform(this.selectedTerm.startDateTime,"MMM d, y, HH:mm:ss"))
       var endDate = new Date(this.datePipe.transform(this.selectedTerm.endDateTime,"MMM d, y, HH:mm:ss"))
 
-      if( examDate < startDate || examDate > endDate) { console.log('ne valjaa'); this.disableConfirmButton = true; }
-      else { this.disableConfirmButton = false; console.log('valjaaa');}
+      if( examDate < startDate || examDate > endDate) { this.disableConfirmButton = true; }
+      else { this.disableConfirmButton = false; }
     }
     else this.disableConfirmButton = true;
   }
 
   approveExamination() {
-    console.log(this.examination);
     this.examination.dateTime = new Date(this.datePipe.transform(this.examinationDate,"MMM d, y, HH:mm:ss"));
     this.examination.roomId = this.selectedRoom.roomId;
     this.examination.doctorId = this.doctor.id;
-    this.examinationService.approveExamination(this.examination).subscribe(
-      (data: Examination) => {
-        this.successModal.show();
-      },
-      error => {
-        this.errorMessage = error.error.message;  
-        this.errorModal.show();
+    if(this.disableDiscount) {
+      this.examinationService.approveExamination(this.examination).subscribe(
+        (data: Examination) => {
+          this.successModal.show();
+          this.succesMessage = 'Examination approved succesfully.';
+        },
+        error => {
+          this.errorMessage = error.error.message;  
+          this.errorModal.show();
+        }
+      )
+    }
+    else {
+      console.log(this.examination.doctorId);
+      this.examination.roomId = this.selectedRoom.roomId;
+      this.examinationService.createExamination(this.examination).subscribe(
+        (data: Examination) => {
+          this.successModal.show();
+          this.succesMessage = 'Predefined examination created.';
+        },
+        error => {
+          this.errorMessage = error.error.message;  
+          this.errorModal.show();
+        }
+      )
+    }
+  }
+
+  onTypeChanged(event) {
+    this.examination.priceListId = this.priceListItem.priceListId;
+    this.examination.price = this.priceListItem.price;
+    this.typeOfExaminationService.getTypeOfExamination(this.priceListItem.typeOfExaminationId).subscribe(
+      typeOfExamination => {
+        this.examination.typeId = typeOfExamination.id;
+        this.typeOfExaminationService.getDoctorsBySpecialiyation(typeOfExamination.id).subscribe(res => { this.doctorsBySpecialization = res});
+        this.examination.typeName = typeOfExamination.typeName;
+
+        if(typeOfExamination.roomTypeId == 1) this.examination.roomType = 'EXAMINATION';
+          else this.examination.roomType = 'OPERATION';
+
+        this.examination.duration = typeOfExamination.duration;
+        this.roomService.getClinicRooms().subscribe(res => {
+          res.forEach(room => 
+          {
+            if(room.roomType == this.examination.roomType) {
+              this.rooms.push(room);
+            }
+          }) 
+        });
       }
-    )
+    );
+  }
+
+  OnPredefinedDateChange($event){
+    this.examination.dateTime = this.predefinedExaminationDate;
+    this.examination.dateTime.setHours(1,0,0);
+    if(this.examination.doctorUsername != '' && this.examination.typeId != 0) {
+      this.userService.getUserByUsername(this.examination.doctorUsername).subscribe(res => { 
+        this.doctor = res;
+        var request = new FreeTermsRequest();
+        request.doctorId = res.id;
+        if(this.examination.roomType == 'EXAMINATION') request.roomTypeId = 1;
+        else request.roomTypeId = 2;
+        request.dateTime = this.examination.dateTime;
+        request.duration = this.examination.duration;
+        this.freeTerms = [];
+        this.roomService.getFreeTerms(request).subscribe((res: FreeTerm[]) => this.freeTerms = res,
+          error => { this.errorMessage = error.error.message;  this.errorModal.show(); this.examination.doctorUsername = ''}
+          );
+      });
+      this.selectedRoom = new Room();
+      this.roomFreeTerms = [];
+      this.roomFreeTerms = [];
+      this.dateTimeHidden = true;
+      this.termStart = '';
+      this.termEnd = '';
+    }
   }
 }

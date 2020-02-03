@@ -1,9 +1,14 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ScheduleRequestDTO;
+import com.example.backend.dto.request.SchedulesRequestDTO;
+import com.example.backend.exception.ClinicNotFoundException;
 import com.example.backend.exception.ScheduleNotFoundException;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.model.Clinic;
 import com.example.backend.model.Schedule;
+import com.example.backend.model.User;
+import com.example.backend.repository.ClinicRepository;
 import com.example.backend.repository.ScheduleRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.ScheduleService;
@@ -11,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -19,10 +27,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final UserRepository userRepository;
 
+    private final ClinicRepository clinicRepository;
+
     @Autowired
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, UserRepository userRepository) {
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, UserRepository userRepository, ClinicRepository clinicRepository) {
         this.scheduleRepository = scheduleRepository;
         this.userRepository = userRepository;
+        this.clinicRepository = clinicRepository;
     }
 
     @Override
@@ -68,5 +79,26 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .orElseThrow(() -> new ScheduleNotFoundException("Could not find schedule with id : " + id));
         schedule.setDeleted(true);
         return true;
+    }
+
+    @Override
+    public List<Schedule> getSchedules(SchedulesRequestDTO schedulesRequestDTO) {
+        Clinic clinic = clinicRepository.findById(schedulesRequestDTO.getClinicId())
+                .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id"));
+        List<User> medicalStaff = clinic.getUsers()
+                .stream()
+                .filter(u -> (u.getRole().getRoleId() == 3 || u.getRole().getRoleId() == 4) && !u.isDeleted())
+                .collect(Collectors.toList());
+        List<Schedule> schedules = new ArrayList<>();
+        for (User user: medicalStaff) {
+            schedules.addAll(user.getSchedules()
+                    .stream()
+                    .filter(s -> ( (schedulesRequestDTO.getStartDate().isBefore(s.getStartDateSchedule()) || schedulesRequestDTO.getStartDate().isEqual(s.getStartDateSchedule()))
+                            && (schedulesRequestDTO.getEndDate().isAfter(s.getStartDateSchedule()) || schedulesRequestDTO.getEndDate().isEqual(s.getStartDateSchedule())) ) ||
+                                ( (schedulesRequestDTO.getStartDate().isBefore(s.getEndDateSchedule()) || schedulesRequestDTO.getStartDate().isEqual(s.getEndDateSchedule()))
+                            && (schedulesRequestDTO.getEndDate().isAfter(s.getEndDateSchedule()) || schedulesRequestDTO.getEndDate().isEqual(s.getEndDateSchedule())) ))
+                    .collect(Collectors.toList()));
+        }
+        return schedules;
     }
 }

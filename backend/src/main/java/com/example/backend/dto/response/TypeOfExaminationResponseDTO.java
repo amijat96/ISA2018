@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class TypeOfExaminationResponseDTO {
 
-    private Integer typeOfExaminationId;
+    private Integer id;
 
     private String name;
 
@@ -28,7 +28,7 @@ public class TypeOfExaminationResponseDTO {
     private Integer numberOfDoctorsOrPriceLists;
 
     public TypeOfExaminationResponseDTO(TypeOfExamination typeOfExamination) {
-        this.typeOfExaminationId = typeOfExamination.getTypeOfExaminationId();
+        this.id = typeOfExamination.getTypeOfExaminationId();
         this.name = typeOfExamination.getName();
         this.description = typeOfExamination.getDescription();
         this.duration = typeOfExamination.getDuration();

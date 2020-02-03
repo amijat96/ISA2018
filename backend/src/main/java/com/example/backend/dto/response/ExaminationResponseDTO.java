@@ -58,8 +58,10 @@ public class ExaminationResponseDTO {
         this.examinationId = examination.getExaminationId();
         this.duration = examination.getPriceList().getTypeOfExamination().getDuration();
         //user
-        this.userId = examination.getUser().getUserId();
-        this.userUsername = examination.getUser().getUsername();
+        if(examination.getUser() != null) {
+            this.userId = examination.getUser().getUserId();
+            this.userUsername = examination.getUser().getUsername();
+        }
         //room
         if(examination.getRoom() != null) {
             this.roomId = examination.getRoom().getRoomId();

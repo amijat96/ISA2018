@@ -16,6 +16,14 @@ public class ScheduleResponseDTO {
 
     private Integer doctorId;
 
+    private String doctorUsername;
+
+    private String doctorName;
+
+    private String doctorLastName;
+
+    private String role;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
@@ -27,6 +35,10 @@ public class ScheduleResponseDTO {
     public ScheduleResponseDTO(Schedule schedule) {
         this.scheduleId = schedule.getScheduleId();
         this.doctorId = schedule.getUser().getUserId();
+        this.doctorUsername = schedule.getUser().getUsername();
+        this.doctorName = schedule.getUser().getName();
+        this.doctorLastName = schedule.getUser().getLastName();
+        this.role = schedule.getUser().getRole().getName();
         this.startDate = schedule.getStartDateSchedule();
         this.endDate = schedule.getEndDateSchedule();
         this.shiftStartTime = schedule.getShiftStartTime();

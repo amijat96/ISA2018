@@ -117,8 +117,8 @@ public class RoomServiceImpl implements RoomService {
                 //Doctors schedule for examination date
                 Schedule schedule = doctor.getSchedules()
                         .stream()
-                        .filter(s -> (s.getStartDateSchedule().isBefore(dateIterator) || s.getEndDateSchedule().isEqual(dateIterator)))
-                        .filter(s -> (s.getStartDateSchedule().isBefore(dateIterator) || s.getEndDateSchedule().isEqual(dateIterator)))
+                        .filter(s -> (s.getStartDateSchedule().isBefore(dateIterator) || s.getStartDateSchedule().isEqual(dateIterator)))
+                        .filter(s -> (s.getEndDateSchedule().isAfter(dateIterator) || s.getEndDateSchedule().isEqual(dateIterator)))
                         .findFirst()
                         .orElseThrow(() -> new DoctorNotWorkException("Doctor doesn't work."));
 

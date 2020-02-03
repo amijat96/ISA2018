@@ -47,6 +47,9 @@ public class ExaminationServiceImpl implements ExaminationService {
         if(examinationRequestDTO.getUserId() != 0)
             examination.setUser(userRepository.findById(examinationRequestDTO.getUserId())
                     .orElseThrow(() -> new UserNotFoundException("Could not find user with given id.")));
+        if(examinationRequestDTO.getRoomId() != 0)
+            examination.setRoom(roomRepository.findById(examinationRequestDTO.getRoomId())
+            .orElseThrow(() -> new RoomNotFoundException("Could not find room with given id")));
         examination.setRoomType(roomTypeRepository.findById(examinationRequestDTO.getTypeId())
                 .orElseThrow(() -> new RoomTypeNotFoundException("Could not find type with given id.")));
         User doctor = userRepository.findById(examinationRequestDTO.getDoctorId())
@@ -95,12 +98,12 @@ public class ExaminationServiceImpl implements ExaminationService {
                 .orElseThrow(() -> new DoctorNotWorkException("Doctor with given id doesn't work that day."));
 
         //Start and end time of shift of day when user want's examination
-        DateTime startDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftStartTime());
+        /*DateTime startDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftStartTime());
         DateTime endDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftEndTime());
 
         if(examinationRequestDTO.getDateTime().getMillis() <= startDateTime.getMillis() || examinationRequestDTO.getDateTime().getMillis() > endDateTime.getMillis()){
             throw new DoctorNotWorkException("Doctor with given id doesn't work at that time.");
-        }
+        }*/
 
     }
 
