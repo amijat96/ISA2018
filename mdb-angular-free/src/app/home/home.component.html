@@ -32,13 +32,16 @@
                     <!--Body-->
                     <div class="md-form">
                       <i class="fas fa-user prefix text-white active"></i>
-                      <input type="text" [(ngModel)]="login.usernameOrEmail" name="username" id="form2" class="text-white form-control" mdbInput>
+                      <input type="text" [(ngModel)]="login.usernameOrEmail" name="username" id="form2" class="text-white form-control" (ngModelChange) ="hideLabel($event)" mdbInput>
                       <label for="form2"  class="text-white">Your username or email</label>
                     </div>
                     <div class="md-form">
                       <i class=" fas fa-lock prefix text-white active"></i>
-                      <input type="password"  [(ngModel)]="login.password" name="password" id="form4" class="text-white form-control" mdbInput>
+                      <input type="password"  [(ngModel)]="login.password" name="password" id="form4" class="text-white form-control" (ngModelChange) ="hideLabel($event)" mdbInput>
                       <label for="form4" class="text-white">Your password</label>
+                    </div>
+                    <div [hidden] = "loginSuccessful" style="background-color: #ff8a80; border-color: #d50000; border-style: solid; text-align: center; height: 30px;">
+                      <label style="color: #d50000;">Invalid username/e-mail or password</label>
                     </div>
                     <div class="text-center mt-4">
                       <button mdbBtn color="primary" type="submit" mdbWavesEffect>Sign up</button>

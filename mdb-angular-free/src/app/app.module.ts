@@ -28,6 +28,7 @@ import { MyAccountComponent } from './component/my-account/my-account.component'
 import { ReportComponent } from './component/report/report.component';
 import { ExaminationsComponent } from './component/examinations/examinations.component';
 import { ExaminationComponent } from './component/examination/examination.component';
+import { ScheduleComponent } from './component/schedule/schedule.component';
 
 const routes: Routes = [
   {
@@ -100,6 +101,10 @@ const routes: Routes = [
       {
         path: 'report',
         component: ReportComponent
+      },
+      {
+        path: 'schedule',
+        component: ScheduleComponent
       }
     ]
   },
@@ -123,7 +128,8 @@ const routes: Routes = [
     MyAccountComponent,
     ReportComponent,
     ExaminationsComponent,
-    ExaminationComponent
+    ExaminationComponent,
+    ScheduleComponent
   ],
   imports: [
     BrowserModule,

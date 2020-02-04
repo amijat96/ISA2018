@@ -38,9 +38,10 @@
         <li class="nav-item dropdown" id="schedules" dropdown>
           <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
             Schedules<span class="caret"></span></a>
-          <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
-            <a class="dropdown-item waves-light" mdbWavesEffect href="#">Work</a>
+          <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu" [class.active]="schedule()">
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/schedule">Work</a>
             <div class="divider dropdown-divider"></div>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="#">Vacation</a>
             <a class="dropdown-item waves-light" mdbWavesEffect href="#">Vacation requests</a>
           </div>
         </li>

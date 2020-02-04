@@ -4,6 +4,7 @@ import com.example.backend.dto.request.ScheduleRequestDTO;
 import com.example.backend.dto.request.SchedulesRequestDTO;
 import com.example.backend.exception.ClinicNotFoundException;
 import com.example.backend.exception.ScheduleNotFoundException;
+import com.example.backend.exception.UserHaveVacationException;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.model.Clinic;
 import com.example.backend.model.Schedule;
@@ -46,9 +47,20 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Transactional
     public Schedule createSchedule(ScheduleRequestDTO scheduleRequestDTO) {
         Schedule schedule = new Schedule();
-        schedule.setUser(userRepository.findById(scheduleRequestDTO.getDoctorId())
-                .orElseThrow(() -> new UserNotFoundException("Could nod find doctor with id : " + scheduleRequestDTO.getDoctorId())));
+        User user = userRepository.findById(scheduleRequestDTO.getDoctorId())
+                .orElseThrow(() -> new UserNotFoundException("Could nod find doctor with id : " + scheduleRequestDTO.getDoctorId()));
+        schedule.setUser(user);
         if(schedule.getUser().getRole().getRoleId() != 3 && schedule.getUser().getRole().getRoleId() != 4) throw new UserNotFoundException("User with id=" + schedule.getUser().getUserId() + " is not doctor or nurse.");
+
+        if(user.getVacations()
+                .stream()
+                .filter(v -> ( (v.getStartDate().isAfter(scheduleRequestDTO.getStartDate()) || v.getStartDate().isEqual(scheduleRequestDTO.getStartDate()))
+                            && (v.getStartDate().isBefore(scheduleRequestDTO.getEndDate()) || v.getStartDate().isEqual(scheduleRequestDTO.getEndDate())) ) ||
+                            ( (v.getEndDate().isAfter(scheduleRequestDTO.getStartDate()) || v.getEndDate().isEqual(scheduleRequestDTO.getStartDate()))
+                            && (v.getEndDate().isBefore(scheduleRequestDTO.getEndDate()) || v.getEndDate().isEqual(scheduleRequestDTO.getEndDate())) ) )
+                .collect(Collectors.toList())
+                .size() > 0 ) { throw new UserHaveVacationException("User have vacation in that period"); }
+
         schedule.setStartDateSchedule(scheduleRequestDTO.getStartDate());
         schedule.setEndDateSchedule(scheduleRequestDTO.getEndDate());
         schedule.setShiftStartTime(scheduleRequestDTO.getShiftStartTime());
@@ -62,9 +74,19 @@ public class ScheduleServiceImpl implements ScheduleService {
     public Schedule updateSchedule(Integer id, ScheduleRequestDTO scheduleRequestDTO) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("Could not find schedule with id : " + id));
-        schedule.setUser(userRepository.findById(scheduleRequestDTO.getDoctorId())
-                .orElseThrow(() -> new UserNotFoundException("Could nod find doctor with id : " + scheduleRequestDTO.getDoctorId())));
+        User user = userRepository.findById(scheduleRequestDTO.getDoctorId())
+                .orElseThrow(() -> new UserNotFoundException("Could nod find doctor with id : " + scheduleRequestDTO.getDoctorId()));
+        schedule.setUser(user);
         if(schedule.getUser().getRole().getRoleId() != 3 && schedule.getUser().getRole().getRoleId() != 4) throw new UserNotFoundException("User with id=" + schedule.getUser().getUserId() + " is not doctor or nurse.");
+
+        if(user.getVacations()
+                .stream()
+                .filter(v -> ( (v.getStartDate().isAfter(scheduleRequestDTO.getStartDate()) || v.getStartDate().isEqual(scheduleRequestDTO.getStartDate()))
+                        && (v.getStartDate().isBefore(scheduleRequestDTO.getEndDate()) || v.getStartDate().isEqual(scheduleRequestDTO.getEndDate())) ) ||
+                        ( (v.getEndDate().isAfter(scheduleRequestDTO.getStartDate()) || v.getEndDate().isEqual(scheduleRequestDTO.getStartDate()))
+                                && (v.getEndDate().isBefore(scheduleRequestDTO.getEndDate()) || v.getEndDate().isEqual(scheduleRequestDTO.getEndDate())) ) )
+                .collect(Collectors.toList())
+                .size() > 0 ) { throw new UserHaveVacationException("User have vacation in that period"); }
         schedule.setStartDateSchedule(scheduleRequestDTO.getStartDate());
         schedule.setEndDateSchedule(scheduleRequestDTO.getEndDate());
         schedule.setShiftStartTime(scheduleRequestDTO.getShiftStartTime());
@@ -78,6 +100,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("Could not find schedule with id : " + id));
         schedule.setDeleted(true);
+        scheduleRepository.save(schedule);
         return true;
     }
 
@@ -93,10 +116,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         for (User user: medicalStaff) {
             schedules.addAll(user.getSchedules()
                     .stream()
-                    .filter(s -> ( (schedulesRequestDTO.getStartDate().isBefore(s.getStartDateSchedule()) || schedulesRequestDTO.getStartDate().isEqual(s.getStartDateSchedule()))
+                    .filter(s -> !s.isDeleted() && (( (schedulesRequestDTO.getStartDate().isBefore(s.getStartDateSchedule()) || schedulesRequestDTO.getStartDate().isEqual(s.getStartDateSchedule()))
                             && (schedulesRequestDTO.getEndDate().isAfter(s.getStartDateSchedule()) || schedulesRequestDTO.getEndDate().isEqual(s.getStartDateSchedule())) ) ||
                                 ( (schedulesRequestDTO.getStartDate().isBefore(s.getEndDateSchedule()) || schedulesRequestDTO.getStartDate().isEqual(s.getEndDateSchedule()))
-                            && (schedulesRequestDTO.getEndDate().isAfter(s.getEndDateSchedule()) || schedulesRequestDTO.getEndDate().isEqual(s.getEndDateSchedule())) ))
+                            && (schedulesRequestDTO.getEndDate().isAfter(s.getEndDateSchedule()) || schedulesRequestDTO.getEndDate().isEqual(s.getEndDateSchedule())) )) ||
+                            (s.getStartDateSchedule().isBefore(schedulesRequestDTO.getStartDate()) && s.getEndDateSchedule().isAfter(schedulesRequestDTO.getEndDate())))
                     .collect(Collectors.toList()));
         }
         return schedules;

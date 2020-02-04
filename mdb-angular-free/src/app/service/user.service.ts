@@ -11,7 +11,7 @@ export class UserService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getMedicalStaff():Observable<User[]> {
+  getMedicalStaff(){
     return this.httpClient.get<User[]>(baseUrl + 'users/' + localStorage.getItem('clinicId') + '/medical-staff', httpOptions);
   }
 

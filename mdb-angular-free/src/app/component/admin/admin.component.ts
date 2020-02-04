@@ -66,7 +66,9 @@ export class AdminComponent implements OnInit {
   report() {
     return window.location.href == "http://localhost:4200/admin-profile/report";
   }
-
+  schedule() {
+    return window.location.href == "http://localhost:4200/admin-profile/schedule";
+  }
   logOut() {
     this.authService.logOut();
   }

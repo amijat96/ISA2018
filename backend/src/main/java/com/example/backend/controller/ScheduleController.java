@@ -32,30 +32,30 @@ public class ScheduleController {
         return ResponseEntity.ok(new ScheduleResponseDTO(scheduleService.getScheduleById(id)));
     }
 
-    @PreAuthorize("hasRole('ROLE_CLINIC_ADMIN')")
-    @PutMapping()
-    public ResponseEntity<List<ScheduleResponseDTO>> getSchedules(SchedulesRequestDTO schedulesRequestDTO) {
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
+    @PutMapping
+    public ResponseEntity<List<ScheduleResponseDTO>> getSchedules(@Valid @RequestBody SchedulesRequestDTO schedulesRequestDTO) {
         return ResponseEntity.ok(scheduleService.getSchedules(schedulesRequestDTO)
                 .stream()
                 .map(ScheduleResponseDTO::new)
                 .collect(Collectors.toList()));
     }
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_CLINIC_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
     @Transactional
     public ResponseEntity<ScheduleResponseDTO> createSchedule(@Valid @RequestBody ScheduleRequestDTO scheduleRequestDTO) {
         return ResponseEntity.ok(new ScheduleResponseDTO(scheduleService.createSchedule(scheduleRequestDTO)));
     }
 
     @PutMapping(path = "/{id}")
-    @PreAuthorize("hasRole('ROLE_CLINIC_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
     @Transactional
     public ResponseEntity<ScheduleResponseDTO> updateSchedule(@PathVariable Integer id, @Valid @RequestBody ScheduleRequestDTO scheduleRequestDTO) {
         return ResponseEntity.ok(new ScheduleResponseDTO(scheduleService.updateSchedule(id, scheduleRequestDTO)));
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasRole('ROLE_CLINIC_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
     public ResponseEntity<ApiResponse> deleteSchedule(@PathVariable Integer id) {
         if(scheduleService.deleteSchedule(id)) {
             return ResponseEntity.ok(new ApiResponse(true, "Room deleted successfully.", new ArrayList<>()));

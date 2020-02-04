@@ -3,7 +3,7 @@ package com.example.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,10 +31,10 @@ public class Vacation implements Serializable {
     private boolean accepted;
 
     @Column(name = "START_DATE")
-    private DateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "END_DATE")
-    private DateTime endDate;
+    private LocalDate endDate;
 
     @Column(name = "DESCRIPTION")
     private String description;

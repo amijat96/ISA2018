@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import java.util.stream.Collectors;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,6 +34,8 @@ public class ScheduleResponseDTO {
 
     private LocalTime shiftEndTime;
 
+    private Integer numberOfExaminations;
+
     public ScheduleResponseDTO(Schedule schedule) {
         this.scheduleId = schedule.getScheduleId();
         this.doctorId = schedule.getUser().getUserId();
@@ -43,5 +47,11 @@ public class ScheduleResponseDTO {
         this.endDate = schedule.getEndDateSchedule();
         this.shiftStartTime = schedule.getShiftStartTime();
         this.shiftEndTime = schedule.getShiftEndTime();
+        this.numberOfExaminations = schedule.getUser().getDoctorExaminations()
+                .stream()
+                .filter(e ->!e.isDeleted() && ((e.getDateTime().toLocalDate().isAfter(schedule.getStartDateSchedule()) || e.getDateTime().toLocalDate().isEqual(schedule.getStartDateSchedule())) &&
+                        (e.getDateTime().toLocalDate().isBefore(schedule.getEndDateSchedule()) || e.getDateTime().toLocalDate().isEqual(schedule.getEndDateSchedule()))))
+                .collect(Collectors.toList())
+                .size();
     }
 }

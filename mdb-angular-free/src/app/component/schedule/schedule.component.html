@@ -1,0 +1,210 @@
+<div style="min-height: 100vh;">
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"> 
+        <div class="col-2"></div>
+        <div class="col-3">
+            <mat-form-field class="form-full-width">
+              <input matInput [(ngModel)]="fromDate" name="fromDate" [matDatepicker]="picker1" (ngModelChange)="getSchedules()" placeholder="From date" >
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-3">
+            <mat-form-field class="form-full-width"> 
+              <input matInput [(ngModel)]="toDate" name="toDate" [matDatepicker]="picker" (ngModelChange)="getSchedules()" placeholder="To date" >
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-2"></div>
+    </div> 
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="md-form">
+                <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect (click)="createScheduleModal()">New</button>
+            </div>
+        </div>  
+        <div class="col-md-4 mx-auto">
+            <div class="md-form">
+                <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+                <label for="search">Search</label>
+             </div>
+        </div>
+    </div>
+    <div class="mx-3">
+        <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+            <thead class="black white-text">
+                <tr>
+                    <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="schedules" [sortBy]="headElementsModel[i]">
+                     {{head}} <mdb-icon fas *ngIf="i < 6" icon="sort"></mdb-icon>
+                    </th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let schedule of schedules; let i = index" style="text-align: center;">
+                    <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{schedule.scheduleId}}</th>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{schedule.doctorUsername}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{schedule.doctorName}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{schedule.doctorLastName}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{schedule.startDate | date: 'mediumDate'}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{schedule.endDate | date: 'mediumDate'}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{schedule.shiftStartTime | slice:0:5}}-{{schedule.shiftEndTime | slice:0:5}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                        <button mdbBtn color="warning" size="sm" mdbWavesEffect type="button" class="btn-warning btn-sm btn" (click)="updateScheduleModal(schedule)" [disabled]="schedule.numberOfExaminations != 0">Edit</button>
+                        <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" (click)="deleteScheduleModal(schedule)" [disabled]="schedule.numberOfExaminations != 0">Delete</button>
+                    </td>   
+                </tr>
+            </tbody>
+            <tfoot class="grey lighten-5 w-100">
+                <tr>
+                    <td colspan="8">
+                    <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="schedules"></mdb-table-pagination>
+                    </td>
+                </tr>
+            <tfoot>
+        </table>  
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>    
+</div>
+
+<!-- Create Schedule Modal-->
+<div mdbModal #newScheduleModal="mdbModal"  class="modal fade top" id="newScheduleModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header text-center">
+                <h4 class="modal-title white-text w-100 font-weight-bold py-2">New schedule</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="newScheduleModal.hide()">
+                    <span aria-hidden="true" class="white-text">&times;</span>
+                </button>
+            </div>
+
+            <form #createScheduleForm="ngForm" (ngSubmit)="createSchedule()">
+            <!--Body-->
+            <div class="modal-body"  >
+                <div class="md-form mt-0">
+                    <mat-form-field class="col-12">
+                        <mat-select name="doctorId" [(ngModel)] ="schedule.doctorId" id="doctorId" placeholder="User" required>
+                            <mat-option value="0">--</mat-option>
+                            <mat-option *ngFor="let user of medicalStaff" [value]="user.id">{{user.username}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="schedule.doctorId < 1">Please choose user</mat-error>
+                    </mat-form-field>
+                </div> 
+                <div class="md-form mt-0">
+                    <mat-form-field class="form-full-width"  [formGroup]="validatingForm"> 
+                        <input matInput [(ngModel)]="schedule.startDate" formControlName="startDateControl" name="scheduleStartDate" [matDatepicker]="picker3" required placeholder="Start Date" (dateChange)="OnDateTimeChange($event)">
+                        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                        <mat-datepicker #picker3></mat-datepicker>
+                    </mat-form-field>s
+                    <mat-form-field class="form-full-width"  [formGroup]="validatingForm"> 
+                        <input matInput [(ngModel)]="schedule.endDate" formControlName="endDateControl" name="scheduleEndDate" [matDatepicker]="picker4" required placeholder="End Date" (dateChange)="OnDateTimeChange($event)">
+                        <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                        <mat-datepicker #picker4></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="md-form mt-0">
+                    <div class="md-form"  [formGroup]="validatingForm">   
+                        <input type="time"  id="scheduleShiftStartTime" [(ngModel)]="schedule.shiftStartTime" formControlName="startTimeControl" class="form-control" mdbInput required/>
+                        <label for="scheduleShiftStartTime" style="text-align: left;">Shift Start Time</label>
+                    </div>
+                    <div class="md-form"  [formGroup]="validatingForm">   
+                        <input type="time"  id="scheduleShiftEndTime" [(ngModel)]="schedule.shiftEndTime" formControlName="endTimeControl" class="form-control" mdbInput required/>
+                        <label for="scheduleShiftEndTime" style="text-align: left;">Shift End Time</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button mdbWavesEffect type="submit" class="btn btn-primary" [disabled]="validatingForm.invalid || schedule.doctorId==0 || createDisabled">Create</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Room Modal-->
+<div mdbModal #editScheduleModal="mdbModal"  class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-warning" role="document">
+        <!--Content-->
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header text-center">
+                <h4 class="modal-title white-text w-100 font-weight-bold py-2">Edit schedule</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="editScheduleModal.hide()">
+                    <span aria-hidden="true" class="white-text">&times;</span>
+                </button>
+            </div>
+            <form #updateScheduleForm="ngForm" (ngSubmit)="updateSchedule()">
+            <!--Body-->
+            <div class="modal-body"  >
+                <div class="md-form mt-0">
+                    <mat-form-field class="col-12">
+                        <mat-select name="doctorId" [(ngModel)] ="schedule.doctorId" id="doctorId" placeholder="User" required>
+                            <mat-option value="0">--</mat-option>
+                            <mat-option *ngFor="let user of medicalStaff" [value]="user.id">{{user.username}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="schedule.doctorId < 1">Please choose user</mat-error>
+                    </mat-form-field>
+                </div> 
+                <div class="md-form mt-0">
+                    <mat-form-field class="form-full-width"  [formGroup]="validatingEditForm"> 
+                        <input matInput [(ngModel)]="schedule.startDate" formControlName="editStartDateControl" name="scheduleStartDate" [matDatepicker]="picker5" required placeholder="Start Date" (dateChange)="OnDateTimeChange($event)">
+                        <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+                        <mat-datepicker #picker5></mat-datepicker>
+                    </mat-form-field>s
+                    <mat-form-field class="form-full-width"  [formGroup]="validatingEditForm"> 
+                        <input matInput [(ngModel)]="schedule.endDate" formControlName="editEndDateControl" name="scheduleEndDate" [matDatepicker]="picker6" required placeholder="End Date" (dateChange)="OnDateTimeChange($event)">
+                        <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+                        <mat-datepicker #picker6></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="md-form mt-0">
+                    <div class="md-form"  [formGroup]="validatingEditForm">   
+                        <input type="time"  id="editScheduleShiftStartTime" [(ngModel)]="schedule.shiftStartTime" formControlName="editStartTimeControl" class="form-control" mdbInput required/>
+                        <label for="scheduleShiftStartTime" style="text-align: left;">Shift Start Time</label>
+                    </div>
+                    <div class="md-form"  [formGroup]="validatingEditForm">   
+                        <input type="time"  id="editScheduleShiftEndTime" [(ngModel)]="schedule.shiftEndTime" formControlName="editEndTimeControl" class="form-control" mdbInput required/>
+                        <label for="scheduleShiftEndTime" style="text-align: left;">Shift End Time</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button mdbWavesEffect type="submit" class="btn btn-warning">Update</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Room Modal-->
+<div mdbModal #confirmDeleteScheduleModal="mdbModal"  class="modal fade top" id="confirmDeleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+        <!--Content-->
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header text-center">
+            <h4 class="modal-title white-text w-100 font-weight-bold py-2">Confirm deleting</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="confirmDeleteScheduleModal.hide()">
+                <span aria-hidden="true" class="white-text">&times;</span>
+            </button>
+            </div>
+            <!--Body-->
+            <div class="modal-body"  >        
+            <div class="md-form mt-0">
+                <label>Are you sure you want to delete schedule permanently?</label>
+            </div>     
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button mdbWavesEffect type="button" class="btn btn-danger" (click)="deleteSchedule()">Yes</button>
+                <a type="button" mdbBtn color="danger" outline="true" class="waves-effect" mdbWavesEffec (click)="confirmDeleteScheduleModal.hide()">No</a>
+            </div>
+        </div>
+    </div>
+</div>

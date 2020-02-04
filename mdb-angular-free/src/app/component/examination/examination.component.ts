@@ -156,7 +156,6 @@ export class ExaminationComponent implements OnInit {
       this.dateTimeHidden = true;
       this.termStart = '';
       this.termEnd = '';
-      console.log(this.examinationPriceWithDiscount);
     }
   }
 
@@ -243,6 +242,12 @@ export class ExaminationComponent implements OnInit {
         });
       }
     );
+    this.selectedRoom = new Room();
+    this.roomFreeTerms = [];
+    this.roomFreeTerms = [];
+    this.dateTimeHidden = true;
+    this.termStart = '';
+    this.termEnd = '';
   }
 
   OnPredefinedDateChange($event){

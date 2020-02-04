@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
   login: Login = new Login();
   success: boolean = true;
   errorMessage: string = "";
+  loginSuccessful = true;
 
   constructor(private authService: AuthService, private router: Router) { console.log(this.router.url); }
 
@@ -28,8 +29,12 @@ export class HomeComponent implements OnInit {
           default: this.router.navigate([""]);
         }
       },
-      error => { this.errorMessage = error.error.message; this.success = false; }
+      error => { this.errorMessage = error.error.message; this.success = false; this.loginSuccessful = false}
     );
+  }
+
+  hideLabel(event) {
+    this.loginSuccessful = true;
   }
 
 }
