@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/room")
+@RequestMapping(path = "/rooms")
 public class RoomController {
 
     private final RoomService roomService;
@@ -47,7 +47,7 @@ public class RoomController {
         return ResponseEntity.ok(new RoomResponseDTO(roomService.getRoomById(id)));
     }
 
-    @GetMapping(path = "/free-terms")
+    @PutMapping(path = "/free-terms")
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
     public ResponseEntity<List<RoomFreeTermsResponseDTO>> getFreeTerms(@Valid @RequestBody RoomFreeTermsRequestDTO roomFreeTermsRequestDTO) {
         return ResponseEntity.ok(roomService.getClinicFreeTerms(roomFreeTermsRequestDTO));
@@ -55,7 +55,7 @@ public class RoomController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
-    public ResponseEntity<RoomResponseDTO> createRoom(@Valid @RequestBody RoomRequestDTO roomRequestDTO) {
+    public ResponseEntity<RoomResponseDTO> createRoom(@RequestBody RoomRequestDTO roomRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new RoomResponseDTO(roomService.createRoom(roomRequestDTO)));
     }
 

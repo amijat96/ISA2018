@@ -1,0 +1,58 @@
+<div style="min-height: 100vh;">
+    <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div class="md-form">
+      <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect (click)="createRoomModal()">New</button>
+      </div>
+    </div>  
+    <div class="col-md-4 mx-auto">
+      <div class="md-form">
+        <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+        <label for="search">Search</label>
+      </div>
+    </div>
+    </div>
+    <div class="mx-3">
+    <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+        <thead class="black white-text">
+          <tr>
+            <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="examinations" [sortBy]="headElementsModel[i]">
+              {{head}} <mdb-icon fas icon="sort"></mdb-icon>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let examination of examinations; let i = index" style="text-align: center;">
+            <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{examination.examinationId}}</th>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{examination.userUsername}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{examination.dateTime | date:'short' : '+0100'}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{examination.typeName}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{examination.doctorUsername}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{examination.roomType}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" [hidden] = "!buttonDisabled">{{examination.roomFloor}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" [hidden] = "!buttonDisabled">{{examination.roomNumber}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" [hidden] = "!buttonDisabled">{{examination.price}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" [hidden] = "!buttonDisabled">{{examination.discount}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" [hidden] = "!buttonDisabled">{{examination.predefined}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" [hidden] = "!buttonDisabled">{{examination.accepted}}</td> 
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" [hidden] = "buttonDisabled">
+                <a size="sm" mdbWavesEffect type="button" class="btn-info btn-sm btn" href="admin-profile/examinations/{{examination.examinationId}}">Approve</a>
+            </td>   
+        </tr>
+        </tbody>
+        <tfoot class="grey lighten-5 w-100">
+          <tr [hidden]="!buttonDisabled">
+            <td colspan="12">
+              <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="examinations"></mdb-table-pagination>
+            </td>
+          </tr>
+          <tr [hidden]="buttonDisabled">
+            <td colspan="7">
+              <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="examinations"></mdb-table-pagination>
+            </td>
+          </tr>
+        <tfoot>
+      </table>
+      
+    </div>
+  </div>

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/city")
+@RequestMapping(path = "/cities")
 public class CityController {
 
     private final CityService cityService;

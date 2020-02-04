@@ -1,6 +1,9 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ClinicRequestDTO;
+import com.example.backend.dto.request.ReportRequestDTO;
+import com.example.backend.dto.response.ReportByFrequencyDTO;
+import com.example.backend.dto.response.ReportResponseDTO;
 import com.example.backend.exception.ClinicNotFoundException;
 import com.example.backend.exception.DeletionException;
 import com.example.backend.exception.ExaminationNotFoundException;
@@ -9,6 +12,7 @@ import com.example.backend.repository.CityRepository;
 import com.example.backend.repository.ClinicRepository;
 import com.example.backend.service.ClinicService;
 import org.joda.time.LocalDate;
+import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,7 @@ public class ClinicServiceImpl implements ClinicService {
         this.clinicRepository = clinicRepository;
         this.cityRepository = cityRepository;
     }
+
     @Override
     public List<Clinic> getClinics() {
         return clinicRepository.findAll();
@@ -112,10 +117,26 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public double getClinicRevenues(Integer clinicId, LocalDate startDate, LocalDate endDate) {
-       return getClinicExaminations(clinicId, startDate, endDate).stream().filter(e -> e.isFinished()).map(e -> e.getPriceList().getPrice()).collect(Collectors.summingDouble(Double::doubleValue));
+       return getClinicExaminations(clinicId, startDate, endDate).stream().filter(e -> e.isFinished()).map(e -> e.getPriceList().getPrice() *(1.0 - e.getDiscount()/100.0)).collect(Collectors.summingDouble(Double::doubleValue));
     }
 
     @Override
+    public List<Examination> getAllClinicExaminations(Integer clinicId) {
+        List<User> users = getClinic(clinicId).getUsers()
+                .stream()
+                .filter(u -> u.getRole().getRoleId() == 3)
+                .collect(Collectors.toList());
+        List<Examination> examinations = new ArrayList<>();
+        for(User user : users) {
+            examinations.addAll(user.getDoctorExaminations()
+                    .stream()
+                    .filter(e -> !e.isDeleted())
+                    .collect(Collectors.toList()));
+        }
+        return examinations;
+    }
+
+
     public List<Examination> getClinicExaminations(Integer clinicId, LocalDate startDate, LocalDate endDate) {
         List<Room> rooms = getClinic(clinicId).getRooms();
         List<Examination> examinations = new ArrayList<>();
@@ -129,11 +150,124 @@ public class ClinicServiceImpl implements ClinicService {
         return examinations;
     }
 
+
+    public List<Examination> getClinicExaminationsFromDateToDate(Integer clinicId, LocalDate startDate, LocalDate endDate) {
+        List<Room> rooms = getClinic(clinicId).getRooms();
+        List<Examination> examinations = new ArrayList<>();
+        for(Room room : rooms) {
+            examinations.addAll(room.getExaminations()
+                    .stream()
+                    .filter(e -> (e.getDateTime().toLocalDate().isAfter(startDate) || e.getDateTime().toLocalDate().isEqual(startDate)) && (e.getDateTime().toLocalDate().isBefore(endDate)))
+                    .collect(Collectors.toList()));
+        }
+        return examinations;
+    }
+
     @Override
     public double getClinicGrade(Integer clinicId) {
-        List<Examination> examinations = getClinicExaminations(clinicId, new LocalDate(1970, 1, 1) , LocalDate.now());
+        List<Examination> examinations = getAllClinicExaminations(clinicId);
         return examinations.stream().map(e -> e.getGradeClinic()).collect(Collectors.summingDouble(Double::doubleValue))
                 /examinations.stream().filter(e -> e.getGradeClinic() != 0).collect(Collectors.toList()).size();
+    }
+
+    @Override
+    public ReportResponseDTO getReport(Integer id, ReportRequestDTO reportRequestDTO) {
+        ReportResponseDTO reportResponse = new ReportResponseDTO();
+        List<ReportByFrequencyDTO> reports = new ArrayList<>();
+
+        //set revenues
+        reportResponse.setRevenues(getClinicRevenues(id, reportRequestDTO.getFromDate(), reportRequestDTO.getToDate()));
+
+        LocalDate startDate = reportRequestDTO.getFromDate();
+        LocalDate endDate = reportRequestDTO.getToDate();
+
+        //Daily report
+        if(reportRequestDTO.getFrequency() == 0) {
+            while(startDate.isBefore(endDate)) {
+                ReportByFrequencyDTO reportByFrequency = new ReportByFrequencyDTO();
+                reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate, startDate.plusDays(1))
+                        .stream()
+                        .filter(e -> !e.isDeleted())
+                        .collect(Collectors.toList())
+                        .size());
+                reportByFrequency.setPeriod(startDate.toString());
+                startDate = startDate.plusDays(1);
+                reports.add(reportByFrequency);
+            }
+        }
+        //Weekly report
+        else if(reportRequestDTO.getFrequency() == 1) {
+            boolean periodLesThanWeek = false;
+            Period period = new Period(startDate, endDate);
+            while(startDate.isBefore(endDate)) {
+                ReportByFrequencyDTO reportByFrequency = new ReportByFrequencyDTO();
+
+                if(periodLesThanWeek) {
+                    reportByFrequency.setPeriod(startDate.toString() + " - " + endDate.toString());
+                    reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate, endDate)
+                            .stream()
+                            .filter(e -> !e.isDeleted())
+                            .collect(Collectors.toList())
+                            .size());
+                }
+                 else {
+                    reportByFrequency.setPeriod(startDate.toString() + " - " + startDate.plusWeeks(1).toString());
+                    reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate, startDate.plusWeeks(1))
+                            .stream()
+                            .filter(e -> !e.isDeleted())
+                            .collect(Collectors.toList())
+                            .size());
+                }
+                startDate = startDate.plusWeeks(1);
+                reports.add(reportByFrequency);
+            }
+        }
+        //Monthly report
+        else if(reportRequestDTO.getFrequency() == 2) {
+
+            boolean firstReport = true;
+            if(startDate.getDayOfMonth() == 1) firstReport = false;
+
+            boolean periodLesThanMonth = false;
+            if(endDate.getYear() == startDate.getYear() && endDate.getMonthOfYear() <= startDate.getMonthOfYear()) periodLesThanMonth = true;
+
+            while(startDate.isBefore(endDate)) {
+                ReportByFrequencyDTO reportByFrequency = new ReportByFrequencyDTO();
+
+                if(periodLesThanMonth){
+                    reportByFrequency.setPeriod(startDate.getDayOfMonth() +".-" + endDate.getDayOfMonth() + ". " + endDate.toString("MMM"));
+                    reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate, endDate)
+                            .stream()
+                            .filter(e -> !e.isDeleted())
+                            .collect(Collectors.toList())
+                            .size());
+                }
+                else {
+                    reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate,  new LocalDate(startDate.plusMonths(1).getYear(), startDate.getMonthOfYear() + 1, 1 ))
+                            .stream()
+                            .filter(e -> !e.isDeleted())
+                            .collect(Collectors.toList())
+                            .size());
+                    //if start date isn't first day of some month show it on diagram
+                    if (firstReport) {
+                        reportByFrequency.setPeriod(startDate.getDayOfMonth() + ".-" + startDate.dayOfMonth().getMaximumValue() + ". " + startDate.toString("MMM"));
+                        firstReport = false;
+                    } else {
+                        reportByFrequency.setPeriod(startDate.toString("MMM"));
+                    }
+                }
+                startDate = new LocalDate(startDate.plusMonths(1).getYear(), startDate.getMonthOfYear() + 1, 1 );
+                if(!periodLesThanMonth){
+                    //if end date isn't last day of month, show it on diagram
+                    if (!startDate.isBefore(endDate) && endDate.getDayOfMonth() < endDate.dayOfMonth().getMaximumValue()) {
+                        reportByFrequency.setPeriod("1" + ".-" + endDate.getDayOfMonth() + ". " + endDate.toString("MMM"));
+                    }
+                }
+                reports.add(reportByFrequency);
+            }
+        }
+        reportResponse.setReports(reports);
+        return reportResponse;
     }
 }
 

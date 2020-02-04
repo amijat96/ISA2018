@@ -2,10 +2,7 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ExaminationRequestDTO;
 import com.example.backend.exception.*;
-import com.example.backend.model.Examination;
-import com.example.backend.model.PriceList;
-import com.example.backend.model.Schedule;
-import com.example.backend.model.User;
+import com.example.backend.model.*;
 import com.example.backend.repository.*;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.ExaminationService;
@@ -50,6 +47,9 @@ public class ExaminationServiceImpl implements ExaminationService {
         if(examinationRequestDTO.getUserId() != 0)
             examination.setUser(userRepository.findById(examinationRequestDTO.getUserId())
                     .orElseThrow(() -> new UserNotFoundException("Could not find user with given id.")));
+        if(examinationRequestDTO.getRoomId() != 0)
+            examination.setRoom(roomRepository.findById(examinationRequestDTO.getRoomId())
+            .orElseThrow(() -> new RoomNotFoundException("Could not find room with given id")));
         examination.setRoomType(roomTypeRepository.findById(examinationRequestDTO.getTypeId())
                 .orElseThrow(() -> new RoomTypeNotFoundException("Could not find type with given id.")));
         User doctor = userRepository.findById(examinationRequestDTO.getDoctorId())
@@ -98,12 +98,12 @@ public class ExaminationServiceImpl implements ExaminationService {
                 .orElseThrow(() -> new DoctorNotWorkException("Doctor with given id doesn't work that day."));
 
         //Start and end time of shift of day when user want's examination
-        DateTime startDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftStartTime());
+        /*DateTime startDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftStartTime());
         DateTime endDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftEndTime());
 
         if(examinationRequestDTO.getDateTime().getMillis() <= startDateTime.getMillis() || examinationRequestDTO.getDateTime().getMillis() > endDateTime.getMillis()){
             throw new DoctorNotWorkException("Doctor with given id doesn't work at that time.");
-        }
+        }*/
 
     }
 
@@ -153,5 +153,13 @@ public class ExaminationServiceImpl implements ExaminationService {
             throw new ExaminationModificationTimeExpiredException("Can't modify examination now.");
         }
         return examinationId;
-    };
+    }
+
+    @Override
+    public Examination getExamination(Integer id) {
+        return examinationRepository.findById(id)
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id"));
+    }
+
+    ;
 }

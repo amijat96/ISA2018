@@ -1,10 +1,7 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.PriceListRequestDTO;
-import com.example.backend.exception.ClinicNotFoundException;
-import com.example.backend.exception.PriceListNotFoundException;
-import com.example.backend.exception.PriceListNotUpdatedException;
-import com.example.backend.exception.TypeOfExaminationNotFoundException;
+import com.example.backend.exception.*;
 import com.example.backend.model.Clinic;
 import com.example.backend.model.Examination;
 import com.example.backend.model.PriceList;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +55,15 @@ public class PriceListServiceImpl implements PriceListService {
     public PriceList createPriceList(PriceListRequestDTO priceListRequestDTO) {
         Clinic clinic = clinicRepository.findById(priceListRequestDTO.getClinicId())
                 .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with id : " + priceListRequestDTO.getClinicId()));
+        //if item with given type of examination already exist in clinic, throw exception
+        if (getPriceListByClinic(clinic.getClinicId())
+                .stream()
+                .filter(i -> i.getTypeOfExamination().getTypeOfExaminationId() == priceListRequestDTO.getTypeOfExaminationId())
+                .filter(i -> !i.isDeleted())
+                .findFirst()
+                .isPresent()) {
+            throw new PriceListAlreadyExistException("Item already exist in price list.");
+        }
         TypeOfExamination typeOfExamination = typeOfExaminationRepository.findById(priceListRequestDTO.getTypeOfExaminationId())
                 .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with id : " + priceListRequestDTO.getTypeOfExaminationId()));
         PriceList priceList = new PriceList();
@@ -64,6 +71,7 @@ public class PriceListServiceImpl implements PriceListService {
         priceList.setClinic(clinic);
         priceList.setTypeOfExamination(typeOfExamination);
         priceList.setPrice(priceListRequestDTO.getPrice());
+        priceList.setExaminations(new ArrayList<>());
         priceListRepository.save(priceList);
         return (priceList);
     }
@@ -74,7 +82,7 @@ public class PriceListServiceImpl implements PriceListService {
         PriceList priceList = getPriceListById(priceListId);
         List<Examination> examinations = priceList.getExaminations()
                 .stream()
-                .filter(e -> !e.isFinished())
+                .filter(e ->!e.isDeleted())
                 .collect(Collectors.toList());
 
         if(examinations.size() == 0 && !priceList.isDeleted()) {
@@ -98,10 +106,9 @@ public class PriceListServiceImpl implements PriceListService {
         PriceList priceList = getPriceListById(priceListId);
         List<Examination> examinations = priceList.getExaminations()
                 .stream()
-                .filter(e -> !e.isFinished())
+                .filter(e -> !e.isFinished() && !e.isDeleted())
                 .collect(Collectors.toList());
-        if(examinations.size() == 0)
-        {
+        if(examinations.size() == 0) {
             priceList.setDeleted(true);
             priceListRepository.save(priceList);
             return true;

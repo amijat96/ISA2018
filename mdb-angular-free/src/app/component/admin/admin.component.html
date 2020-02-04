@@ -1,0 +1,109 @@
+<!--Navbar-->
+<div>
+<mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark blue lighten-1" [containerInside]="false">
+
+    <!-- Navbar brand -->
+    <mdb-navbar-brand ><a class="navbar-brand font-weight-bold" style="font-size: 35px;" [style.color]="clinicProfile()" href="admin-profile/clinic-profile">{{clinicName}}</a></mdb-navbar-brand><!-- add clinic name as logo -->
+  
+    <!-- Collapsible content -->
+    <links>
+  
+      <!-- Links -->
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item" [class.active]="rooms()" id="rooms" >
+          <a class="nav-link waves-light" href="admin-profile/rooms" mdbWavesEffect >Rooms<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item dropdown"  [class.active]="medicalStaff()" id="examinations" dropdown>
+          <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
+            Medical staff<span class="caret"></span></a>
+          <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/medical-staff">Show</a>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/medical-staff/register">Register</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown" [class.active]="examinations()" id="examinations" dropdown>
+            <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
+              Examinations<span class="caret"></span></a>
+            <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
+              <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations">Confirmed</a>
+              <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations/types-of-examination">Types</a>
+              <div class="divider dropdown-divider"></div>
+              <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations/predefined">Create predefined</a>
+              <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/examinations/requests">Requests</a>
+            </div>
+          </li>
+          <li class="nav-item" [class.active]="priceList()">
+            <a class="nav-link waves-light" href="admin-profile/price-list" mdbWavesEffect>Price list</a>
+        </li>
+        <li class="nav-item dropdown" id="schedules" dropdown [class.active]="schedule()">
+          <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
+            Schedules<span class="caret"></span></a>
+          <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu" >
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/schedule">Work</a>
+            <div class="divider dropdown-divider"></div>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/vacations">Vacation</a>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/vacations/requests">Vacation requests</a>
+          </div>
+        </li>
+        <li class="nav-item" id="report"  [class.active]="report()">
+            <a class="nav-link waves-light" href="admin-profile/report" mdbWavesEffect>Report</a>
+          </li>
+      </ul>
+      <!-- Links -->
+  
+      <ul class="navbar-nav ml-auto nav-flex-icons">
+        <li class="nav-item avatar dropdown" dropdown>
+          <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
+            <img src="/assets/images/avatar.png" alt="" class="img-fluid rounded-circle z-depth-0" style="width: 50px;"></a>
+          <div *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown dropdown-primary" role="menu">
+            <a class="dropdown-item waves-light" mdbWavesEffect (click)="changePasswordModal()">Change password</a>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="admin-profile/my-account">My account</a>
+            <div class="divider dropdown-divider"></div>
+            <a class="dropdown-item waves-light" mdbWavesEffect href="http://localhost:4200/" (click)="logOut()">Log out</a>
+          </div>
+        </li>
+      </ul>
+    </links>
+    <!-- Collapsible content -->
+  </mdb-navbar>
+</div>
+  <div style="background-color: gainsboro;">
+  <router-outlet></router-outlet>
+  </div>
+
+  <div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-notify modal-info" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">{{modalMessage}}</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="successModal.hide()" [disabled]="disableModal" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <form class="text-center border border-light p-5 white" (ngSubmit)="changePassword()" >
+
+      <div [formGroup]="passwordForm">
+        <div class="md-form mt-0" > 
+            <input mdbInput mdbValidate [(ngModel)]="password" formControlName="passwordControl" type="password" name="password" id="password" class="form-control">
+            <label for="password">Password *</label>
+            <mdb-error *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)">Size 8-20 chars</mdb-error>
+            <mdb-success *ngIf="passwordInput.valid && (passwordInput.dirty || passwordInput.touched)">ok</mdb-success>
+        </div>
+        <div class="md-form mt-0">
+            <input mdbInput mdbValidate formControlName="confirmPasswordControl" type="password" name="confirmPassword" id="confirmPassword" class="form-control">
+            <label for="confirmPassword">Confirm password</label>
+            <mdb-success *ngIf="confirmPasswordInput.valid && (passwordInput.dirty || passwordInput.touched)">Passwords match</mdb-success>
+            <mdb-error *ngIf="confirmPasswordInput.invalid && (passwordInput.dirty || passwordInput.touched)">Passwords do not match</mdb-error>
+        </div>
+      </div>
+      <div class="md-form mt-0">
+          <button mdbWavesEffect type="sumbit" class="btn btn-info" [disabled]="passwordForm.invalid" >Confirm</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>

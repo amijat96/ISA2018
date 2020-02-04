@@ -4,7 +4,9 @@ import com.example.backend.dto.JwtAuthDto;
 import com.example.backend.dto.request.DoctorFreeTermsRequestDTO;
 import com.example.backend.dto.request.LoginRequestDTO;
 import com.example.backend.dto.request.RegisterRequestDTO;
+import com.example.backend.dto.request.UserRequestDTO;
 import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
+import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.exception.*;
 import com.example.backend.model.*;
 import com.example.backend.repository.CityRepository;
@@ -75,7 +77,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("No user with given username or email found!"));
         if(user.isVerified() && user.isAdminApproved()) {
             String jwt = tokenProvider.generateAuthToken(authentication);
-            return new JwtAuthDto(jwt, user.getRole().getName());
+            if(user.getClinic() != null)
+                return new JwtAuthDto(jwt, user.getRole().getName(), user.getClinic().getClinicId(), user.getClinic().getName());
+            else
+                return new JwtAuthDto(jwt, user.getRole().getName(), null, null);
         } else if(!user.isVerified()){
             throw new EmailNotVerifiedException("Mail is not verified.");
         } else {
@@ -99,19 +104,17 @@ public class UserServiceImpl implements UserService {
         // Create address for user
         final City city = cityRepository.findById(registerRequestDTO.getCityId()).orElseThrow(() -> new ApiException("City not set!"));
 
-        // Find clinic
-        Clinic clinic = null;
-        if(registerRequestDTO.getClinicId() != 0)
-            clinic = clinicRepository.findById(registerRequestDTO.getClinicId()).orElseThrow(() -> new ApiException("Clinic not set!"));
 
         // Creating user's account
-        System.out.println("Date : " + registerRequestDTO.getDateOfBirth());
         User user = new User(registerRequestDTO);
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setRole(userRole);
         user.setCity(city);
-        if(clinic != null)
+        if(registerRequestDTO.getClinicId() != 0) {
+            final Clinic clinic = clinicRepository.findById(registerRequestDTO.getClinicId())
+                    .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
             user.setClinic(clinic);
+        }
         userRepository.save(user);
 
         return user;
@@ -215,9 +218,101 @@ public class UserServiceImpl implements UserService {
         return freeTerms;
     }
 
+    @Override
+    public List<UserResponseDTO> getClinicMedicalStaff(Integer clinicId) {
+        Clinic clinic = clinicRepository.findById(clinicId)
+                .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id"));
+        List<UserResponseDTO> medicalStaff = clinic.getUsers()
+                .stream()
+                .filter( u -> (u.getRole().getRoleId() ==3 || u.getRole().getRoleId() == 4) && !u.isDeleted())
+                .map(UserResponseDTO::new)
+                .collect(Collectors.toList());
+        for (UserResponseDTO user : medicalStaff) {
+            if(user.getRoleId() == 3) {
+                user.setDoctorGrade(doctorGrade(user));
+            }
+        }
+        return medicalStaff;
+    }
+
+    @Override
+    public boolean deleteUser(Integer id) {
+        LocalDate date = LocalDate.now();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %s not found.", Integer.toString(id))));
+        Integer schedules = user.getSchedules()
+                .stream()
+                .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
+                .collect(Collectors.toList())
+                .size();
+        if(schedules != 0) {
+            return false;
+        }
+        else {
+            user.setDeleted(true);
+            userRepository.save(user);
+            return true;
+        }
+    }
+
+    @Override
+    public User updateUser(UserRequestDTO userRequestDTO) {
+        User user = findByUsername(userRequestDTO.getUsername());
+
+        final City city = cityRepository.findById(userRequestDTO.getCityId())
+                .orElseThrow(() -> new ApiException("City not set!"));
+
+        if( userRepository.findAll()
+                .stream()
+                .filter(u -> u.getUsername() != userRequestDTO.getUsername() && u.getEmail().equals(userRequestDTO.getEmail()))
+                .collect(Collectors.toList())
+                .size() > 0) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        };
+        user.setEmail(userRequestDTO.getEmail());
+        user.setName(userRequestDTO.getName());
+        user.setLastName(userRequestDTO.getLastName());
+        user.setDateOfBirth(userRequestDTO.getDateOfBirth());
+        user.setGender(userRequestDTO.getGender());
+        user.setStreet(userRequestDTO.getStreet());
+        user.setPhone(userRequestDTO.getPhone());
+        user.setCity(city);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    @Override
+    public void changePassword(String username, String password) {
+        User user = findByUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setPasswordChanged(true);
+        userRepository.save(user);
+    }
+
     public static DateTime createDateTime(LocalDate date, LocalTime time) {
         return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
                 time.getHourOfDay(), time.getMinuteOfHour());
+    }
+
+    public double doctorGrade(UserResponseDTO user) {
+        List<Examination> examinations = findByUsername(user.getUsername()).getDoctorExaminations()
+                .stream()
+                .filter(e -> e.getGradeDoctor() >= 1)
+                .collect(Collectors.toList());
+        if (examinations.size() > 0) {
+            return examinations
+                    .stream()
+                    .map(e -> e.getGradeDoctor())
+                    .collect(Collectors.summingDouble(Double::doubleValue))
+                    /
+                    examinations
+                            .stream()
+                            .collect(Collectors.toList())
+                            .size();
+        } else {
+            return 0;
+        }
     }
 
 

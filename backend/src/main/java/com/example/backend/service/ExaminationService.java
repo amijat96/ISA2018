@@ -10,4 +10,6 @@ public interface ExaminationService {
     Examination approveExamination(Integer id, ExaminationRequestDTO examinationRequestDTO);
 
     Integer confirmExamination(String token);
+
+    Examination getExamination(Integer id);
 }

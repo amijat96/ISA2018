@@ -43,7 +43,6 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Room> getRoomByClinic(String username) {
-        System.out.println("Username : " + username);
         Clinic clinic = userRepository.findByUsername(username).getClinic();
         return clinic.getRooms().stream()
                 .filter(r -> !r.isDeleted())
@@ -68,6 +67,7 @@ public class RoomServiceImpl implements RoomService {
             .orElseThrow(() -> new RoomTypeNotFoundException("Could not find room type with given id.")));
         room.setNumber(roomRequestDTO.getNumber());
         room.setFloor(roomRequestDTO.getFloor());
+        room.setExaminations(new ArrayList<>());
         roomRepository.save(room);
         return room;
     }
@@ -97,7 +97,7 @@ public class RoomServiceImpl implements RoomService {
         //Find all rooms in the clinic, with same type as examination
         List<Room> rooms = clinic.getRooms()
                 .stream()
-                .filter(r -> r.getRoomType().getRoomTypeId() == roomFreeTermsRequestDTO.getRoomTypeId())
+                .filter(r -> r.getRoomType().getRoomTypeId() == roomFreeTermsRequestDTO.getRoomTypeId() && !r.isDeleted())
                 .collect(Collectors.toList());
 
         //Find free terms for every room
@@ -117,8 +117,8 @@ public class RoomServiceImpl implements RoomService {
                 //Doctors schedule for examination date
                 Schedule schedule = doctor.getSchedules()
                         .stream()
-                        .filter(s -> (s.getStartDateSchedule().isBefore(dateIterator) || s.getEndDateSchedule().isEqual(dateIterator)))
-                        .filter(s -> (s.getStartDateSchedule().isBefore(dateIterator) || s.getEndDateSchedule().isEqual(dateIterator)))
+                        .filter(s -> (s.getStartDateSchedule().isBefore(dateIterator) || s.getStartDateSchedule().isEqual(dateIterator)))
+                        .filter(s -> (s.getEndDateSchedule().isAfter(dateIterator) || s.getEndDateSchedule().isEqual(dateIterator)))
                         .findFirst()
                         .orElseThrow(() -> new DoctorNotWorkException("Doctor doesn't work."));
 

@@ -19,6 +19,8 @@ public class ClinicResponseDTO {
 
     private String name;
 
+    private Integer countryId;
+
     private Integer cityId;
 
     private String street;
@@ -41,6 +43,7 @@ public class ClinicResponseDTO {
         this.clinicId = clinic.getClinicId();
         this.name = clinic.getName();
         this.cityId = clinic.getCity().getCityId();
+        this.countryId = clinic.getCity().getCountry().getCountryId();
         this.street = clinic.getStreet();
         this.workTimeStart = clinic.getWorkTimeStart();
         this.workTimeEnd = clinic.getWorkTimeEnd();

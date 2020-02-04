@@ -1,0 +1,67 @@
+<div style="min-height: 100vh;">
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"> 
+        <div class="col-2"></div>
+        <div class="col-3">
+            <mat-form-field class="form-full-width">
+              <input matInput [(ngModel)]="fromDate" name="fromDate" [matDatepicker]="picker1" (ngModelChange)="getVacations()" placeholder="From date" >
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-3">
+            <mat-form-field class="form-full-width"> 
+              <input matInput [(ngModel)]="toDate" name="toDate" [matDatepicker]="picker" (ngModelChange)="getVacations()" placeholder="To date" >
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-2"></div>
+    </div> 
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="md-form">
+            </div>
+        </div>  
+        <div class="col-md-4 mx-auto">
+            <div class="md-form">
+                <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+                <label for="search">Search</label>
+             </div>
+        </div>
+    </div>
+    <div class="mx-3">
+        <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+            <thead class="black white-text">
+                <tr>
+                    <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="vacations" [sortBy]="headElementsModel[i]">
+                     {{head}} <mdb-icon fas *ngIf="i < 6" icon="sort"></mdb-icon>
+                    </th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let vacation of vacations; let i = index" style="text-align: center;">
+                    <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{vacation.vacationId}}</th>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.userUsername}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.startDate | date: 'mediumDate'}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.endDate | date: 'mediumDate'}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.accepted}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.description}}</td> 
+                </tr>
+            </tbody>
+            <tfoot class="grey lighten-5 w-100">
+                <tr>
+                    <td colspan="6">
+                    <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="vacations"></mdb-table-pagination>
+                    </td>
+                </tr>
+            <tfoot>
+        </table>  
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>    
+</div>

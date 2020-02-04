@@ -1,0 +1,306 @@
+<div> 
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <!-- Patient info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Patient:</h4></div>
+        <div class="col-7">
+            <div class="form-row">
+                <div class="col md-form mt-0">
+                    <!-- First name -->
+                    <input mdbInput [(ngModel)]="patient.name" type="text" name ="patientName" id="patientName" class="form-control" disabled>
+                    <label for="patientName">First name</label>
+                </div>
+                <div class="col md-form mt-0">
+                    <!-- Last name -->
+                    <input mdbInput [(ngModel)]="patient.lastName" type="text" name ="patientLastName" id="patientLastName" class="form-control" disabled>
+                    <label for="patientLastName">Last name</label>
+                </div>
+            </div>
+            <!-- Username -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="patient.username" type="text" name="patientUsername" id="patientUsername" class="form-control" disabled>
+                <label for="patientUsername">Username</label>
+            </div>
+            <!-- E-mail -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="patient.email" type="email" id="patientEmail" name="patientEmail" class="form-control" disabled>
+                <label for="patientEmail">E-mail</label>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Examination info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Examination:</h4></div>
+        <div class="col-7">
+            <!-- List of available types of examination-->
+            <div class="md-form mt-0" [hidden]="disableDiscount">
+              <mat-form-field class="form-full-width">
+                <mat-select [(ngModel)]="priceListItem" name="typeName" id="typeName" placeholder="Select type" required (selectionChange)="onTypeChanged($event)">
+                  <mat-option value="0">--</mat-option>
+                  <mat-option  *ngFor="let type of priceListItems" [value]="type">{{type.typeOfExaminationName}}</mat-option>
+                </mat-select>
+                <mat-error>Please choose type</mat-error>
+              </mat-form-field>
+            </div>
+            <!-- Name -->
+            <div class="md-form mt-0" [hidden]="!disableDiscount">
+                <input mdbInput [(ngModel)]="examination.typeName" type="text" name ="examinationName" id="examinationName" class="form-control" disabled>
+                <label for="examinationName">Name</label>
+            </div>
+            <!-- Type -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="examination.roomType" type="text" id="examinationType" name="examinationType" class="form-control" disabled>
+                <label for="examinationType">Type</label>
+            </div>
+            <div class="md-form mt-0">
+              <mat-form-field class="form-full-width"> 
+                  <input matInput [(ngModel)]="predefinedExaminationDate" name="predefinedExaminationDate" [matDatepicker]="picker1" required placeholder="Date" (dateChange)="OnPredefinedDateChange($event)" [hidden]="disableDiscount">
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <!-- Duration -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="examination.duration" type="text" id="duration" name="duration" class="form-control" disabled>
+                <label for="duration">Duration</label>
+            </div>
+            <!-- Requested date & time -->
+            <div class="md-form mt-0" [hidden]="!disableDiscount">
+                <input mdbInput [(ngModel)]="requestedDateTime" type="text" id="examinationDateTime" name="examinationDateTime" class="form-control" disabled>
+                <label for="examinationDateTime">Requested date & time</label>
+            </div>
+            <!-- Price -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="examination.price" type="text" id="examinationPrice" name="examinationPrice" class="form-control" disabled>
+                <label for="examinationPrice">Price(€)</label>
+            </div>
+            <!-- Discount -->
+            <div class="md-form mt-0"  [hidden]="disableDiscount">
+                <input mdbInput [(ngModel)]="examination.discount" type="text" id="examinationDiscount" name="examinationDiscount" class="form-control">
+                <label for="examinationPrice">Discount(%)</label>
+            </div>
+            <!-- Price with discount -->
+            <div class="md-form mt-0"  [hidden]="disableDiscount">
+                <input mdbInput [value]="examination.price * (1 - examination.discount/100.0)" type="text" id="examinationPriceWithDiscount" name="examinationPriceWithDiscount" class="form-control" disabled>
+                <label for="examinationPrice">Price with discount(€)</label>
+            </div>
+        </div> 
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Doctor info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Doctor:</h4></div>
+        <div class="col-7">
+            <div class="md-form mt-0">
+                <mat-form-field class="form-full-width">
+                  <mat-select [(ngModel)]="examination.doctorUsername" name="doctorUsername" id="doctorUsername" placeholder="Selected doctor" required (selectionChange)="onDoctorChanged($event)">
+                    <mat-option value="0">--</mat-option>
+                    <mat-option  *ngFor="let doctor of doctorsBySpecialization" [value]="doctor.username">{{doctor.username}}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="doctorUsername == ''">Please choose doctor</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="form-row">
+                <div class="col md-form mt-0">
+                    <!-- First name -->
+                    <input [(ngModel)]="doctor.name" mdbInput type="text" name ="doctorName" id="doctorName" class="form-control" disabled>
+                    <label for="doctorName">First name</label>
+                </div>
+                <div class="col md-form mt-0">
+                    <!-- Last name -->
+                    <input mdbInput [(ngModel)]="doctor.lastName" type="text" name ="doctorLastName" id="doctorLastName" class="form-control" disabled>
+                    <label for="doctorLastName">Last name</label>
+                </div>
+            </div>
+            <!-- Username -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="doctor.username" type="text" name ="doctorUsername" id="doctorUsername" class="form-control" disabled>
+                <label for="doctorUsername">Username</label>
+            </div>
+            <!-- E-mail -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="doctor.email" type="email" id="doctorEmail" name="doctorEmail" class="form-control" disabled>
+                <label for="doctorEmail">E-mail</label>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Room info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Rooms:</h4></div>
+        <div class="col-7">
+            <div>
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                    </div>  
+                    <div class="col-md-4 mx-auto">
+                    <div class="md-form">
+                        <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+                        <label for="search">Search by number</label>
+                    </div>
+                    </div>
+                </div>
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+                    <thead class="black white-text">
+                      <tr>
+                        <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="rooms" [sortBy]="headElementsModel[i]">
+                          {{head}} <mdb-icon fas *ngIf="i < 4" icon="sort"></mdb-icon>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let room of rooms; let i = index" style="text-align: center;">
+                        <th scope="row">{{room.roomId}}</th>
+                        <td>{{room.floor}}</td>
+                        <td>{{room.number}}</td>
+                        <td>{{room.roomType}}</td>
+                        <td>
+                          <button mdbBtn size="sm" mdbWavesEffect  class="btn-info btn-sm btn" (click)="getRoomFreeTerms(room)">Free terms</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- List of free terms by selected room-->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"><h4>Free terms, room {{selectedRoom.roomId + ', ' + selectedRoom.number}}:</h4></div>
+        <div class="col-7">
+            <div>
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table #tableEl="mdbTable" mdbTable id="freeTermsTable" style="margin-bottom: 0px;" striped="true">
+                    <thead class="black white-text">
+                      <tr>
+                        <th *ngFor="let head of freeTermsHeadElements; let i = index" scope="col" style="text-align: center;" aria-controls="freeTermsTable" [mdbTableSort]="rooms" [sortBy]="freeTermsHeadElementsModel[i]">
+                          {{head}} <mdb-icon fas *ngIf="i < 2" icon="sort"></mdb-icon>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let freeTerm of roomFreeTerms; let i = index" style="text-align: center;">
+                        <th scope="row">{{freeTerm.startDateTime  | date:'short' : '+0100'}}</th>
+                        <td>{{freeTerm.endDateTime | date:'short' : '+0100'}}</td>
+                        <td>
+                          <button mdbBtn size="sm" mdbWavesEffect  class="btn-info btn-sm btn" (click)="selectTerm(freeTerm)">Select</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Choosen date & time -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10"><h4>Chose Date time, from <b>{{termStart}}</b> to <b>{{termEnd}}</b></h4></div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3"></div>
+        <div class="col-7" [hidden] = "dateTimeHidden">
+            <div class="md-form mt-0">
+                <mat-form-field class="form-full-width"  [formGroup]="validatingForm"> 
+                    <input matInput [(ngModel)]="examinationDate" formControlName="dateControl" name="examinationDate" [matDatepicker]="picker" required placeholder="Date" (dateChange)="OnDateTimeChange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <div class="md-form"  [formGroup]="validatingForm">   
+                    <input type="time"  id="examinationTime" [(ngModel)]="examinationTime" formControlName="timeControl" class="form-control" mdbInput (change)="OnDateTimeChange($event)" required/>
+                    <label for="examinationTime" style="text-align: left;">Time</label>
+                </div>
+                <div class="md-form">
+                    <label [hidden] = "validatingForm.valid && !disableConfirmButton" style="color: red; text-align: left;">Date and time must be from selected free term</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <!-- Confirm button-->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-7"></div>
+        <div class="col-3 d-flex justify-content-center">
+            <button mdbBtn class="btn btn-info" type="submit" [disabled]="!(validatingForm.valid && !disableConfirmButton)" (click)="approveExamination()">Confirm</button>
+            <a type="button" mdbBtn color="info" outline="true" class="waves-effect" mdbWavesEffec href="/admin-profile/examinations">Cancel</a>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+</div>
+
+<!-- Error modal -->
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100">Error.</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+          <div class="md-form mb-5">
+            <label class="ml-0">{{errorMessage}}</label>
+          </div>
+        </div>
+  
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Success modal -->
+<div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-success" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">{{succesMessage}}</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="successModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+        <div class="md-form">
+          <label class="m1-0">{{succesMessage}}</label>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-success" onclick="location.href='http://localhost:4200/admin-profile/examinations'">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>

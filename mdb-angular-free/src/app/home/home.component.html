@@ -1,0 +1,60 @@
+<!--Main Navigation-->
+    <!--Intro Section-->
+    <section class="view intro-2">
+      <div class="full-bg-img mask rgba-gradient">
+        <div class="container flex-center">
+          <div class="d-flex align-items-center content-height w-100">
+            <div class="row flex-center pt-5 mt-3 w-100">
+              <div class="col-md-6 text-center text-md-left mb-5">
+                <div class="white-text">
+                  <h2 class="h1 h1-responsive font-bold wow fadeInLeft" data-wow-delay="0.3s">Register right
+                    now! </h2>
+                  <hr class="hr-light wow fadeInLeft" data-wow-delay="0.3s">
+                  <h6 class="wow fadeInLeft" data-wow-delay="0.3s">If you don't have account, just click on register button and finish registration in one minute.
+                  </h6>
+                  <br>
+                  <a mdbBtn color="white" outline="true" routerLink="/register" class="wow fadeInLeft waves-light" data-wow-delay="0.3s"
+                    mdbWavesEffect>Register</a>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-5 offset-xl-1">
+                <!--Form-->
+                <form #loginForm="ngForm" (ngSubmit)="onLogin()">
+                <mdb-card class="wow fadeInRight" data-wow-delay="0.3s">
+                  <mdb-card-body>
+                    <!--Header-->
+                    <div class="text-center">
+                      <h3 class="white-text">
+                        <mdb-icon fas icon="user" class="text-white"></mdb-icon> Sign in:</h3>
+                      <hr class="hr-light">
+                    </div>
+                    <!--Body-->
+                    <div class="md-form">
+                      <i class="fas fa-user prefix text-white active"></i>
+                      <input type="text" [(ngModel)]="login.usernameOrEmail" name="username" id="form2" class="text-white form-control" (ngModelChange) ="hideLabel($event)" mdbInput>
+                      <label for="form2"  class="text-white">Your username or email</label>
+                    </div>
+                    <div class="md-form">
+                      <i class=" fas fa-lock prefix text-white active"></i>
+                      <input type="password"  [(ngModel)]="login.password" name="password" id="form4" class="text-white form-control" (ngModelChange) ="hideLabel($event)" mdbInput>
+                      <label for="form4" class="text-white">Your password</label>
+                    </div>
+                    <div [hidden] = "loginSuccessful" style="background-color: #ff8a80; border-color: #d50000; border-style: solid; text-align: center; height: 30px;">
+                      <label style="color: #d50000;">Invalid username/e-mail or password</label>
+                    </div>
+                    <div class="text-center mt-4">
+                      <button mdbBtn color="primary" type="submit" mdbWavesEffect>Sign up</button>
+                    </div>
+                  </mdb-card-body>
+                </mdb-card>
+              </form>
+                <!--/.Form-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <!--Main Navigation-->

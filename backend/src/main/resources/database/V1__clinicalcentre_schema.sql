@@ -98,7 +98,7 @@ create table DIAGNOSIS
 /*==============================================================*/
 create table DOCTORSPECIALIZATION
 (
-   ID_TYPE_OF_EXAMINATION int not null AUTO_INCREMENT,
+   ID_TYPE_OF_EXAMINATION int not null,
    ID_USER              int not null,
    primary key (ID_TYPE_OF_EXAMINATION, ID_USER)
 );
@@ -109,11 +109,11 @@ create table DOCTORSPECIALIZATION
 create table EXAMINATION
 (
    ID_EXAMINATION       int not null AUTO_INCREMENT,
-   ID_USER              int not null,
-   ID_ROOM              int not null,
+   ID_USER              int,
+   ID_ROOM              int,
    ID_ROOM_TYPE         int not null,
    ID_DOCTOR            int not null,
-   ID_PRICELIST         int,
+   ID_PRICELIST         int not null,
    PREDEFINED           bool not null,
    FINISHED             bool not null,
    DISCOUNT             decimal not null,
@@ -297,7 +297,7 @@ create table VACATION
    ACCEPTED             bool not null,
    START_DATE           date not null,
    END_DATE             date not null,
-   DESCRIPTION          varchar(1024) not null,
+   DESCRIPTION          varchar(1024),
    DELETED              bool not null,
    primary key (ID_VACATION)
 );

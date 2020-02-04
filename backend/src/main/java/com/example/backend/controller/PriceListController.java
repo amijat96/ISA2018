@@ -10,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/priceList")
+@RequestMapping(path = "/price-list")
 public class PriceListController {
 
     private final PriceListService priceListService;
@@ -27,13 +27,13 @@ public class PriceListController {
         this.priceListService = priceListService;
     }
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<PriceListResponseDTO> getPriceList(@PathVariable Integer id) {
         return ResponseEntity.ok(new PriceListResponseDTO(priceListService.getPriceListById(id)));
     }
 
-    @GetMapping
-    public ResponseEntity<List<PriceListResponseDTO>> getPriceLists(@PathParam("id") Integer id) {
+    @GetMapping(path = "byClinic/{id}")
+    public ResponseEntity<List<PriceListResponseDTO>> getPriceLists(@PathVariable Integer id) {
         return ResponseEntity.ok(priceListService.getPriceListByClinic(id)
                                                 .stream()
                                                 .map(PriceListResponseDTO::new)
@@ -42,12 +42,14 @@ public class PriceListController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
+    @Transactional
     public ResponseEntity<PriceListResponseDTO> createPriceList(@Valid @RequestBody PriceListRequestDTO priceListRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new PriceListResponseDTO(priceListService.createPriceList(priceListRequestDTO)));
     }
 
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
+    @Transactional
     public ResponseEntity<PriceListResponseDTO> updatePriceList(@PathVariable Integer id, @Valid @RequestBody PriceListRequestDTO priceListRequestDTO) {
         return ResponseEntity.ok(new PriceListResponseDTO(priceListService.updatePriceList(id, priceListRequestDTO)));
     }

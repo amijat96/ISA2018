@@ -1,7 +1,10 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.request.ScheduleRequestDTO;
+import com.example.backend.dto.request.SchedulesRequestDTO;
 import com.example.backend.model.Schedule;
+
+import java.util.List;
 
 public interface ScheduleService {
 
@@ -13,4 +16,5 @@ public interface ScheduleService {
 
     boolean deleteSchedule(Integer id);
 
+    List<Schedule> getSchedules(SchedulesRequestDTO schedulesRequestDTO);
 }

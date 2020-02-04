@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.LocalDate;
 
+import java.util.stream.Collectors;
+
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDTO {
 
-    private int userId;
+    private int id;
 
     private String username;
 
@@ -20,38 +22,54 @@ public class UserResponseDTO {
 
     private String name;
 
-    private String lastname;
+    private String lastName;
 
     private String phone;
 
     private int gender;
 
-    private String roleName;
+    private Integer roleId;
 
     private String jbo;
 
-    private String cityName;
+    private Integer cityId;
+
+    private Integer countryId;
 
     private String street;
 
-    private String clinic;
+    private Integer clinicId;
 
     private LocalDate dateOfBirth;
 
+    private double doctorGrade;
+
+    private Integer numberOfSchedules;
+
+    private boolean passwordChanged;
+
     public UserResponseDTO(User user) {
-        this.userId = user.getUserId();
+        this.id = user.getUserId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.name = user.getName();
-        this.lastname = user.getLastName();
+        this.lastName = user.getLastName();
         this.phone = user.getPhone();
         this.gender = user.getGender();
-        this.roleName = user.getRole().getName();
-        this.cityName = user.getCity().getName();
+        this.roleId = user.getRole().getRoleId();
+        this.cityId = user.getCity().getCityId();
+        this.countryId = user.getCity().getCountry().getCountryId();
         this.street = user.getStreet();
         this.jbo = user.getJbo();
         this.dateOfBirth = user.getDateOfBirth();
+        this.passwordChanged = user.isPasswordChanged();
         if(user.getClinic() != null)
-            this.clinic = user.getClinic().getName();
+            this.clinicId = user.getClinic().getClinicId();
+        LocalDate date = LocalDate.now();
+        this.numberOfSchedules = user.getSchedules()
+                .stream()
+                .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
+                .collect(Collectors.toList())
+                .size();
     }
 }
