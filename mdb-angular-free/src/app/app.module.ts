@@ -29,6 +29,8 @@ import { ReportComponent } from './component/report/report.component';
 import { ExaminationsComponent } from './component/examinations/examinations.component';
 import { ExaminationComponent } from './component/examination/examination.component';
 import { ScheduleComponent } from './component/schedule/schedule.component';
+import { VacationsComponent } from './component/vacations/vacations.component';
+import { VacationRequestsComponent } from './component/vacation-requests/vacation-requests.component';
 
 const routes: Routes = [
   {
@@ -105,6 +107,20 @@ const routes: Routes = [
       {
         path: 'schedule',
         component: ScheduleComponent
+      },
+      {
+        path: 'vacations',
+        children:
+        [
+          {
+            path: '',
+            component: VacationsComponent
+          },
+          {
+            path: 'requests',
+            component: VacationRequestsComponent
+          }
+        ]
       }
     ]
   },
@@ -129,7 +145,9 @@ const routes: Routes = [
     ReportComponent,
     ExaminationsComponent,
     ExaminationComponent,
-    ScheduleComponent
+    ScheduleComponent,
+    VacationsComponent,
+    VacationRequestsComponent
   ],
   imports: [
     BrowserModule,

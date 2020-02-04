@@ -1,6 +1,7 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.config.ConfigProperties;
+import com.example.backend.dto.request.VacationRequestDTO;
 import com.example.backend.exception.ExaminationNotFoundException;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.model.Examination;
@@ -61,12 +62,10 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Async
-    void sendMail(String email, String subject, Context context, boolean examinationMail) {
+    void sendMail(String email, String subject, Context context, String template) {
+
         final String body;
-        if(!examinationMail)
-            body = templateEngine.process("email_confirmation.html", context);
-        else
-            body = templateEngine.process("email_confirmation_examination.html", context);
+        body = templateEngine.process(template, context);
 
         final MimeMessage message = javaMailSender.createMimeMessage();
         final MimeMessageHelper mimeHelper;
@@ -90,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("title", configProperties.getConfirmSubject());
         context.setVariable("firstName", user.getName());
         context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/confirm-email?token=" + tokenProvider.generateConfirmationToken(user.getUserId()));
-        sendMail(user.getEmail(), configProperties.getConfirmSubject(), context, false);
+        sendMail(user.getEmail(), configProperties.getConfirmSubject(), context, "email_confirmation.html");
     }
 
     @Override
@@ -105,6 +104,37 @@ public class EmailServiceImpl implements EmailService {
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
         sendNotificationMail(examination.getDoctor(), examination);
 
+    }
+
+    @Override
+    public void sendVacationApprovedMailToMedicalStaff(VacationRequestDTO vacationRequestDTO) {
+        final User user = userRepository.findById(vacationRequestDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        logger.info(String.format("Sending vacation mail for to %s .", user.getEmail()));
+        Context context = new Context();
+        context.setVariable("type", "vacation request");
+        context.setVariable("title", "Vacation request approved");
+        context.setVariable("firstName", user.getName());
+        context.setVariable("fromDate", vacationRequestDTO.getStartDate());
+        context.setVariable("toDate", vacationRequestDTO.getEndDate());
+        context.setVariable("clinicName", user.getClinic().getName());
+        sendMail(user.getEmail(), "Vacation request approved", context, "email_approved_vacation.html");
+    }
+
+    @Override
+    public void sendVacationDeniedMailToMedicalStaff(VacationRequestDTO vacationRequestDTO) {
+        final User user = userRepository.findById(vacationRequestDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        logger.info(String.format("Sending vacation mail for to %s .", user.getEmail()));
+        Context context = new Context();
+        context.setVariable("type", "vacation request");
+        context.setVariable("title", "Vacation request denied");
+        context.setVariable("firstName", user.getName());
+        context.setVariable("fromDate", vacationRequestDTO.getStartDate());
+        context.setVariable("toDate", vacationRequestDTO.getEndDate());
+        context.setVariable("clinicName", user.getClinic().getName());
+        context.setVariable("description", vacationRequestDTO.getDescription());
+        sendMail(user.getEmail(), "Vacation request denied", context, "email_denied_vacation.html");
     }
 
     void sendNotificationMail(User user, Examination examination) {
@@ -132,6 +162,6 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("doctorLastName", doctor.getLastName());
         context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/examination/confirm-examination?token=" + tokenProvider.generateExaminationConfirmationToken(examination.getExaminationId()));
         context.setVariable("patient", user.getRole().getRoleId() != 5);
-        sendMail(user.getEmail(), configProperties.getExaminationConfirmed(), context, true);
+        sendMail(user.getEmail(), configProperties.getExaminationConfirmed(), context, "email_confirmation_examination.html");
     }
 }

@@ -297,7 +297,7 @@ create table VACATION
    ACCEPTED             bool not null,
    START_DATE           date not null,
    END_DATE             date not null,
-   DESCRIPTION          varchar(1024) not null,
+   DESCRIPTION          varchar(1024),
    DELETED              bool not null,
    primary key (ID_VACATION)
 );

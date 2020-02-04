@@ -21,7 +21,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   @ViewChild('confirmDeleteScheduleModal', {static: false}) confirmDeleteScheduleModal: ModalDirective;
   
   headElements = ['ID', 'Username', 'First Name', 'Last Name', 'From Date', 'To Date', 'Shift time', ''];
-  headElementsModel = ['scheduleIsd', 'doctorUsername', 'doctorName', 'doctorLastName', 'startDate', 'endDate'];
+  headElementsModel = ['scheduleId', 'doctorUsername', 'doctorName', 'doctorLastName', 'startDate', 'endDate'];
 
   fromDate: Date;
   toDate: Date;
@@ -90,6 +90,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
           this.previous = this.mdbTable.getDataSource();
         }
       )
+      this.schedule = new Schedule();
     }
   }
 

@@ -157,7 +157,7 @@
                         <input matInput [(ngModel)]="schedule.startDate" formControlName="editStartDateControl" name="scheduleStartDate" [matDatepicker]="picker5" required placeholder="Start Date" (dateChange)="OnDateTimeChange($event)">
                         <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
                         <mat-datepicker #picker5></mat-datepicker>
-                    </mat-form-field>s
+                    </mat-form-field>
                     <mat-form-field class="form-full-width"  [formGroup]="validatingEditForm"> 
                         <input matInput [(ngModel)]="schedule.endDate" formControlName="editEndDateControl" name="scheduleEndDate" [matDatepicker]="picker6" required placeholder="End Date" (dateChange)="OnDateTimeChange($event)">
                         <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
