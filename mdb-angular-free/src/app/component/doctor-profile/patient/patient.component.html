@@ -1,0 +1,156 @@
+<div class="container" style="min-height: 100vh;">
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-4">
+            <mdb-card >
+                <div class="view rgba-white-slight waves-light" mdbWavesEffect>
+                <!-- Card img -->
+                <mdb-card-img [src]="picture" alt="Card image cap"></mdb-card-img>
+                <a>
+                    <div class="mask"></div>
+                </a>
+                </div>
+                <!--Card content-->
+                <mdb-card-body>
+                <!--Title-->
+                <mdb-card-title>
+                    <h4>{{user.name + ' ' + user.lastName}}</h4>
+                </mdb-card-title>
+            
+                <!--Text-->
+                <hr/>
+                <mdb-card-text>Username: {{user.username}}
+                </mdb-card-text>
+                <mdb-card-text>E-mail: {{user.email}}
+                </mdb-card-text>
+                <mdb-card-text>Phone: {{user.phone}}
+                </mdb-card-text>
+                <mdb-card-text>Gender: {{user.gender == 0 ? 'Male': user.gender == 1 ? 'Female' : 'Other'}}
+                </mdb-card-text>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-8">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="home-tab" data-toggle="tab" role="tab" aria-controls="home"
+                    aria-selected="true" [class.active]="medicalRecordTab" (click)="setMedicalRecordTab(true)">Medical record</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" role="tab" aria-controls="profile"
+                    aria-selected="false"[class.active]="!medicalRecordTab" (click)="setMedicalRecordTab(false)">Examinations</a>
+                </li>
+            </ul>
+            <!-- Tab Content-->
+            <div class="tab-content white" id="myTabContent">
+                <!-- Medical record -->
+                <div class="tab-pane fade" [class.active]="medicalRecordTab" [class.show]="medicalRecordTab"  id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="container">
+                        <div class="row"><p></p></div>
+                        <form class="text-center border border-light p-5 white">
+                        <div class="md-form mt-0">
+                            <input mdbInput mdbValidate [(ngModel)]="medicalRecord.bloodTypeRh" disabled type="text" name ="bloodTypeRh" id="bloodTypeRh" class="form-control">
+                            <label for="bloodTypeRh">Blood Type Rh</label>
+                        </div>
+                        <div class="md-form mt-0">
+                            <input mdbInput mdbValidate [(ngModel)]="medicalRecord.height" disabled type="text" name ="height" id="height" class="form-control">
+                            <label for="height">Height(m)</label>
+                        </div>
+                        <div class="md-form mt-0">
+                            <input mdbInput mdbValidate [(ngModel)]="medicalRecord.weight" disabled type="text" name ="weight" id="weight" class="form-control">
+                            <label for="weight">Weight(kg)</label>
+                        </div>
+                        <div class="md-form mt-0">
+                            <input mdbInput mdbValidate [(ngModel)]="medicalRecord.race" disabled type="text" name ="race" id="race" class="form-control">
+                            <label for="race">Race</label>
+                        </div>
+                        </form>
+                        <div class="row"><p></p></div>
+                    </div>
+                </div>
+                <!-- Examinations -->
+                <div class="tab-pane fade" [class.active]="!medicalRecordTab" [class.show]="!medicalRecordTab" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div>
+                        <div class="row">
+                            <div class="col-md-6 mx-auto">
+                                <div class="md-form">
+                                    <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect >New</button>
+                                </div>                            
+                            </div>  
+                            <div class="col-md-4 mx-auto">
+                            <div class="md-form">
+                                <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+                                <label for="search">Search</label>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                        <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+                            <thead class="black white-text">
+                              <tr>
+                                <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="examinations" [sortBy]="headElementsModel[i]">
+                                  {{head}} <mdb-icon fas *ngIf="i < 4" icon="sort"></mdb-icon>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let examination of examinations; let i = index" style="text-align: center;">
+                                <th scope="row">{{examination.doctorUsername}}</th>
+                                <td>{{examination.typeName}}</td>
+                                <td>{{examination.roomType}}</td>
+                                <td>{{examination.dateTime | date: 'short'}}</td>
+                                <td>
+                                  <button mdbBtn size="sm" mdbWavesEffect  class="btn-info btn-sm btn" [disabled]="!examination.finished" (click)="getInfo(examination.reportId)">Info</button>
+                                  <button mdbBtn size="sm" mdbWavesEffect  class="btn-success btn-sm btn" [disabled]="examination.finished || examination.doctorUsername != currentDoctor.username">Report</button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row"><p></p></div>
+</div>
+
+<div mdbModal #reportInfoModal="mdbModal"  class="modal fade top" id="reportInfoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">Info</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="reportInfoModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body"  >
+            <label for="diagnoses">Diagnoses:</label>
+            <div class="md-form mt-0" >
+                <div class="list-group " *ngFor="let diagnosis of report.diagnoses;" id="diagnoses">
+                    <a class="list-group-item waves-light white-text blue lighten-2" mdbWavesEffect>{{diagnosis.name}}</a>
+                </div>
+            </div>
+            <label for="medicines">Medicines:</label>
+            <div class="md-form mt-0" >
+                <div class="list-group" *ngFor="let medicine of report.medicines;" id="medicines">
+                    <a class="list-group-item waves-light white-text blue lighten-2" mdbWavesEffect>{{medicine.name}}</a>
+                </div>
+            </div>
+            <label for="description">Description:</label>      
+            <div class="md-form mt-0" >
+                <div class="list-group" id="medicines" *ngIf="report.description != null">
+                    <a class="list-group-item waves-light white-text blue lighten-2" mdbWavesEffect>{{report.description}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="button" class="btn btn-primary" (click)="reportInfoModal.hide()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>

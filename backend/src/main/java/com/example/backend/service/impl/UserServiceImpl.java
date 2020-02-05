@@ -302,6 +302,19 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public MedicalRecord getMedicalRecord(String username) {
+        return findByUsername(username).getMedicalRecord();
+    }
+
+    @Override
+    public List<Examination> getExaminations(String username) {
+        return findByUsername(username).getExaminations()
+                .stream()
+                .filter(e -> !e.isDeleted() && !e.isCanceled())
+                .collect(Collectors.toList());
+    }
+
     public static DateTime createDateTime(LocalDate date, LocalTime time) {
         return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
                 time.getHourOfDay(), time.getMinuteOfHour());

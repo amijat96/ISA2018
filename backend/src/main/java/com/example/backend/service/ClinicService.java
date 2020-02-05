@@ -1,8 +1,8 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.request.ClinicRequestDTO;
-import com.example.backend.dto.request.ReportRequestDTO;
-import com.example.backend.dto.response.ReportResponseDTO;
+import com.example.backend.dto.request.ClinicReportRequestDTO;
+import com.example.backend.dto.response.ClinicReportResponseDTO;
 import com.example.backend.model.Clinic;
 import com.example.backend.model.Examination;
 import com.example.backend.model.User;
@@ -30,5 +30,5 @@ public interface ClinicService {
 
     double getClinicGrade(Integer clinicId);
 
-    ReportResponseDTO getReport(Integer id, ReportRequestDTO reportRequestDTO);
+    ClinicReportResponseDTO getReport(Integer id, ClinicReportRequestDTO clinicReportRequestDTO);
 }

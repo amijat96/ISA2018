@@ -1,9 +1,9 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ClinicRequestDTO;
-import com.example.backend.dto.request.ReportRequestDTO;
+import com.example.backend.dto.request.ClinicReportRequestDTO;
 import com.example.backend.dto.response.ReportByFrequencyDTO;
-import com.example.backend.dto.response.ReportResponseDTO;
+import com.example.backend.dto.response.ClinicReportResponseDTO;
 import com.example.backend.exception.ClinicNotFoundException;
 import com.example.backend.exception.DeletionException;
 import com.example.backend.exception.ExaminationNotFoundException;
@@ -106,9 +106,11 @@ public class ClinicServiceImpl implements ClinicService {
         for(Room room : rooms) {
             patients.addAll(room.getExaminations()
                     .stream()
+                    .filter(e -> e.getUser() != null)
                     .map(e -> e.getUser())
                     .distinct()
                     .collect(Collectors.toList()));
+
         }
         return patients.stream()
                 .distinct()
@@ -171,18 +173,18 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public ReportResponseDTO getReport(Integer id, ReportRequestDTO reportRequestDTO) {
-        ReportResponseDTO reportResponse = new ReportResponseDTO();
+    public ClinicReportResponseDTO getReport(Integer id, ClinicReportRequestDTO clinicReportRequestDTO) {
+        ClinicReportResponseDTO reportResponse = new ClinicReportResponseDTO();
         List<ReportByFrequencyDTO> reports = new ArrayList<>();
 
         //set revenues
-        reportResponse.setRevenues(getClinicRevenues(id, reportRequestDTO.getFromDate(), reportRequestDTO.getToDate()));
+        reportResponse.setRevenues(getClinicRevenues(id, clinicReportRequestDTO.getFromDate(), clinicReportRequestDTO.getToDate()));
 
-        LocalDate startDate = reportRequestDTO.getFromDate();
-        LocalDate endDate = reportRequestDTO.getToDate();
+        LocalDate startDate = clinicReportRequestDTO.getFromDate();
+        LocalDate endDate = clinicReportRequestDTO.getToDate();
 
         //Daily report
-        if(reportRequestDTO.getFrequency() == 0) {
+        if(clinicReportRequestDTO.getFrequency() == 0) {
             while(startDate.isBefore(endDate)) {
                 ReportByFrequencyDTO reportByFrequency = new ReportByFrequencyDTO();
                 reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate, startDate.plusDays(1))
@@ -196,7 +198,7 @@ public class ClinicServiceImpl implements ClinicService {
             }
         }
         //Weekly report
-        else if(reportRequestDTO.getFrequency() == 1) {
+        else if(clinicReportRequestDTO.getFrequency() == 1) {
             boolean periodLesThanWeek = false;
             Period period = new Period(startDate, endDate);
             while(startDate.isBefore(endDate)) {
@@ -223,7 +225,7 @@ public class ClinicServiceImpl implements ClinicService {
             }
         }
         //Monthly report
-        else if(reportRequestDTO.getFrequency() == 2) {
+        else if(clinicReportRequestDTO.getFrequency() == 2) {
 
             boolean firstReport = true;
             if(startDate.getDayOfMonth() == 1) firstReport = false;

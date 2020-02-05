@@ -61,4 +61,11 @@ export class DoctorComponent implements OnInit {
     })
   }
   
+  schedule() {
+    return window.location.href == "http://localhost:4200/doctor-profile/schedule" || 
+            window.location.href == "http://localhost:4200/doctor-profile/vacations";
+  }
+  patients() {
+    return window.location.href.slice(0,45) == "http://localhost:4200/doctor-profile/patients";
+  }
 }

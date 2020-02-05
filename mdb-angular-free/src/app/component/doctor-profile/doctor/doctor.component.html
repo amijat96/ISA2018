@@ -10,7 +10,7 @@
       
           <!-- Links -->
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item" id="rooms" >
+                <li class="nav-item" id="rooms" [class.active]="patients()">
                     <a class="nav-link waves-light" href="doctor-profile/patients" mdbWavesEffect>Patients<span class="caret"></span></a>
                 </li>
                 <li class="nav-item dropdown" id="schedules" dropdown>

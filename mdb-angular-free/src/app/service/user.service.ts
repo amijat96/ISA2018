@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { baseUrl, httpOptions} from './constants';
 import { User } from 'src/app/model/user';
 import { Observable } from 'rxjs';
+import { MedicalRecord } from '../model/medical-record';
+import { Examination } from '../model/examination';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +36,14 @@ export class UserService {
 
   getUserByUsername(username: string) {
     return this.httpClient.get<User>(baseUrl + 'users/' + username, httpOptions);
+  }
+
+  getMedicalRecord(username: string) {
+    return this.httpClient.get<MedicalRecord>(baseUrl + 'users/' + username + '/medical-record', httpOptions);
+  }
+
+  getExaminations(username: string) {
+    return this.httpClient.get<Examination[]>(baseUrl + 'users/' + username + '/examinations', httpOptions);
   }
 }
 

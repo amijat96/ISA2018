@@ -75,10 +75,12 @@ public class UserResponseDTO {
                 .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
                 .collect(Collectors.toList())
                 .size();
-        this.specializations.addAll(user.getDoctorSpecialization()
-                .stream()
-                .map(t -> t.getTypeOfExaminationId())
-                .collect(Collectors.toList())
-        );
+        if(user.getDoctorSpecialization() != null) {
+            this.specializations.addAll(user.getDoctorSpecialization()
+                    .stream()
+                    .map(t -> t.getTypeOfExaminationId())
+                    .collect(Collectors.toList())
+            );
+        }
     }
 }

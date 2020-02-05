@@ -54,6 +54,8 @@ public class ExaminationResponseDTO {
 
     private String doctorUsername;
 
+    private Integer reportId;
+
     public ExaminationResponseDTO(Examination examination) {
         this.examinationId = examination.getExaminationId();
         this.duration = examination.getPriceList().getTypeOfExamination().getDuration();
@@ -90,5 +92,7 @@ public class ExaminationResponseDTO {
         this.finished = examination.isFinished();
         this.accepted = examination.isAccepted();
         this.dateTime = examination.getDateTime();
+        if(examination.getReport() != null)
+            this.reportId = examination.getReport().getReportId();
     }
 }

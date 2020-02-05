@@ -33,6 +33,8 @@ import { VacationsComponent } from './component/vacations/vacations.component';
 import { VacationRequestsComponent } from './component/vacation-requests/vacation-requests.component';
 import { DoctorComponent } from './component/doctor-profile/doctor/doctor.component';
 import { MyAccountDoctorComponent } from './component/doctor-profile/my-account-doctor/my-account-doctor.component';
+import { PatientsComponent } from './component/doctor-profile/patients/patients.component';
+import { PatientComponent } from './component/doctor-profile/patient/patient.component';
 
 const routes: Routes = [
   {
@@ -136,9 +138,28 @@ const routes: Routes = [
     children:
     [
       {
+        path: '',
+        redirectTo:'patients',
+        pathMatch: 'full'
+      },
+      {
+        path: 'patients',
+        children:
+        [
+          {
+            path:'',
+            component: PatientsComponent,
+          },
+          {
+            path: ':username',
+            component: PatientComponent
+          }
+        ]
+      },
+      {
         path: 'my-account',
         component: MyAccountDoctorComponent
-      }
+      } 
     ]
   }
 ];
@@ -162,7 +183,9 @@ const routes: Routes = [
     VacationsComponent,
     VacationRequestsComponent,
     DoctorComponent,
-    MyAccountDoctorComponent
+    MyAccountDoctorComponent,
+    PatientsComponent,
+    PatientComponent
   ],
   imports: [
     BrowserModule,

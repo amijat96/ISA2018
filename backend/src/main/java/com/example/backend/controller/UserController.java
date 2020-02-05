@@ -4,6 +4,8 @@ import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.DoctorFreeTermsRequestDTO;
 import com.example.backend.dto.request.UserRequestDTO;
 import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
+import com.example.backend.dto.response.ExaminationResponseDTO;
+import com.example.backend.dto.response.MedicalRecordResponseDTO;
 import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -45,6 +48,20 @@ public class UserController {
     @GetMapping(path = "/{id}/medical-staff")
     public ResponseEntity<List<UserResponseDTO>> getClinicMedicalStaff(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.getClinicMedicalStaff(id));
+    }
+
+    @GetMapping(path = "/{username}/medical-record")
+    public ResponseEntity<MedicalRecordResponseDTO> getMedicalRecord(@PathVariable String username) {
+        return ResponseEntity.ok(new MedicalRecordResponseDTO(userService.getMedicalRecord(username)));
+    }
+
+    @GetMapping(path = "/{username}/examinations")
+    public ResponseEntity<List<ExaminationResponseDTO>> getExaminations(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getExaminations(username)
+                .stream()
+                .map(ExaminationResponseDTO::new)
+                .collect(Collectors.toList())
+        );
     }
 
     @PutMapping(path = "/{id}")

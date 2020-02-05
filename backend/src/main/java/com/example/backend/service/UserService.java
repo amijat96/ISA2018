@@ -7,6 +7,8 @@ import com.example.backend.dto.request.RegisterRequestDTO;
 import com.example.backend.dto.request.UserRequestDTO;
 import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
 import com.example.backend.dto.response.UserResponseDTO;
+import com.example.backend.model.Examination;
+import com.example.backend.model.MedicalRecord;
 import com.example.backend.model.User;
 
 import java.util.List;
@@ -32,4 +34,8 @@ public interface UserService {
     User updateUser(UserRequestDTO userRequestDTO);
 
     void changePassword(String username, String password);
+
+    MedicalRecord getMedicalRecord(String username);
+
+    List<Examination> getExaminations(String username);
 }

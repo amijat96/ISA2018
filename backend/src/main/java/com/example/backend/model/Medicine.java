@@ -20,7 +20,7 @@ public class Medicine implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "ID_MEDICINE")
-    private int medicineId;
+    private Integer medicineId;
 
     @Column(name = "NAME")
     private String name;
