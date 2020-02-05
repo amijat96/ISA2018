@@ -9,10 +9,7 @@ import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
 import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.exception.*;
 import com.example.backend.model.*;
-import com.example.backend.repository.CityRepository;
-import com.example.backend.repository.ClinicRepository;
-import com.example.backend.repository.RoleRepository;
-import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.*;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.UserService;
 import org.joda.time.DateTime;
@@ -46,13 +43,15 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final TypeOfExaminationRepository typeOfExaminationRepository;
+
     private final JwtTokenProvider tokenProvider;
 
     @Autowired
     public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
                            RoleRepository roleRepository, CityRepository cityRepository,
                            PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider,
-                           ClinicRepository clinicRepository) {
+                           ClinicRepository clinicRepository, TypeOfExaminationRepository typeOfExaminationRepository) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -60,6 +59,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.clinicRepository = clinicRepository;
+        this.typeOfExaminationRepository = typeOfExaminationRepository;
     }
 
     @Override
@@ -114,6 +114,7 @@ public class UserServiceImpl implements UserService {
             final Clinic clinic = clinicRepository.findById(registerRequestDTO.getClinicId())
                     .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
             user.setClinic(clinic);
+            user.setAdminApproved(true);
         }
         userRepository.save(user);
 
@@ -258,17 +259,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(UserRequestDTO userRequestDTO) {
         User user = findByUsername(userRequestDTO.getUsername());
+        System.out.println(user.getEmail() + " -----------");
 
         final City city = cityRepository.findById(userRequestDTO.getCityId())
                 .orElseThrow(() -> new ApiException("City not set!"));
 
         if( userRepository.findAll()
                 .stream()
-                .filter(u -> u.getUsername() != userRequestDTO.getUsername() && u.getEmail().equals(userRequestDTO.getEmail()))
+                .filter(u -> !u.getUsername().equals(userRequestDTO.getUsername()) && u.getEmail().equals(userRequestDTO.getEmail()))
                 .collect(Collectors.toList())
                 .size() > 0) {
             throw new EmailAlreadyExistsException("Email already exists");
-        };
+        }
+
+        user.setDoctorSpecialization(new ArrayList<>());
+        if(userRequestDTO.getSpecializations() != null) {
+            for (Integer i : userRequestDTO.getSpecializations()) {
+                TypeOfExamination type = typeOfExaminationRepository.findById(i)
+                        .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id"));
+                user.getDoctorSpecialization().add(type);
+            }
+        }
+
         user.setEmail(userRequestDTO.getEmail());
         user.setName(userRequestDTO.getName());
         user.setLastName(userRequestDTO.getLastName());

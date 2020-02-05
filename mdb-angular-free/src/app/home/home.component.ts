@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
         this.authService.storeToken(data.accessToken);
         switch(data.role) {
           case "ROLE_ADMIN_CLINIC": this.authService.storeClinic(data.clinicId, data.clinicName); this.router.navigate(["admin-profile"]); break;
+          case "ROLE_DOCTOR": this.authService.storeClinic(data.clinicId, data.clinicName); this.router.navigate(['doctor-profile']); break;
           default: this.router.navigate([""]);
         }
       },

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -48,6 +50,8 @@ public class UserResponseDTO {
 
     private boolean passwordChanged;
 
+    private List<Integer> specializations = new ArrayList<>();
+
     public UserResponseDTO(User user) {
         this.id = user.getUserId();
         this.username = user.getUsername();
@@ -71,5 +75,10 @@ public class UserResponseDTO {
                 .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
                 .collect(Collectors.toList())
                 .size();
+        this.specializations.addAll(user.getDoctorSpecialization()
+                .stream()
+                .map(t -> t.getTypeOfExaminationId())
+                .collect(Collectors.toList())
+        );
     }
 }

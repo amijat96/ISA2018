@@ -31,6 +31,8 @@ import { ExaminationComponent } from './component/examination/examination.compon
 import { ScheduleComponent } from './component/schedule/schedule.component';
 import { VacationsComponent } from './component/vacations/vacations.component';
 import { VacationRequestsComponent } from './component/vacation-requests/vacation-requests.component';
+import { DoctorComponent } from './component/doctor-profile/doctor/doctor.component';
+import { MyAccountDoctorComponent } from './component/doctor-profile/my-account-doctor/my-account-doctor.component';
 
 const routes: Routes = [
   {
@@ -127,6 +129,17 @@ const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent
+  },
+  {
+    path: 'doctor-profile',
+    component: DoctorComponent,
+    children:
+    [
+      {
+        path: 'my-account',
+        component: MyAccountDoctorComponent
+      }
+    ]
   }
 ];
 
@@ -147,7 +160,9 @@ const routes: Routes = [
     ExaminationComponent,
     ScheduleComponent,
     VacationsComponent,
-    VacationRequestsComponent
+    VacationRequestsComponent,
+    DoctorComponent,
+    MyAccountDoctorComponent
   ],
   imports: [
     BrowserModule,
