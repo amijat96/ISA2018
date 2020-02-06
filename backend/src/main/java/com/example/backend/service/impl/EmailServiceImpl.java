@@ -137,6 +137,36 @@ public class EmailServiceImpl implements EmailService {
         sendMail(user.getEmail(), "Vacation request denied", context, "email_denied_vacation.html");
     }
 
+    @Override
+    public void sendExaminationCanceledMail(Examination examination) {
+        //send to doctor
+        final User doctor = userRepository.findById(examination.getDoctor().getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        Context context = new Context();
+        context.setVariable("type", examination.getRoomType().getName().toLowerCase());
+        context.setVariable("title", "Examination canceled");
+        context.setVariable("firstName", doctor.getName());
+        context.setVariable("typeOfExamination", examination.getPriceList().getTypeOfExamination().getName());
+
+        DateTimeFormatter df = DateTimeFormat.forPattern("dd MM yyyy HH:mm:ss.SSS Z");
+        DateTime temp = new DateTime();
+        DateTimeZone theZone = DateTimeZone.getDefault();
+        DateTimeFormatter df2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSZZ");
+        DateTimeFormatter df3 = df2.withZone(theZone);
+        String dateTime = examination.getDateTime().withZone(theZone).toString();
+
+        context.setVariable("date", dateTime.substring(0,10));
+        context.setVariable("time", dateTime.substring(11));
+        context.setVariable("clinicName", examination.getRoom().getClinic().getName());
+        sendMail(doctor.getEmail(), "Examination canceled", context, "email_canceled_examination.html");
+
+        //send to user
+        final User user = userRepository.findById(examination.getUser().getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        context.setVariable("firstName", user.getName());
+        sendMail(user.getEmail(), "Examination canceled", context, "email_canceled_examination.html");
+    }
+
     void sendNotificationMail(User user, Examination examination) {
         final User doctor = userRepository.findById(examination.getDoctor().getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));

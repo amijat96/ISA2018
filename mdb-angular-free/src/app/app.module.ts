@@ -37,6 +37,9 @@ import { PatientsComponent } from './component/doctor-profile/patients/patients.
 import { PatientComponent } from './component/doctor-profile/patient/patient.component';
 import { DoctorReportComponent } from './component/doctor-profile/doctor-report/doctor-report.component';
 import { DoctorExaminationComponent } from './component/doctor-profile/doctor-examination/doctor-examination.component';
+import { CalendarComponent } from './component/doctor-profile/calendar/calendar.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 const routes: Routes = [
   {
@@ -178,6 +181,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'schedule',
+        children:
+        [
+          {
+            path: '',
+            component: CalendarComponent
+          }
+        ]
+      },
+      {
         path: 'my-account',
         component: MyAccountDoctorComponent
       } 
@@ -208,7 +221,8 @@ const routes: Routes = [
     PatientsComponent,
     PatientComponent,
     DoctorReportComponent,
-    DoctorExaminationComponent
+    DoctorExaminationComponent,
+    CalendarComponent
   ],
   imports: [
     BrowserModule,
@@ -225,7 +239,8 @@ const routes: Routes = [
     MatNativeDateModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDYKwGWasRUj5FlVyAm50hmEOhnlXkCU4w'
-    })
+    }),
+    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   exports: [RouterModule],
   providers: [httpInterceptorProviders, GoogleMapsAPIWrapper, DatePipe],

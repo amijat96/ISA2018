@@ -13,7 +13,7 @@
                 <li class="nav-item" id="rooms" [class.active]="patients()">
                     <a class="nav-link waves-light" href="doctor-profile/patients" mdbWavesEffect>Patients<span class="caret"></span></a>
                 </li>
-                <li class="nav-item dropdown" id="schedules" dropdown>
+                <li class="nav-item dropdown" id="schedules" [class.active]="schedule()" dropdown>
                     <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
                     Schedules<span class="caret"></span></a>
                     <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu" >

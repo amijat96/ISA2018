@@ -9,10 +9,7 @@ import com.example.backend.model.User;
 import com.example.backend.repository.*;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.ExaminationService;
-import org.joda.time.DateTime;
-import org.joda.time.Hours;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
+import org.joda.time.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -203,7 +200,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         DateTime dateTime = examination.getDateTime();
         DateTime now = new DateTime();
 
-        if(Hours.hoursBetween(dateTime, now).getHours() >= 24) {
+        if(now.getMillis() - dateTime.getMillis() >= 24 * 60 * 60 * 1000) {
             examination.setAccepted(true);
             examinationRepository.save(examination);
         }
@@ -219,5 +216,21 @@ public class ExaminationServiceImpl implements ExaminationService {
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id"));
     }
 
-    ;
+    @Override
+    public Examination cancelExamination(Integer id) {
+        Examination examination = examinationRepository.findById(id)
+                .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
+
+        DateTime dateTime = examination.getDateTime();
+        DateTime now = new DateTime();
+
+        if(dateTime.getMillis() - now.getMillis()>= 24 * 60 * 60 * 1000) {
+            examination.setDeleted(true);
+            examinationRepository.save(examination);
+            return examination;
+        }
+        else {
+            throw new ExaminationModificationTimeExpiredException("Can't modify examination now.");
+        }
+    }
 }

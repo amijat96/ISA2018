@@ -45,5 +45,9 @@ export class UserService {
   getExaminations(username: string) {
     return this.httpClient.get<Examination[]>(baseUrl + 'users/' + username + '/examinations', httpOptions);
   }
+
+  getDoctorExaminationsByDate(username: string, date: string) {
+    return this.httpClient.get<Examination[]>(baseUrl + 'users/doctor/' + username + '/examinations/' + date, httpOptions);
+  }
 }
 

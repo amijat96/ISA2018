@@ -8,6 +8,9 @@ import com.example.backend.dto.response.ExaminationResponseDTO;
 import com.example.backend.dto.response.MedicalRecordResponseDTO;
 import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.service.UserService;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +62,17 @@ public class UserController {
     @GetMapping(path = "/{username}/examinations")
     public ResponseEntity<List<ExaminationResponseDTO>> getExaminations(@PathVariable String username) {
         return ResponseEntity.ok(userService.getExaminations(username)
+                .stream()
+                .map(ExaminationResponseDTO::new)
+                .collect(Collectors.toList())
+        );
+    }
+
+    @GetMapping(path = "doctor/{username}/examinations/{dateString}")
+    public ResponseEntity<List<ExaminationResponseDTO>> getDoctorExaminationsByDate(@PathVariable String username, @PathVariable String dateString) throws ParseException {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        LocalDate date = formatter.parseLocalDate(dateString);
+        return ResponseEntity.ok(userService.getDoctorExaminationsByDate(username, date)
                 .stream()
                 .map(ExaminationResponseDTO::new)
                 .collect(Collectors.toList())

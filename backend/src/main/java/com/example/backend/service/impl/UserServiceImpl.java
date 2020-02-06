@@ -314,6 +314,15 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Examination> getDoctorExaminationsByDate(String username, LocalDate date) {
+        return userRepository.findByUsername(username).getDoctorExaminations()
+                .stream()
+                .filter(e -> !e.isDeleted() && e.isAccepted())
+                .filter(e -> e.getDateTime().toLocalDate().isEqual(date))
+                .collect(Collectors.toList());
+    }
+
     public static DateTime createDateTime(LocalDate date, LocalTime time) {
         return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
                 time.getHourOfDay(), time.getMinuteOfHour());

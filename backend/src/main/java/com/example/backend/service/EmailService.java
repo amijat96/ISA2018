@@ -15,4 +15,6 @@ public interface EmailService {
 
     void sendVacationDeniedMailToMedicalStaff(VacationRequestDTO vacationRequestDTO);
 
+    void sendExaminationCanceledMail(Examination examination);
+
 }

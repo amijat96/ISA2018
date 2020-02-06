@@ -64,4 +64,12 @@ public class ExaminationController {
         return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.getExamination(id)));
     }
 
+    @PutMapping(path = "/{id}/cancel")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_DOCTOR')")
+    public ResponseEntity<ExaminationResponseDTO> cancelExamination(@PathVariable Integer id) {
+        Examination examination = examinationService.cancelExamination(id);
+        emailService.sendExaminationCanceledMail(examination);
+        return ResponseEntity.ok(new ExaminationResponseDTO(examination));
+    }
+
 }

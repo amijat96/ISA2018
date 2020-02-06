@@ -20,4 +20,7 @@ export class ExaminationService {
   createExamination(examination: Examination) {
     return this.httpClient.post(baseUrl + 'examinations', examination, httpOptions);
   }
+  cancelExamination(id: number){
+    return this.httpClient.put<Examination>(baseUrl + 'examinations/' + id +'/cancel', httpOptions);
+  }
 }
