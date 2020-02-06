@@ -35,6 +35,7 @@ import { DoctorComponent } from './component/doctor-profile/doctor/doctor.compon
 import { MyAccountDoctorComponent } from './component/doctor-profile/my-account-doctor/my-account-doctor.component';
 import { PatientsComponent } from './component/doctor-profile/patients/patients.component';
 import { PatientComponent } from './component/doctor-profile/patient/patient.component';
+import { DoctorReportComponent } from './component/doctor-profile/doctor-report/doctor-report.component';
 
 const routes: Routes = [
   {
@@ -152,7 +153,22 @@ const routes: Routes = [
           },
           {
             path: ':username',
-            component: PatientComponent
+            children:
+            [
+              {
+                path: '',
+                component: PatientComponent
+              },
+              {
+                path:'examination',
+                children:[
+                  {
+                    path: ':id/report',
+                    component: DoctorReportComponent
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -185,7 +201,8 @@ const routes: Routes = [
     DoctorComponent,
     MyAccountDoctorComponent,
     PatientsComponent,
-    PatientComponent
+    PatientComponent,
+    DoctorReportComponent
   ],
   imports: [
     BrowserModule,

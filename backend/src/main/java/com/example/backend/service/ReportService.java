@@ -7,5 +7,5 @@ public interface ReportService{
 
     Report findReportById(Integer id);
 
-    Report createReport(ReportRequestDTO reportRequestDTO);
+    Report createReport(Integer id, ReportRequestDTO reportRequestDTO);
 }

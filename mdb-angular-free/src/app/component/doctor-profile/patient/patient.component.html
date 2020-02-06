@@ -101,7 +101,7 @@
                                 <td>{{examination.dateTime | date: 'short'}}</td>
                                 <td>
                                   <button mdbBtn size="sm" mdbWavesEffect  class="btn-info btn-sm btn" [disabled]="!examination.finished" (click)="getInfo(examination.reportId)">Info</button>
-                                  <button mdbBtn size="sm" mdbWavesEffect  class="btn-success btn-sm btn" [disabled]="examination.finished || examination.doctorUsername != currentDoctor.username">Report</button>
+                                  <button mdbBtn size="sm" mdbWavesEffect  class="btn-success btn-sm btn" [disabled]="examination.finished || examination.doctorUsername != currentDoctor.username" [routerLink]="'examination/' + examination.examinationId + '/report'">Report</button>
                                 </td>
                               </tr>
                             </tbody>

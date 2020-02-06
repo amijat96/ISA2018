@@ -65,5 +65,4 @@ public class ExaminationController {
         return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.getExamination(id)));
     }
 
-
 }

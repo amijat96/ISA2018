@@ -259,7 +259,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(UserRequestDTO userRequestDTO) {
         User user = findByUsername(userRequestDTO.getUsername());
-        System.out.println(user.getEmail() + " -----------");
 
         final City city = cityRepository.findById(userRequestDTO.getCityId())
                 .orElseThrow(() -> new ApiException("City not set!"));

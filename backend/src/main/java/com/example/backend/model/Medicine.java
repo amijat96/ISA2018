@@ -31,15 +31,6 @@ public class Medicine implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @ManyToMany
-    @JoinTable(
-            name="reportmedicine"
-            , joinColumns={
-            @JoinColumn(name="ID_REPORT")
-        }
-            , inverseJoinColumns={
-            @JoinColumn(name="ID_MEDICINE")
-        }
-    )
+    @ManyToMany(mappedBy = "medicines")
     private List<Report> reports;
 }
