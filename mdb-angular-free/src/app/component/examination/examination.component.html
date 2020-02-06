@@ -58,9 +58,9 @@
                 <input mdbInput [(ngModel)]="examination.roomType" type="text" id="examinationType" name="examinationType" class="form-control" disabled>
                 <label for="examinationType">Type</label>
             </div>
-            <div class="md-form mt-0">
-              <mat-form-field class="form-full-width"> 
-                  <input matInput [(ngModel)]="predefinedExaminationDate" name="predefinedExaminationDate" [matDatepicker]="picker1" required placeholder="Date" (dateChange)="OnPredefinedDateChange($event)" [hidden]="disableDiscount">
+            <div class="md-form mt-0" [hidden]="disableDiscount">
+              <mat-form-field class="form-full-width" > 
+                  <input matInput [(ngModel)]="predefinedExaminationDate" name="predefinedExaminationDate" [matDatepicker]="picker1" required placeholder="Date" (dateChange)="OnPredefinedDateChange($event)">
                   <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                   <mat-datepicker #picker1></mat-datepicker>
               </mat-form-field>

@@ -36,6 +36,7 @@ import { MyAccountDoctorComponent } from './component/doctor-profile/my-account-
 import { PatientsComponent } from './component/doctor-profile/patients/patients.component';
 import { PatientComponent } from './component/doctor-profile/patient/patient.component';
 import { DoctorReportComponent } from './component/doctor-profile/doctor-report/doctor-report.component';
+import { DoctorExaminationComponent } from './component/doctor-profile/doctor-examination/doctor-examination.component';
 
 const routes: Routes = [
   {
@@ -163,6 +164,10 @@ const routes: Routes = [
                 path:'examination',
                 children:[
                   {
+                    path:'',
+                    component: DoctorExaminationComponent
+                  },
+                  {
                     path: ':id/report',
                     component: DoctorReportComponent
                   }
@@ -202,7 +207,8 @@ const routes: Routes = [
     MyAccountDoctorComponent,
     PatientsComponent,
     PatientComponent,
-    DoctorReportComponent
+    DoctorReportComponent,
+    DoctorExaminationComponent
   ],
   imports: [
     BrowserModule,

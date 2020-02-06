@@ -50,7 +50,9 @@ export class PatientComponent implements OnInit {
       this.setPicture(user);
       this.userService.getMedicalRecord(user.username).subscribe(record => this.medicalRecord = record);
       this.userService.getExaminations(user.username).subscribe(examinations => {
-        this.examinations = examinations;
+        examinations.forEach(exam => {
+          if(exam.roomId != 0 && exam.accepted) this.examinations.push(exam);
+        })
         this.mdbTable.setDataSource(this.examinations);
         this.examinations= this.mdbTable.getDataSource();
         this.previous = this.mdbTable.getDataSource(); 

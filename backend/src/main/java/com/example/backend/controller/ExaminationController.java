@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 @RestController
@@ -35,10 +34,10 @@ public class ExaminationController {
     }
     @PostMapping
     @Transactional
-    public ResponseEntity<ExaminationResponseDTO> createExamination(@Valid @RequestBody ExaminationRequestDTO examinatioRequestDTO) throws ParseException {
+    public ResponseEntity<ExaminationResponseDTO> createExamination(@Valid @RequestBody ExaminationRequestDTO examinationRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.
-                                                            createExamination(authentication.getName(), examinatioRequestDTO)));
+                                                            createExamination(authentication.getName(), examinationRequestDTO)));
     }
 
     @PutMapping(path = "/approve-examination/{id}")

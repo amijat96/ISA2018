@@ -1,0 +1,140 @@
+<div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <!-- Patient info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Patient:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6">
+            <div class="form-row">
+                <div class="col md-form mt-0">
+                    <!-- First name -->
+                    <input mdbInput [(ngModel)]="patient.name" type="text" name ="patientName" id="patientName" class="form-control" disabled>
+                    <label for="patientName">First name</label>
+                </div>
+                <div class="col md-form mt-0">
+                    <!-- Last name -->
+                    <input mdbInput [(ngModel)]="patient.lastName" type="text" name ="patientLastName" id="patientLastName" class="form-control" disabled>
+                    <label for="patientLastName">Last name</label>
+                </div>
+            </div>
+            <!-- Username -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="patient.username" type="text" name="patientUsername" id="patientUsername" class="form-control" disabled>
+                <label for="patientUsername">Username</label>
+            </div>
+            <!-- E-mail -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="patient.email" type="email" id="patientEmail" name="patientEmail" class="form-control" disabled>
+                <label for="patientEmail">E-mail</label>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Doctor info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Doctor:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6">
+            <div class="form-row">
+                <div class="col md-form mt-0">
+                    <!-- First name -->
+                    <input mdbInput [(ngModel)]="doctor.name" type="text" name ="doctorName" id="doctorName" class="form-control" disabled>
+                    <label for="patientName">First name</label>
+                </div>
+                <div class="col md-form mt-0">
+                    <!-- Last name -->
+                    <input mdbInput [(ngModel)]="doctor.lastName" type="text" name ="doctorLastName" id="doctorLastName" class="form-control" disabled>
+                    <label for="patientLastName">Last name</label>
+                </div>
+            </div>
+            <!-- Username -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="doctor.username" type="text" name="doctorUsername" id="doctorUsername" class="form-control" disabled>
+                <label for="patientUsername">Username</label>
+            </div>
+            <!-- E-mail -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="doctor.email" type="email" id="doctorEmail" name="doctorEmail" class="form-control" disabled>
+                <label for="patientEmail">E-mail</label>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Examination info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Examination/Operation:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6">
+            <!-- List of available types(doctor's specializations) -->
+            <div class="md-form mt-0">
+                <mat-form-field class="form-full-width">
+                  <mat-select [(ngModel)]="typeOfExamination" name="typeName" id="typeName" placeholder="Select type" required (selectionChange)="onTypeChanged(type)">
+                    <mat-option value="0">--</mat-option>
+                    <mat-option  *ngFor="let type of specializations" [value]="type">{{type.name + ' '}}{{ (type.roomTypeId == 1) ? 'EXAMINATION' : 'OPERATION'}}</mat-option>
+                  </mat-select>
+                  <mat-error>Please choose type</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="md-form mt-0">
+                <mat-form-field class="form-full-width"> 
+                    <input matInput [(ngModel)]="examinationDate" name="examinationDate" [matDatepicker]="picker" required placeholder="Date" (dateChange)="OnDateTimeChange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <div class="md-form">   
+                    <input type="time"  id="examinationTime" [(ngModel)]="examinationTime" class="form-control" mdbInput (change)="OnDateTimeChange($event)" required/>
+                    <label for="examinationTime" style="text-align: left;">Time</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-7"></div>
+        <div class="col-3 d-flex justify-content-center">
+            <button mdbBtn class="btn btn-info" type="submit" [disabled]="examinationDate == null || this.typeOfExamination.id == 0 || examinationTime == null" (click)="createExamination()">Confirm</button>
+            <a type="button" mdbBtn color="info" outline="true" class="waves-effect" mdbWavesEffec [href]="'/doctor-profile/patients/' + patient.username">Cancel</a>
+        </div>
+        <div class="col-1"></div>
+    </div>
+</div>
+
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100">Error</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+          <div class="md-form mb-5">
+            <label class="ml-0">{{errorMessage}}</label>
+          </div>
+        </div>
+  
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+        </div>
+      </div>
+    </div>
+</div>
