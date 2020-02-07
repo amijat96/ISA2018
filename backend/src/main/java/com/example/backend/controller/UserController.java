@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
         return ResponseEntity.ok(new UserResponseDTO(userService.findByUsername(username)));
     }
+
     @GetMapping(path = "/free-terms")
     public ResponseEntity<List<DoctorFreeTermsResponseDTO>> getDoctorFreeTerms(@Valid @RequestBody DoctorFreeTermsRequestDTO doctorFreeTermsRequestDTO) {
         return ResponseEntity.ok(userService.getDoctorFreeTerms(doctorFreeTermsRequestDTO));
@@ -90,7 +92,9 @@ public class UserController {
         userService.changePassword(authentication.getName(), password);
         return ResponseEntity.ok(new ApiResponse(true, "Password changed successfully.", new ArrayList<>()));
     }
+
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE+ADMIN_SYSTEM')")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer id) {
         if(userService.deleteUser(id)) {
             return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully.", new ArrayList<>()));

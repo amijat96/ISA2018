@@ -12,8 +12,8 @@ import com.example.backend.repository.TypeOfExaminationRepository;
 import com.example.backend.service.PriceListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +50,7 @@ public class PriceListServiceImpl implements PriceListService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public PriceList createPriceList(PriceListRequestDTO priceListRequestDTO) {
         Clinic clinic = clinicRepository.findById(priceListRequestDTO.getClinicId())
@@ -76,8 +76,8 @@ public class PriceListServiceImpl implements PriceListService {
         return (priceList);
     }
 
-    @Transactional
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public PriceList updatePriceList(Integer priceListId, PriceListRequestDTO priceListRequestDTO) {
         PriceList priceList = getPriceListById(priceListId);
         List<Examination> examinations = priceList.getExaminations()
@@ -102,6 +102,7 @@ public class PriceListServiceImpl implements PriceListService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deletePriceList(Integer priceListId) {
         PriceList priceList = getPriceListById(priceListId);
         List<Examination> examinations = priceList.getExaminations()

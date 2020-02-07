@@ -22,6 +22,9 @@ public class Examination implements Serializable {
     @Column(name = "ID_EXAMINATION")
     private int examinationId;
 
+    @Version
+    private long version;
+
     @ManyToOne()
     @JoinColumn(name = "ID_USER")
     private User user;

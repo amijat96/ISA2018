@@ -23,6 +23,9 @@ public class Vacation implements Serializable {
     @Column(name = "ID_VACATION")
     private int vacationId;
 
+    @Version
+    private long version;
+
     @ManyToOne()
     @JoinColumn(name = "ID_USER")
     private User user;

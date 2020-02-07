@@ -105,7 +105,7 @@
             <mat-form-field class="col-12">
               <mat-select name="typeOfExaminationId" [(ngModel)] ="editPriceListItem.typeOfExaminationId" id="typeOfExaminationId" placeholder="Type of examination" required>
                 <mat-option value="0">--</mat-option>
-                <mat-option *ngFor="let type of typesOfExamination" [value]="type.typeOfExaminationId">{{type.typeOfExaminationId + ' ' + type.name}}</mat-option>
+                <mat-option *ngFor="let type of typesOfExamination" [value]="type.id">{{type.id + ' ' + type.name}}</mat-option>
               </mat-select>
               <mat-error *ngIf="editPriceListItem.typeOfExaminationId < 0">Please choose type</mat-error>
             </mat-form-field>

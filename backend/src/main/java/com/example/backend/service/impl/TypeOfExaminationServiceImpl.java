@@ -11,6 +11,7 @@ import com.example.backend.repository.TypeOfExaminationRepository;
 import com.example.backend.service.TypeOfExaminationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TypeOfExamination createTypeOfExamination(TypeOfExaminationRequestDTO typeOfExaminationRequestDTO) {
         TypeOfExamination typeOfExamination = new TypeOfExamination();
         typeOfExamination.setName(typeOfExaminationRequestDTO.getName());
@@ -53,6 +55,7 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TypeOfExamination updateTypeOfExamination(Integer id, TypeOfExaminationRequestDTO typeOfExaminationRequestDTO) {
         TypeOfExamination typeOfExamination = typeOfExaminationRepository.findById(id)
                 .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id."));
@@ -72,6 +75,7 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteTypeOfExamination(Integer id) {
         TypeOfExamination typeOfExamination = typeOfExaminationRepository.findById(id)
                 .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id."));

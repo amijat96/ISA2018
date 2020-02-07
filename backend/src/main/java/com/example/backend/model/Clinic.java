@@ -24,6 +24,9 @@ public class Clinic implements Serializable {
     @Column(name = "ID_CLINIC")
     private int clinicId;
 
+    @Version
+    private long version;
+
     @NotNull
     @Column(name = "NAME")
     private String name;

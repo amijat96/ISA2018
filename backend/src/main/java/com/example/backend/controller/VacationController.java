@@ -55,17 +55,17 @@ public class VacationController {
                 .collect(Collectors.toList()));
     }
 
+    @Transactional
     @PutMapping(path="/approve")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
-    @Transactional
     public ResponseEntity<VacationResponseDTO> approveVacation(@Valid @RequestBody VacationRequestDTO vacationRequestDTO) {
         emailService.sendVacationApprovedMailToMedicalStaff(vacationRequestDTO);
         return ResponseEntity.ok(new VacationResponseDTO(vacationService.approveVacation(vacationRequestDTO.getVacationId())));
     }
 
+    @Transactional
     @PutMapping(path="/deny")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
-    @Transactional
     public ResponseEntity<VacationResponseDTO> denyVacation(@Valid @RequestBody VacationRequestDTO vacationRequestDTO) {
         emailService.sendVacationDeniedMailToMedicalStaff(vacationRequestDTO);
         return ResponseEntity.ok(new VacationResponseDTO(this.vacationService.denyVacation(vacationRequestDTO.getVacationId(), vacationRequestDTO.getDescription())));

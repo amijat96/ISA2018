@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +32,7 @@ public class PriceListController {
     }
 
     @GetMapping(path = "byClinic/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_DOCTOR')")
     public ResponseEntity<List<PriceListResponseDTO>> getPriceLists(@PathVariable Integer id) {
         return ResponseEntity.ok(priceListService.getPriceListByClinic(id)
                                                 .stream()
@@ -42,14 +42,12 @@ public class PriceListController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
-    @Transactional
     public ResponseEntity<PriceListResponseDTO> createPriceList(@Valid @RequestBody PriceListRequestDTO priceListRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new PriceListResponseDTO(priceListService.createPriceList(priceListRequestDTO)));
     }
 
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasRole('ADMIN_CLINIC')")
-    @Transactional
     public ResponseEntity<PriceListResponseDTO> updatePriceList(@PathVariable Integer id, @Valid @RequestBody PriceListRequestDTO priceListRequestDTO) {
         return ResponseEntity.ok(new PriceListResponseDTO(priceListService.updatePriceList(id, priceListRequestDTO)));
     }

@@ -32,14 +32,16 @@ public class ExaminationController {
         this.examinationService = examinationService;
         this.emailService = emailService;
     }
+
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_DOCTOR') or hasRole('ROLE_ADMIN_CLINIC')")
     @PostMapping
-    @Transactional
     public ResponseEntity<ExaminationResponseDTO> createExamination(@Valid @RequestBody ExaminationRequestDTO examinationRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.
                                                             createExamination(authentication.getName(), examinationRequestDTO)));
     }
 
+    @Transactional
     @PutMapping(path = "/approve-examination/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
     public ResponseEntity<ExaminationResponseDTO> approveExamination(@PathVariable Integer id, @Valid @RequestBody ExaminationRequestDTO examinationRequestDTO) {
@@ -49,6 +51,7 @@ public class ExaminationController {
     }
 
     @GetMapping(path = "/confirm-examination")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse> confirmExamination(@PathParam("token") String token) {
         Integer examinationId = examinationService.confirmExamination(token);
         if(examinationId != 0) {
@@ -59,11 +62,13 @@ public class ExaminationController {
             return new ResponseEntity(new ApiResponse(false, "Examination confirmation failed.", new ArrayList<>()), HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(path = "/{id}")
     public ResponseEntity<ExaminationResponseDTO> getExamination(@PathVariable Integer id){
         return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.getExamination(id)));
     }
 
+    @Transactional
     @PutMapping(path = "/{id}/cancel")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_DOCTOR')")
     public ResponseEntity<ExaminationResponseDTO> cancelExamination(@PathVariable Integer id) {

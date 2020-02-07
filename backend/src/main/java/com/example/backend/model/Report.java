@@ -23,6 +23,9 @@ public class Report implements Serializable {
     @Column(name = "ID_REPORT")
     private int reportId;
 
+    @Version
+    private long version;
+
     @OneToOne
     @JoinColumn(name = "ID_EXAMINATION")
     private Examination examination;

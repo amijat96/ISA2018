@@ -22,6 +22,9 @@ public class Country implements Serializable {
     @Column(name="ID_COUNTRY")
     private int countryId;
 
+    @Version
+    private long version;
+
     private String name;
 
     @OneToMany(mappedBy="country", fetch = FetchType.LAZY)

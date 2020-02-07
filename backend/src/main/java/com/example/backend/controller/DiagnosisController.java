@@ -4,6 +4,7 @@ import com.example.backend.dto.response.DiagnosisResponseDTO;
 import com.example.backend.service.DiagnosisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +24,7 @@ public class DiagnosisController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     public ResponseEntity<List<DiagnosisResponseDTO>> getDiagnoses() {
         return ResponseEntity.ok(diagnosisService.getDiagnoses()
                 .stream()

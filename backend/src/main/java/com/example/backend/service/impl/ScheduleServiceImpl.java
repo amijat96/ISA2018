@@ -15,8 +15,8 @@ import com.example.backend.repository.UserRepository;
 import com.example.backend.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Schedule createSchedule(ScheduleRequestDTO scheduleRequestDTO) {
         Schedule schedule = new Schedule();
         User user = userRepository.findById(scheduleRequestDTO.getDoctorId())
@@ -70,7 +70,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Schedule updateSchedule(Integer id, ScheduleRequestDTO scheduleRequestDTO) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("Could not find schedule with id : " + id));
@@ -96,6 +96,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteSchedule(Integer id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("Could not find schedule with id : " + id));

@@ -9,9 +9,12 @@ import com.example.backend.model.User;
 import com.example.backend.repository.*;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.ExaminationService;
-import org.joda.time.*;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,7 +47,9 @@ public class ExaminationServiceImpl implements ExaminationService {
         this.roomTypeRepository = roomTypeRepository;
         this.tokenProvider = tokenProvider;
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Examination createExamination(String username, ExaminationRequestDTO examinationRequestDTO) {
         Examination examination = new Examination();
         User doctor = userRepository.findById(examinationRequestDTO.getDoctorId())
@@ -83,6 +88,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Examination approveExamination(Integer id, ExaminationRequestDTO examinationRequestDTO) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
@@ -140,7 +146,6 @@ public class ExaminationServiceImpl implements ExaminationService {
                 .filter(e -> e.getExaminationId() != examinationId)
                 .sorted(Comparator.comparing(Examination::getDateTime))
                 .collect(Collectors.toList()));
-        System.out.println(oldExaminations.size());
         DateTime newExaminationEndTime = examinationRequestDTO.getDateTime().plus(priceList.getTypeOfExamination().getDuration().getMillisOfDay());
 
         for(Examination oldExamination: oldExaminations) {
@@ -192,6 +197,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer confirmExamination(String token){
         Integer examinationId = tokenProvider.getIdFromJwt(token);
         Examination examination = examinationRepository.findById(examinationId)
@@ -217,6 +223,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Examination cancelExamination(Integer id) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));

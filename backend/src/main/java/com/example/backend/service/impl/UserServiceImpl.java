@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -89,6 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public User register(RegisterRequestDTO registerRequestDTO) {
         if(userRepository.existsByUsername(registerRequestDTO.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists");
@@ -122,6 +124,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean confirmMail(String confirmToken) {
         if(tokenProvider.validateToken(confirmToken)) {
             final int userId = tokenProvider.getIdFromJwt(confirmToken);
@@ -141,6 +144,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean approveRegistration(int id) {
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with id %s not found.", Integer.toString(id))));
@@ -237,6 +241,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteUser(Integer id) {
         LocalDate date = LocalDate.now();
         User user = userRepository.findById(id)
@@ -257,6 +262,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public User updateUser(UserRequestDTO userRequestDTO) {
         User user = findByUsername(userRequestDTO.getUsername());
 
@@ -294,6 +300,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void changePassword(String username, String password) {
         User user = findByUsername(username);
         user.setPassword(passwordEncoder.encode(password));

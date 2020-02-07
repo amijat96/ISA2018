@@ -23,6 +23,9 @@ public class RoomType implements Serializable {
     @Column(name = "ID_ROOM_TYPE")
     private int roomTypeId;
 
+    @Version
+    private long version;
+
     @Column(name = "NAME")
     private String name;
 

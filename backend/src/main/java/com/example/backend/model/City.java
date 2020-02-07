@@ -23,6 +23,9 @@ public class City implements Serializable {
     @Column(name="ID_CITY")
     private int cityId;
 
+    @Version
+    private long version;
+
     private String name;
 
     @ManyToOne()

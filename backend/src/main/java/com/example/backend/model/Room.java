@@ -22,6 +22,9 @@ public class Room implements Serializable {
     @Column(name = "ID_ROOM")
     private int roomId;
 
+    @Version
+    private long version;
+
     @ManyToOne()
     @JoinColumn(name = "ID_CLINIC")
     private Clinic clinic;

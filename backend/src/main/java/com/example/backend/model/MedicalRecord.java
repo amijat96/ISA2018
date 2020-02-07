@@ -21,6 +21,9 @@ public class MedicalRecord implements Serializable {
     @Column(name = "ID_MEDICAL_RECORD")
     private int medicalRecordId;
 
+    @Version
+    private long version;
+
     @Column(name = "BLOOD_TYPE_RH")
     private String bloodTypeRh;
 

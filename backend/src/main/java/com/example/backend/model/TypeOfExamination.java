@@ -24,6 +24,9 @@ public class TypeOfExamination implements Serializable {
     @Column(name = "ID_TYPE_OF_EXAMINATION")
     private int typeOfExaminationId;
 
+    @Version
+    private long version;
+
     @Column(name = "DURATION")
     private LocalTime duration;
 

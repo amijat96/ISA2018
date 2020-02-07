@@ -34,6 +34,7 @@ export class PriceListComponent implements OnInit, AfterViewInit {
   searchText: string = '';
   errorMessage: string = '';
   successModalMessage = '';
+  selectedTypeOfExamination: TypeOfExamination = new TypeOfExamination();
 
   constructor(private typesOfExaminationService: TypeOfExaminationService, private priceListService: PriceListService, private cdRef: ChangeDetectorRef) {
     this.validatingForm = new FormGroup({
@@ -97,6 +98,9 @@ export class PriceListComponent implements OnInit, AfterViewInit {
   updatePriceListItemModal(priceListItemToEdit: PriceList) {
     this.editPriceListItem = priceListItemToEdit;
     this.typesOfExaminationService.getTypesOfExamination().subscribe(res => this.typesOfExamination = res);
+    this.typesOfExaminationService.getTypeOfExamination(this.editPriceListItem.typeOfExaminationId).subscribe(res => {
+      this.selectedTypeOfExamination = res;
+    })
     this.editPriceListItemModal.show();
   }
 

@@ -22,6 +22,9 @@ public class Diagnosis implements Serializable {
     @Column(name = "ID_DIAGNOSIS")
     private Integer diagnosisId;
 
+    @Version
+    private long version;
+
     @Column(name = "NAME")
     private String name;
 

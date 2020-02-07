@@ -23,6 +23,9 @@ public class Role implements Serializable {
     @Column(name = "ID_ROLE")
     private int roleId;
 
+    @Version
+    private long version;
+
     @UniqueElements
     @NotNull
     @Column(name = "NAME")

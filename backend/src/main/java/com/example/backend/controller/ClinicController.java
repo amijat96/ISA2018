@@ -31,7 +31,7 @@ public class ClinicController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN_SYSTEM')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_SYSTEM') or hasRole('ROLE_USER')")
     public ResponseEntity<List<ClinicResponseDTO>> getClinics()
     {
         return ResponseEntity.ok(clinicService.getClinics()
@@ -46,17 +46,19 @@ public class ClinicController {
     }
 
     @GetMapping(path = "/{id}/grade")
+    @PreAuthorize("hasRole('ROLE_ADMIN_SYSTEM') or hasRole('ROLE_USER') or hasRole('ROLE_ADMIN_CLINIC')")
     public double getClinicGrade(@PathVariable Integer id) {
         return clinicService.getClinicGrade(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
     @PutMapping(path = "/{id}/report")
     public ResponseEntity<ClinicReportResponseDTO> getClinicReport(@PathVariable Integer id, @Valid @RequestBody ClinicReportRequestDTO clinicReportRequestDTO) {
         return ResponseEntity.ok(clinicService.getReport(id, clinicReportRequestDTO));
     }
 
     @GetMapping(path = "/{id}/patients")
-    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_DOCTOR')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_DOCTOR') or hasRole('ROLE_NURSE')")
     public ResponseEntity<List<UserResponseDTO>> getClinicPatients(@PathVariable Integer id) {
         return ResponseEntity.ok(clinicService.getClinicPatients(id)
                 .stream()
@@ -77,7 +79,7 @@ public class ClinicController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_ADMIN_SYSTEM')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_SYSTEM')")
     public ResponseEntity<ApiResponse> deleteClinic(@PathVariable Integer id) {
         if(clinicService.deleteClinic(id)) {
             return ResponseEntity.ok(new ApiResponse(true, "Clinic deleted successfully.", new ArrayList<>()));

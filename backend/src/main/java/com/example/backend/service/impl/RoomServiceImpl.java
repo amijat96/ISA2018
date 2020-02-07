@@ -14,8 +14,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -58,7 +58,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Room createRoom(RoomRequestDTO roomRequestDTO) {
         Room room = new Room();
         room.setClinic(clinicRepository.findById(roomRequestDTO.getClinicId())
@@ -73,7 +73,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Room updateRoom(Integer id, RoomRequestDTO roomRequestDTO) {
         Room room = getRoomById(id);
         room.setClinic(clinicRepository.findById(roomRequestDTO.getClinicId())
@@ -87,6 +87,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<RoomFreeTermsResponseDTO> getClinicFreeTerms(RoomFreeTermsRequestDTO roomFreeTermsRequestDTO) {
 
         List<RoomFreeTermsResponseDTO> freeTerms = new ArrayList<>();
@@ -157,6 +158,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteRoom(Integer id) {
 
         Room room = roomRepository.findById(id)

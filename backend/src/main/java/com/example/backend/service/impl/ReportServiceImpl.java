@@ -16,6 +16,7 @@ import com.example.backend.repository.ReportRepository;
 import com.example.backend.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -46,6 +47,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Report createReport(Integer id, ReportRequestDTO reportRequestDTO) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("COuld not find examination with given id"));

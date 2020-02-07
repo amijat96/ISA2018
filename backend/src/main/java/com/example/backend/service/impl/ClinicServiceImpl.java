@@ -36,9 +36,10 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public List<Clinic> getClinics() {
-        return clinicRepository.findAll();
+        return clinicRepository.findAll().stream().filter(c -> !c.isDeleted()).collect(Collectors.toList());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Clinic getClinic(Integer id) {
         return clinicRepository.findById(id)
@@ -78,6 +79,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteClinic(Integer id) {
         Clinic clinic = clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
@@ -124,16 +126,19 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public List<Examination> getAllClinicExaminations(Integer clinicId) {
-        List<User> users = getClinic(clinicId).getUsers()
-                .stream()
-                .filter(u -> u.getRole().getRoleId() == 3)
-                .collect(Collectors.toList());
+        Clinic clinic = getClinic(clinicId);
         List<Examination> examinations = new ArrayList<>();
-        for(User user : users) {
-            examinations.addAll(user.getDoctorExaminations()
+        if(clinic.getUsers().size() != 0) {
+            List<User> users = clinic.getUsers()
                     .stream()
-                    .filter(e -> !e.isDeleted())
-                    .collect(Collectors.toList()));
+                    .filter(u -> u.getRole().getRoleId() == 3)
+                    .collect(Collectors.toList());
+            for (User user : users) {
+                examinations.addAll(user.getDoctorExaminations()
+                        .stream()
+                        .filter(e -> !e.isDeleted())
+                        .collect(Collectors.toList()));
+            }
         }
         return examinations;
     }

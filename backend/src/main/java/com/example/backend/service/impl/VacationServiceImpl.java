@@ -16,6 +16,7 @@ import com.example.backend.service.VacationService;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Vacation createVacation(VacationRequestDTO vacationRequestDTO) {
         User user = userRepository.findById(vacationRequestDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("Could not find user with given id"));
@@ -97,6 +99,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Vacation approveVacation(Integer id) {
         Vacation vacation = vacationRepository.findById(id)
                 .orElseThrow(() -> new VacationNotFoundException("Could not find vacation with given id"));
@@ -106,6 +109,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Vacation denyVacation(Integer id, String description) {
         Vacation vacation = vacationRepository.findById(id)
                 .orElseThrow(() -> new VacationNotFoundException("Could not find vacation with given id"));

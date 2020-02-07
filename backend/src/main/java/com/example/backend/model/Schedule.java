@@ -24,6 +24,9 @@ public class Schedule implements Serializable {
     @Column(name = "ID_SCHEDULE")
     private int scheduleId;
 
+    @Version
+    private long version;
+
     @ManyToOne()
     @JoinColumn(name = "ID_USER")
     private User user;

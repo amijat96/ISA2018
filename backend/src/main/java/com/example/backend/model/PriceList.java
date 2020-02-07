@@ -23,6 +23,9 @@ public class PriceList implements Serializable {
     @Column(name = "ID_PRICELIST")
     private int priceListId;
 
+    @Version
+    private long version;
+
     @Column(name = "PRICE")
     private double price;
 

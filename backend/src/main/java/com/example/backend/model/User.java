@@ -30,6 +30,9 @@ public class User implements UserDetails, Serializable {
     @Column(name = "ID_USER")
     private int userId;
 
+    @Version
+    private long version;
+
     @NotNull
     @Column(name = "USERNAME")
     private String username;

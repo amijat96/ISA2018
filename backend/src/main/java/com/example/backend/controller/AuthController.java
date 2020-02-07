@@ -39,7 +39,6 @@ public class AuthController {
         return ResponseEntity.ok(jwtToken);
     }
 
-    @Transactional
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
         final User user = userService.register(registerRequestDTO);

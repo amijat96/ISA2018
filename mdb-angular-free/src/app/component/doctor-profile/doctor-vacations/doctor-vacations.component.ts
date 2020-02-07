@@ -76,11 +76,12 @@ export class DoctorVacationsComponent implements OnInit, AfterViewInit {
     request.startDate =  this.datePipe.transform(this.fromDate, 'yyyy-MM-dd');
     request.endDate =  this.datePipe.transform(this.toDate, 'yyyy-MM-dd')
     request.userId = this.user.id;
+    request.description = null;
     console.log(request);
     this.vacationsService.createVacation(request).subscribe(
       (data: Vacation) => {
         this.successModal.show();
-        //this.ngOnInit();
+        this.ngOnInit();
         console.log("kreirano");
       },
       error => { 
