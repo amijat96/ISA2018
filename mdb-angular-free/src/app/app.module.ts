@@ -31,6 +31,16 @@ import { ExaminationComponent } from './component/examination/examination.compon
 import { ScheduleComponent } from './component/schedule/schedule.component';
 import { VacationsComponent } from './component/vacations/vacations.component';
 import { VacationRequestsComponent } from './component/vacation-requests/vacation-requests.component';
+import { DoctorComponent } from './component/doctor-profile/doctor/doctor.component';
+import { MyAccountDoctorComponent } from './component/doctor-profile/my-account-doctor/my-account-doctor.component';
+import { PatientsComponent } from './component/doctor-profile/patients/patients.component';
+import { PatientComponent } from './component/doctor-profile/patient/patient.component';
+import { DoctorReportComponent } from './component/doctor-profile/doctor-report/doctor-report.component';
+import { DoctorExaminationComponent } from './component/doctor-profile/doctor-examination/doctor-examination.component';
+import { CalendarComponent } from './component/doctor-profile/calendar/calendar.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { DoctorVacationsComponent } from './component/doctor-profile/doctor-vacations/doctor-vacations.component';
 
 const routes: Routes = [
   {
@@ -127,6 +137,69 @@ const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent
+  },
+  {
+    path: 'doctor-profile',
+    component: DoctorComponent,
+    children:
+    [
+      {
+        path: '',
+        redirectTo:'patients',
+        pathMatch: 'full'
+      },
+      {
+        path: 'patients',
+        children:
+        [
+          {
+            path:'',
+            component: PatientsComponent,
+          },
+          {
+            path: ':username',
+            children:
+            [
+              {
+                path: '',
+                component: PatientComponent
+              },
+              {
+                path:'examination',
+                children:[
+                  {
+                    path:'',
+                    component: DoctorExaminationComponent
+                  },
+                  {
+                    path: ':id/report',
+                    component: DoctorReportComponent
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        path: 'schedule',
+        children:
+        [
+          {
+            path: '',
+            component: CalendarComponent
+          },
+          {
+            path : 'vacations',
+            component: DoctorVacationsComponent
+          }
+        ]
+      },
+      {
+        path: 'my-account',
+        component: MyAccountDoctorComponent
+      } 
+    ]
   }
 ];
 
@@ -147,7 +220,15 @@ const routes: Routes = [
     ExaminationComponent,
     ScheduleComponent,
     VacationsComponent,
-    VacationRequestsComponent
+    VacationRequestsComponent,
+    DoctorComponent,
+    MyAccountDoctorComponent,
+    PatientsComponent,
+    PatientComponent,
+    DoctorReportComponent,
+    DoctorExaminationComponent,
+    CalendarComponent,
+    DoctorVacationsComponent
   ],
   imports: [
     BrowserModule,
@@ -164,7 +245,8 @@ const routes: Routes = [
     MatNativeDateModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDYKwGWasRUj5FlVyAm50hmEOhnlXkCU4w'
-    })
+    }),
+    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   exports: [RouterModule],
   providers: [httpInterceptorProviders, GoogleMapsAPIWrapper, DatePipe],

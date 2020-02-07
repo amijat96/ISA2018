@@ -30,9 +30,10 @@ public class MedicalRecord implements Serializable {
     @Column(name = "WEIGHT")
     private double weight;
 
+    @Column(name = "RACE")
+    private String race;
 
-
-
-
+    @Column(name = "DELETED")
+    private boolean deleted;
 
 }

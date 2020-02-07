@@ -6,6 +6,7 @@ export class TypeOfExamination {
         public typeName: string = '',
         public duration: string = '',
         public id: number = 0,
+        public checked: boolean = false,
         public numberOfDoctorsOrPriceLists?: number
     ) { }
 }

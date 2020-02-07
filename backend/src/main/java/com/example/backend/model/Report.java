@@ -40,10 +40,29 @@ public class Report implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @ManyToMany(mappedBy = "reports")
+    @ManyToMany
+    @JoinTable(
+            name="reportdiagnosis"
+            , joinColumns={
+            @JoinColumn(name="ID_REPORT")
+    }
+            , inverseJoinColumns={
+            @JoinColumn(name="ID_DIAGNOSIS")
+    }
+    )
     private List<Diagnosis> diagnoses;
 
-    @ManyToMany(mappedBy = "reports")
+    @ManyToMany
+    @JoinTable(
+            name="reportmedicine"
+            , joinColumns={
+            @JoinColumn(name="ID_REPORT")
+    }
+            , inverseJoinColumns={
+            @JoinColumn(name="ID_MEDICINE")
+    }
+    )
     private List<Medicine> medicines;
+
 
 }

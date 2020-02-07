@@ -10,11 +10,9 @@ public interface VacationService {
 
     List<Vacation> getVacations(VacationsRequestDTO vacationsRequestDTO);
 
-    Vacation crateVacation(VacationRequestDTO vacationRequestDTO);
+    List<Vacation> getDoctorVacations(String username);
 
-    Vacation updateVacation(Integer id, VacationRequestDTO vacationRequestDTO);
-
-    boolean deleteVacation(Integer id);
+    Vacation createVacation(VacationRequestDTO vacationRequestDTO);
 
     Vacation approveVacation(Integer id);
 

@@ -12,4 +12,6 @@ public interface ExaminationService {
     Integer confirmExamination(String token);
 
     Examination getExamination(Integer id);
+
+    Examination cancelExamination(Integer id);
 }

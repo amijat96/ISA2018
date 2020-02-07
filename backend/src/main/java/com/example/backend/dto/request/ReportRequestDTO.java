@@ -1,27 +1,20 @@
 package com.example.backend.dto.request;
 
-import com.example.backend.miscellaneous.MyDateFormat;
-import com.example.backend.miscellaneous.MyJsonDateSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joda.time.LocalDate;
 
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportRequestDTO {
 
-    @MyDateFormat
-    @JsonSerialize(using = MyJsonDateSerializer.class)
-    private LocalDate fromDate;
+    private String description;
 
-    @MyDateFormat
-    @JsonSerialize(using = MyJsonDateSerializer.class)
-    private LocalDate toDate;
+    private List<Integer> medicines;
 
-    private Integer frequency;
+    private List<Integer> diagnoses;
 
 }

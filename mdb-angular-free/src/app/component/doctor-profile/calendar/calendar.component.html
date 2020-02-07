@@ -1,0 +1,115 @@
+<div class="container" style="min-height: 100vh;">
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10" align="center">
+            <a mdbBtn type="button" mdbWavesEffec style="display:inline-block;" (click)="previousDay()">
+                <mdb-icon fas icon="angle-left" class="black-text"></mdb-icon>
+            </a>
+            <mat-form-field class="form-full-width" style="display:inline-block;"> 
+                <input matInput [(ngModel)]="date" name="dateOfBirth" [matDatepicker]="picker" required (ngModelChange)="getExaminations()" class="form-control">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <a mdbBtn type="button" mdbWavesEffect style="display:inline-block;" (click)="nextDay()">
+                <mdb-icon fas icon="angle-right" class="black-text"></mdb-icon>
+             </a>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+        </div>  
+        <div class="col-md-4 mx-auto">
+          <div class="md-form">
+            <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+            <label for="search">Search</label>
+          </div>
+        </div>
+        </div>
+        <div class="mx-3">
+        <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+            <thead class="black white-text">
+              <tr>
+                <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="examinations" [sortBy]="headElementsModel[i]">
+                  {{head}} <mdb-icon fas *ngIf="i < 7" icon="sort"></mdb-icon>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let examination of examinations; let i = index" style="text-align: center;">
+                    <th scope="row">{{examination.examinationId}}</th>
+                    <td>{{examination.userUsername}}</td>
+                    <td>{{examination.dateTime | date:'short' : '+0100'}}</td>
+                    <td>{{examination.typeName}}</td>
+                    <td>{{examination.roomType}}</td>
+                    <td>{{examination.roomFloor}}</td>
+                    <td>{{examination.roomNumber}}</td>
+                    <td>
+                        <button size="sm" mdbWavesEffect type="button" class="btn-success btn-sm btn" [disabled]="examination.finished || examination.roomId == 0" (click)="createReport(examination)">Report</button>
+                        <button size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="examination.finished || examination.roomId == 0" (click)="cancelExamination(examination)">Cancel</button>
+                    </td>   
+                  </tr>
+            </tbody>
+          </table>
+          
+        </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+</div>
+<!-- Success modal -->
+<div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-success" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">Examination canceled.</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="successModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+        <div class="md-form">
+          <label class="m1-0">Examination canceled successfully.</label>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-success" (click) ="successModal.hide()">Ok</button>
+      </div>
+    </div>
+  </div>
+
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100">Error.</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+            <div class="md-form mb-5">
+                <div>
+                    <label class="ml-0">You can't cancel examination/operation now.<br/>Examination starts in less than 24 hours.</label>
+                </div>
+            </div>
+        </div>
+  
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+        </div>
+      </div>
+    </div>
+</div>

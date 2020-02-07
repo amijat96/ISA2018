@@ -12,7 +12,7 @@ export class TypeOfExaminationService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getTypesOfExamination():Observable<TypeOfExamination[]> {
+  getTypesOfExamination() {
     return this.httpClient.get<TypeOfExamination[]>(baseUrl + 'types-of-examination', httpOptions);
   }
 

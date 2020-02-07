@@ -1,0 +1,47 @@
+<div style="min-height: 100vh;">
+    <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div class="md-form">
+      </div>
+    </div>  
+    <div class="col-md-4 mx-auto">
+      <div class="md-form">
+        <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+        <label for="search">Search</label>
+      </div>
+    </div>
+    </div>
+    <div class="mx-3">
+    <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+        <thead class="black white-text">
+          <tr>
+            <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="patients" [sortBy]="headElementsModel[i]">
+              {{head}} <mdb-icon fas *ngIf="i < 7" icon="sort"></mdb-icon>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let patient of patients; let i = index" style="text-align: center;">
+            <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{patient.id}}</th>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{patient.username}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{patient.name}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{patient.lastName}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{patient.email}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{patient.dateOfBirth |  date: 'mediumDate'}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{patient.gender == 0 ? 'Male' : patient.gender == 1 ? 'Female' : 'Other'}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" style="width: 250px;">
+              <button mdbBtn color="info" size="sm" mdbWavesEffect type="button" [routerLink]="patient.username" class="btn-info btn-sm btn" >View profile</button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot class="grey lighten-5 w-100">
+          <tr>
+            <td colspan="8">
+              <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="patients"></mdb-table-pagination>
+            </td>
+          </tr>
+        <tfoot>
+      </table>
+      
+    </div>
+  </div>

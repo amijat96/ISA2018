@@ -20,7 +20,7 @@ public class Diagnosis implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_DIAGNOSIS")
-    private Diagnosis diagnosis;
+    private Integer diagnosisId;
 
     @Column(name = "NAME")
     private String name;
@@ -31,15 +31,6 @@ public class Diagnosis implements Serializable {
     @Column(name = "DELETED")
     private boolean deleted;
 
-    @ManyToMany
-    @JoinTable(
-            name="reportdiagnosis"
-            , joinColumns={
-            @JoinColumn(name="ID_REPORT")
-        }
-            , inverseJoinColumns={
-            @JoinColumn(name="ID_DIAGNOSIS")
-        }
-    )
+    @ManyToMany(mappedBy = "diagnoses")
     private List<Report> reports;
 }

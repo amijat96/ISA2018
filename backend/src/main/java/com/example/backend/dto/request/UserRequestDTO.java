@@ -12,6 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -50,4 +51,6 @@ public class UserRequestDTO {
     @MyDateFormat
     @JsonSerialize(using = MyJsonDateSerializer.class)
     private LocalDate dateOfBirth;
+
+    private List<Integer> specializations;
 }

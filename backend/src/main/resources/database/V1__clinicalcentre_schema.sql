@@ -133,8 +133,8 @@ create table MEDICAL_RECORD
 (
    ID_MEDICAL_RECORD    int not null AUTO_INCREMENT,
    BLOOD_TYPE_RH        varchar(3) not null,
-   HEIGHT               decimal not null,
-   WEIGHT               decimal not null,
+   HEIGHT               decimal(8,2) not null,
+   WEIGHT               decimal(8,2) not null,
    RACE                 varchar(1024) not null,
    DELETED              bool not null,
    primary key (ID_MEDICAL_RECORD)

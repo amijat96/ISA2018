@@ -15,7 +15,8 @@ export class User {
         public cityId: number = 0,
         public countryId: number = 0,
         public numberOfSchedules: number = 0,
-        public passwordChanged: boolean = true,    
+        public passwordChanged: boolean = true,
+        public specializations?: number[],    
         public clinicId?: number
     ) { }
 }

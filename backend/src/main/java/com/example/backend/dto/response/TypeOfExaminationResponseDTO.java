@@ -27,6 +27,8 @@ public class TypeOfExaminationResponseDTO {
 
     private Integer numberOfDoctorsOrPriceLists;
 
+    private boolean checked = false;
+
     public TypeOfExaminationResponseDTO(TypeOfExamination typeOfExamination) {
         this.id = typeOfExamination.getTypeOfExaminationId();
         this.name = typeOfExamination.getName();

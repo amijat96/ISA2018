@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { ReportRequest } from '../model/reportRequest';
 import { ReportResponse } from '../model/reportResponse';
 import { Examination } from '../model/examination';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +33,9 @@ export class ClinicService {
 
   getClinicExaminations() {
     return this.httpClient.get<Examination[]>(baseUrl + 'clinics/' + localStorage.getItem('clinicId') + '/examinations', httpOptions);
+  }
+
+  getClinicPatients() {
+    return this.httpClient.get<User[]>(baseUrl + 'clinics/' + localStorage.getItem('clinicId') + '/patients', httpOptions);
   }
 }

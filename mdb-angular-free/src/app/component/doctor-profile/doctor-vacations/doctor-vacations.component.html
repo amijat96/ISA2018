@@ -1,0 +1,131 @@
+<div style="min-height: 100vh;">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="md-form">
+                <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect (click)="newVacationModal()">New</button>
+            </div>
+        </div>  
+        <div class="col-md-4 mx-auto">
+            <div class="md-form">
+             </div>
+        </div>
+    </div>
+    <div class="mx-3">
+        <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+            <thead class="black white-text">
+                <tr>
+                    <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="vacations" [sortBy]="headElementsModel[i]">
+                     {{head}} <mdb-icon fas *ngIf="i < 3" icon="sort"></mdb-icon>
+                    </th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let vacation of vacations; let i = index" style="text-align: center;">
+                    <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{vacation.vacationId}}</th>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.startDate | date: 'mediumDate'}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.endDate | date: 'mediumDate'}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.accepted}}</td>
+                    <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{vacation.description}}</td> 
+                </tr>
+            </tbody>
+            <tfoot class="grey lighten-5 w-100">
+                <tr>
+                    <td colspan="5">
+                    <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="vacations"></mdb-table-pagination>
+                    </td>
+                </tr>
+            <tfoot>
+        </table>  
+    </div>
+</div>
+
+  <!-- Create Vacation Request Modal-->
+  <div mdbModal #newVacation="mdbModal"  class="modal fade top" id="newVacation" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">New vacation request</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="newVacation.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <form #createRoomForm="ngForm">
+        <!--Body-->
+        <div class="modal-body"  >
+            <div class="md-form">
+                <mat-form-field class="form-full-width">
+                  <input matInput [(ngModel)]="fromDate" name="fromDate" [matDatepicker]="picker1" placeholder="From date" >
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="md-form">
+                <mat-form-field class="form-full-width"> 
+                  <input matInput [(ngModel)]="toDate" name="toDate" [matDatepicker]="picker" placeholder="To date" >
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="button" class="btn btn-primary" [disabled]="toDate == null || fromDate == null || toDate < fromDate" (click)="newVacation.hide()" (click)="createVacationRequest()">Create</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success modal -->
+<div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"aria-hidden="true">
+<div class="modal-dialog modal-notify modal-success" role="document">
+  <!--Content-->
+  <div class="modal-content">
+    <!--Header-->
+    <div class="modal-header text-center">
+      <h4 class="modal-title white-text w-100 font-weight-bold py-2">Vacation request created</h4>
+      <button type="button" class="close" data-dismiss="modal" (click)="successModal.hide()" aria-label="Close">
+        <span aria-hidden="true" class="white-text">&times;</span>
+      </button>
+    </div>
+
+    <!--Body-->
+    <div class="modal-body">
+      <div class="md-form">
+        <label class="m1-0">Vacation request created successfully.</label>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+        <button mdbWavesEffect type="button" class="btn btn-success" (click) ="successModal.hide()">Ok</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Erorr modal-->
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-danger" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100">Error</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+          <div class="md-form mb-5">
+                <label class="ml-0">{{message}}</label>
+          </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>

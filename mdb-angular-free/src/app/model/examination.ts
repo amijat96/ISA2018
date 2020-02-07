@@ -20,6 +20,7 @@ export class Examination{
         public doctorUsername: string = '',
         public roomType: string = '',
         public typeId: number = 0,
-        public duration: string = ''
+        public duration: string = '',
+        public reportId: number = 0
     ) {}
 }

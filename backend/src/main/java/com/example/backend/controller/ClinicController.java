@@ -2,10 +2,11 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.request.ClinicRequestDTO;
-import com.example.backend.dto.request.ReportRequestDTO;
+import com.example.backend.dto.request.ClinicReportRequestDTO;
 import com.example.backend.dto.response.ClinicResponseDTO;
 import com.example.backend.dto.response.ExaminationResponseDTO;
-import com.example.backend.dto.response.ReportResponseDTO;
+import com.example.backend.dto.response.ClinicReportResponseDTO;
+import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,18 +51,18 @@ public class ClinicController {
     }
 
     @PutMapping(path = "/{id}/report")
-    public ResponseEntity<ReportResponseDTO> getClinicReport(@PathVariable Integer id, @Valid @RequestBody ReportRequestDTO reportRequestDTO) {
-        return ResponseEntity.ok(clinicService.getReport(id, reportRequestDTO));
+    public ResponseEntity<ClinicReportResponseDTO> getClinicReport(@PathVariable Integer id, @Valid @RequestBody ClinicReportRequestDTO clinicReportRequestDTO) {
+        return ResponseEntity.ok(clinicService.getReport(id, clinicReportRequestDTO));
     }
 
-    /*@GetMapping(path = "/{id}/patients")
+    @GetMapping(path = "/{id}/patients")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC') or hasRole('ROLE_DOCTOR')")
     public ResponseEntity<List<UserResponseDTO>> getClinicPatients(@PathVariable Integer id) {
         return ResponseEntity.ok(clinicService.getClinicPatients(id)
                 .stream()
                 .map(UserResponseDTO::new)
                 .collect(Collectors.toList()));
-    }*/
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN_SYSTEM')")

@@ -9,10 +9,7 @@ import com.example.backend.dto.response.DoctorFreeTermsResponseDTO;
 import com.example.backend.dto.response.UserResponseDTO;
 import com.example.backend.exception.*;
 import com.example.backend.model.*;
-import com.example.backend.repository.CityRepository;
-import com.example.backend.repository.ClinicRepository;
-import com.example.backend.repository.RoleRepository;
-import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.*;
 import com.example.backend.security.JwtTokenProvider;
 import com.example.backend.service.UserService;
 import org.joda.time.DateTime;
@@ -46,13 +43,15 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final TypeOfExaminationRepository typeOfExaminationRepository;
+
     private final JwtTokenProvider tokenProvider;
 
     @Autowired
     public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
                            RoleRepository roleRepository, CityRepository cityRepository,
                            PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider,
-                           ClinicRepository clinicRepository) {
+                           ClinicRepository clinicRepository, TypeOfExaminationRepository typeOfExaminationRepository) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -60,6 +59,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.clinicRepository = clinicRepository;
+        this.typeOfExaminationRepository = typeOfExaminationRepository;
     }
 
     @Override
@@ -114,6 +114,7 @@ public class UserServiceImpl implements UserService {
             final Clinic clinic = clinicRepository.findById(registerRequestDTO.getClinicId())
                     .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
             user.setClinic(clinic);
+            user.setAdminApproved(true);
         }
         userRepository.save(user);
 
@@ -264,11 +265,21 @@ public class UserServiceImpl implements UserService {
 
         if( userRepository.findAll()
                 .stream()
-                .filter(u -> u.getUsername() != userRequestDTO.getUsername() && u.getEmail().equals(userRequestDTO.getEmail()))
+                .filter(u -> !u.getUsername().equals(userRequestDTO.getUsername()) && u.getEmail().equals(userRequestDTO.getEmail()))
                 .collect(Collectors.toList())
                 .size() > 0) {
             throw new EmailAlreadyExistsException("Email already exists");
-        };
+        }
+
+        user.setDoctorSpecialization(new ArrayList<>());
+        if(userRequestDTO.getSpecializations() != null) {
+            for (Integer i : userRequestDTO.getSpecializations()) {
+                TypeOfExamination type = typeOfExaminationRepository.findById(i)
+                        .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id"));
+                user.getDoctorSpecialization().add(type);
+            }
+        }
+
         user.setEmail(userRequestDTO.getEmail());
         user.setName(userRequestDTO.getName());
         user.setLastName(userRequestDTO.getLastName());
@@ -288,6 +299,28 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(password));
         user.setPasswordChanged(true);
         userRepository.save(user);
+    }
+
+    @Override
+    public MedicalRecord getMedicalRecord(String username) {
+        return findByUsername(username).getMedicalRecord();
+    }
+
+    @Override
+    public List<Examination> getExaminations(String username) {
+        return findByUsername(username).getExaminations()
+                .stream()
+                .filter(e -> !e.isDeleted() && !e.isCanceled())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Examination> getDoctorExaminationsByDate(String username, LocalDate date) {
+        return userRepository.findByUsername(username).getDoctorExaminations()
+                .stream()
+                .filter(e -> !e.isDeleted() && e.isAccepted())
+                .filter(e -> e.getDateTime().toLocalDate().isEqual(date))
+                .collect(Collectors.toList());
     }
 
     public static DateTime createDateTime(LocalDate date, LocalTime time) {

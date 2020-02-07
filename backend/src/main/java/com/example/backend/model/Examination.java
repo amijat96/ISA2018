@@ -69,6 +69,9 @@ public class Examination implements Serializable {
     @JoinColumn(name = "ID_DOCTOR")
     private User doctor;
 
+    @OneToOne(mappedBy = "examination")
+    private Report report;
+
     public DateTime getEndTime() {
         return dateTime.plus(this.priceList.getTypeOfExamination().getDuration().getMillisOfDay());
     }
