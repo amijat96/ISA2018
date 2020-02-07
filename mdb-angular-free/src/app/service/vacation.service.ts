@@ -23,4 +23,12 @@ export class VacationService {
   denyVacation(vacation: Vacation) {
     return this.httpClient.put<Vacation>(baseUrl + 'vacations/deny', vacation, httpOptions);
   }
+
+  getDoctorVacations(username: string) {
+    return this.httpClient.get<Vacation[]>(baseUrl + 'vacations/' + username, httpOptions);
+  }
+
+  createVacation(vacation: Vacation) {
+    return this.httpClient.post<Vacation>(baseUrl + 'vacations', vacation, httpOptions);
+  }
 }

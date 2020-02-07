@@ -224,7 +224,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         DateTime dateTime = examination.getDateTime();
         DateTime now = new DateTime();
 
-        if(dateTime.getMillis() - now.getMillis()>= 24 * 60 * 60 * 1000) {
+        if(dateTime.getMillis() - now.getMillis() >= 24 * 60 * 60 * 1000) {
             examination.setDeleted(true);
             examinationRepository.save(examination);
             return examination;

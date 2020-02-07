@@ -8,11 +8,9 @@ import com.example.backend.service.VacationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +29,13 @@ public class VacationController {
         this.emailService = emailService;
     }
 
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_NURSE')")
+    @Transactional
+    public ResponseEntity<VacationResponseDTO> createVacation(@Valid @RequestBody VacationRequestDTO vacationRequestDTO) {
+        return ResponseEntity.ok(new VacationResponseDTO(vacationService.createVacation(vacationRequestDTO)));
+    }
+
     @PutMapping(path = "/all")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
     public ResponseEntity<List<VacationResponseDTO>> getVacations(@Valid @RequestBody VacationsRequestDTO vacationsRequestDTO) {
@@ -41,8 +46,18 @@ public class VacationController {
         );
     }
 
+    @GetMapping(path = "/{username}")
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_NURSE')")
+    public ResponseEntity<List<VacationResponseDTO>> getDoctorVacations(@PathVariable String username){
+        return ResponseEntity.ok(vacationService.getDoctorVacations(username)
+                .stream()
+                .map(VacationResponseDTO::new)
+                .collect(Collectors.toList()));
+    }
+
     @PutMapping(path="/approve")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
+    @Transactional
     public ResponseEntity<VacationResponseDTO> approveVacation(@Valid @RequestBody VacationRequestDTO vacationRequestDTO) {
         emailService.sendVacationApprovedMailToMedicalStaff(vacationRequestDTO);
         return ResponseEntity.ok(new VacationResponseDTO(vacationService.approveVacation(vacationRequestDTO.getVacationId())));
@@ -50,6 +65,7 @@ public class VacationController {
 
     @PutMapping(path="/deny")
     @PreAuthorize("hasRole('ROLE_ADMIN_CLINIC')")
+    @Transactional
     public ResponseEntity<VacationResponseDTO> denyVacation(@Valid @RequestBody VacationRequestDTO vacationRequestDTO) {
         emailService.sendVacationDeniedMailToMedicalStaff(vacationRequestDTO);
         return ResponseEntity.ok(new VacationResponseDTO(this.vacationService.denyVacation(vacationRequestDTO.getVacationId(), vacationRequestDTO.getDescription())));

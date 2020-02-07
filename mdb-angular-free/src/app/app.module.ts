@@ -40,6 +40,7 @@ import { DoctorExaminationComponent } from './component/doctor-profile/doctor-ex
 import { CalendarComponent } from './component/doctor-profile/calendar/calendar.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { DoctorVacationsComponent } from './component/doctor-profile/doctor-vacations/doctor-vacations.component';
 
 const routes: Routes = [
   {
@@ -187,6 +188,10 @@ const routes: Routes = [
           {
             path: '',
             component: CalendarComponent
+          },
+          {
+            path : 'vacations',
+            component: DoctorVacationsComponent
           }
         ]
       },
@@ -222,7 +227,8 @@ const routes: Routes = [
     PatientComponent,
     DoctorReportComponent,
     DoctorExaminationComponent,
-    CalendarComponent
+    CalendarComponent,
+    DoctorVacationsComponent
   ],
   imports: [
     BrowserModule,
