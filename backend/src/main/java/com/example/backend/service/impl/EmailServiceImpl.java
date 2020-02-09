@@ -47,6 +47,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final ExaminationRepository examinationRepository;
 
+
     @Autowired
     public EmailServiceImpl(ConfigProperties configProperties, UserRepository userRepository,
                             JavaMailSender javaMailSender, ServletContext servletContext,
@@ -90,6 +91,19 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("firstName", user.getName());
         context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/confirm-email?token=" + tokenProvider.generateConfirmationToken(user.getUserId()));
         sendMail(user.getEmail(), configProperties.getConfirmSubject(), context, "email_confirmation.html");
+    }
+
+    @Override
+    public void sendConfirmationMailToMedicalStaff(Integer id, String password) {
+        final User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User doesn't exist."));
+        logger.info(String.format("Sending confirmation token to %s email.", user.getEmail()));
+        Context context = new Context();
+        context.setVariable("title", configProperties.getConfirmSubject());
+        context.setVariable("firstName", user.getName());
+        context.setVariable("emailConfirmLink", configProperties.getFrontBaseUrl() + "/confirm-email?token=" + tokenProvider.generateConfirmationToken(user.getUserId()));
+        context.setVariable("password", password);
+        sendMail(user.getEmail(), configProperties.getConfirmSubject(), context, "email_confirmation_medical_staff.html");
     }
 
     @Override

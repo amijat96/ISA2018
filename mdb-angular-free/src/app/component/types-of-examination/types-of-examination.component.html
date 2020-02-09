@@ -23,14 +23,14 @@
         </thead>
         <tbody>
           <tr *ngFor="let type of typesOfExamination; let i = index" style="text-align: center;">
-            <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{type.typeOfExaminationId}}</th>
+            <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{type.id}}</th>
             <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.name}}</td>
             <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.duration}}</td>
             <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.description}}</td>
             <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{type.typeName}}</td>
             <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" style="width: 250px;">
-              <button mdbBtn color="warning" size="sm" mdbWavesEffect type="button" class="btn-warning btn-sm btn" [disabled]="type.numberOfDoctorsOrPriceLists != 0" (click)="updateTypeOfExaminationModal(type.typeOfExaminationId, type)">Edit</button>
-              <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="type.numberOfDoctorsOrPriceLists != 0" (click)="removeTypeOfExaminationModal(type.typeOfExaminationId)">Delete</button>
+              <button mdbBtn color="warning" size="sm" mdbWavesEffect type="button" class="btn-warning btn-sm btn" [disabled]="type.numberOfDoctorsOrPriceLists != 0" (click)="updateTypeOfExaminationModal(type.id, type)">Edit</button>
+              <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="type.numberOfDoctorsOrPriceLists != 0" (click)="removeTypeOfExaminationModal(type.id)">Delete</button>
             </td>
           </tr>
         </tbody>

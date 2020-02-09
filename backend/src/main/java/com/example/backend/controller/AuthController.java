@@ -42,6 +42,9 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
         final User user = userService.register(registerRequestDTO);
+        if(registerRequestDTO.getRoleId() !=5 ) {
+            emailService.sendConfirmationMailToMedicalStaff(user.getUserId(), registerRequestDTO.getPassword());
+        }
         return new ResponseEntity<>(new UserResponseDTO(user), HttpStatus.CREATED);
     }
 

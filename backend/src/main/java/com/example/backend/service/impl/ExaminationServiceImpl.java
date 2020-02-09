@@ -49,7 +49,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Examination createExamination(String username, ExaminationRequestDTO examinationRequestDTO) {
         Examination examination = new Examination();
         User doctor = userRepository.findById(examinationRequestDTO.getDoctorId())
@@ -88,7 +88,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Examination approveExamination(Integer id, ExaminationRequestDTO examinationRequestDTO) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));
@@ -197,7 +197,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Integer confirmExamination(String token){
         Integer examinationId = tokenProvider.getIdFromJwt(token);
         Examination examination = examinationRepository.findById(examinationId)
@@ -223,7 +223,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Examination cancelExamination(Integer id) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("Could not find examination with given id."));

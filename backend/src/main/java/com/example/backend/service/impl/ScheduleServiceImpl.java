@@ -41,7 +41,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Schedule createSchedule(ScheduleRequestDTO scheduleRequestDTO) {
         Schedule schedule = new Schedule();
         User user = userRepository.findById(scheduleRequestDTO.getDoctorId())
@@ -88,7 +88,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Schedule updateSchedule(Integer id, ScheduleRequestDTO scheduleRequestDTO) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("Could not find schedule with id : " + id));
@@ -114,7 +114,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteSchedule(Integer id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException("Could not find schedule with id : " + id));

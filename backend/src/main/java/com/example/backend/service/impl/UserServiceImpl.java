@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public User register(RegisterRequestDTO registerRequestDTO) {
         if(userRepository.existsByUsername(registerRequestDTO.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists");
@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Boolean confirmMail(String confirmToken) {
         if(tokenProvider.validateToken(confirmToken)) {
             final int userId = tokenProvider.getIdFromJwt(confirmToken);
@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Boolean approveRegistration(int id) {
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with id %s not found.", Integer.toString(id))));
@@ -241,7 +241,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteUser(Integer id) {
         LocalDate date = LocalDate.now();
         User user = userRepository.findById(id)
@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public User updateUser(UserRequestDTO userRequestDTO) {
         User user = findByUsername(userRequestDTO.getUsername());
 
@@ -300,7 +300,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void changePassword(String username, String password) {
         User user = findByUsername(username);
         user.setPassword(passwordEncoder.encode(password));
@@ -325,7 +325,7 @@ public class UserServiceImpl implements UserService {
     public List<Examination> getDoctorExaminationsByDate(String username, LocalDate date) {
         return userRepository.findByUsername(username).getDoctorExaminations()
                 .stream()
-                .filter(e -> !e.isDeleted() && e.isAccepted())
+                .filter(e -> !e.isDeleted() && e.isAccepted() && e.getRoom() != null)
                 .filter(e -> e.getDateTime().toLocalDate().isEqual(date))
                 .collect(Collectors.toList());
     }

@@ -48,8 +48,8 @@
                     <td>{{examination.roomFloor}}</td>
                     <td>{{examination.roomNumber}}</td>
                     <td>
-                        <button size="sm" mdbWavesEffect type="button" class="btn-success btn-sm btn" [disabled]="examination.finished || examination.roomId == 0" (click)="createReport(examination)">Report</button>
-                        <button size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="examination.finished || examination.roomId == 0" (click)="cancelExamination(examination)">Cancel</button>
+                        <button size="sm" mdbWavesEffect type="button" class="btn-success btn-sm btn" [disabled]="examination.finished" (click)="createReport(examination)">Report</button>
+                        <button size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="examination.finished" (click)="cancelExamination(examination)">Cancel</button>
                     </td>   
                   </tr>
             </tbody>

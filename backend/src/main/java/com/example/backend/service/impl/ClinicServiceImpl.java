@@ -39,7 +39,7 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicRepository.findAll().stream().filter(c -> !c.isDeleted()).collect(Collectors.toList());
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @Override
     public Clinic getClinic(Integer id) {
         return clinicRepository.findById(id)
@@ -47,7 +47,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Clinic createClinic(ClinicRequestDTO clinicRequestDTO) {
         Clinic clinic = new Clinic();
         clinic.setCity(cityRepository.findById(clinicRequestDTO.getCityId())
@@ -62,7 +62,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Clinic updateClinic(Integer id, ClinicRequestDTO clinicRequestDTO) {
         Clinic clinic = clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));
@@ -79,7 +79,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteClinic(Integer id) {
         Clinic clinic = clinicRepository.findById(id)
                 .orElseThrow(() -> new ClinicNotFoundException("Could not find clinic with given id."));

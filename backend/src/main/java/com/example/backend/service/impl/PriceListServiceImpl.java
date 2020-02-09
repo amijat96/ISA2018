@@ -50,7 +50,7 @@ public class PriceListServiceImpl implements PriceListService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @Override
     public PriceList createPriceList(PriceListRequestDTO priceListRequestDTO) {
         Clinic clinic = clinicRepository.findById(priceListRequestDTO.getClinicId())
@@ -77,7 +77,7 @@ public class PriceListServiceImpl implements PriceListService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public PriceList updatePriceList(Integer priceListId, PriceListRequestDTO priceListRequestDTO) {
         PriceList priceList = getPriceListById(priceListId);
         List<Examination> examinations = priceList.getExaminations()
@@ -102,7 +102,7 @@ public class PriceListServiceImpl implements PriceListService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deletePriceList(Integer priceListId) {
         PriceList priceList = getPriceListById(priceListId);
         List<Examination> examinations = priceList.getExaminations()

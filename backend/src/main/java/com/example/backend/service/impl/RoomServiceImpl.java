@@ -58,7 +58,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Room createRoom(RoomRequestDTO roomRequestDTO) {
         Room room = new Room();
         room.setClinic(clinicRepository.findById(roomRequestDTO.getClinicId())
@@ -73,7 +73,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Room updateRoom(Integer id, RoomRequestDTO roomRequestDTO) {
         Room room = getRoomById(id);
         room.setClinic(clinicRepository.findById(roomRequestDTO.getClinicId())
@@ -87,7 +87,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public List<RoomFreeTermsResponseDTO> getClinicFreeTerms(RoomFreeTermsRequestDTO roomFreeTermsRequestDTO) {
 
         List<RoomFreeTermsResponseDTO> freeTerms = new ArrayList<>();
@@ -158,7 +158,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteRoom(Integer id) {
 
         Room room = roomRepository.findById(id)

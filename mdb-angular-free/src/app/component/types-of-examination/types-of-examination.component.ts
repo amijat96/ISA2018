@@ -21,7 +21,7 @@ export class TypesOfExaminationComponent implements OnInit, AfterViewInit{
   @ViewChild('deleteTypeOfExaminationModal', {static: false}) deleteTypeOfExaminationModal: ModalDirective;
 
   headElements = ['ID', 'Name', 'Duration', 'Description', 'Type', 'Commands'];
-  headElementsModel = ['typeOfExaminationId', 'name', 'duration', 'description', 'typeName'];
+  headElementsModel = ['id', 'name', 'duration', 'description', 'typeName'];
   typesOfExamination: TypeOfExamination[] = [];
   previous: any = [];
   searchText: string = '';
@@ -90,11 +90,13 @@ export class TypesOfExaminationComponent implements OnInit, AfterViewInit{
   createTypeOfExamination() {
     console.log(this.typeOfExamination.name);
     this.typesOfExaminationService.createTypeOfExamination(this.typeOfExamination).subscribe(
-      (data: TypeOfExamination) => console.log('success'),
+      (data: TypeOfExamination) =>{
+        this.ngOnInit();
+        this.newTypeOfExaminationModal.hide();
+      },
       error => {this.errorMessage = error.error.message;  console.log(this.errorMessage); 
     });
-    this.ngOnInit();
-    this.newTypeOfExaminationModal.hide();
+    
   }
 
   updateTypeOfExaminationModal(id: number, typeOfExamination1: TypeOfExamination) {

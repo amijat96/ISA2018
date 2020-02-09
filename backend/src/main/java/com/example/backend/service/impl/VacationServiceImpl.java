@@ -73,7 +73,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Vacation createVacation(VacationRequestDTO vacationRequestDTO) {
         User user = userRepository.findById(vacationRequestDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("Could not find user with given id"));
@@ -99,7 +99,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Vacation approveVacation(Integer id) {
         Vacation vacation = vacationRepository.findById(id)
                 .orElseThrow(() -> new VacationNotFoundException("Could not find vacation with given id"));
@@ -109,7 +109,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Vacation denyVacation(Integer id, String description) {
         Vacation vacation = vacationRepository.findById(id)
                 .orElseThrow(() -> new VacationNotFoundException("Could not find vacation with given id"));

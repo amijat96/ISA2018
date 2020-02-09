@@ -17,4 +17,6 @@ public interface EmailService {
 
     void sendExaminationCanceledMail(Examination examination);
 
+    void sendConfirmationMailToMedicalStaff(Integer id, String password);
+
 }

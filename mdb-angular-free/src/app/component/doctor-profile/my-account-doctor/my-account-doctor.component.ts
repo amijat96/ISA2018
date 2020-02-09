@@ -8,6 +8,7 @@ import { UserService } from 'src/app/service/user.service';
 import { AddressService } from 'src/app/service/address.service';
 import { TypeOfExaminationService } from 'src/app/service/type-of-examination.service';
 import { TypeOfExamination } from 'src/app/model/typeOfExamination';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-my-account-doctor',
@@ -31,7 +32,7 @@ export class MyAccountDoctorComponent implements OnInit {
   headElements = ['ID', 'Name', 'Type', 'Specialization'];
   headElementsModel = ['id', 'name', 'typeName'];
 
-  constructor(private userService: UserService, private addressService: AddressService, private typeOfExaminationService: TypeOfExaminationService) {
+  constructor(private userService: UserService, public datepipe: DatePipe, private addressService: AddressService, private typeOfExaminationService: TypeOfExaminationService) {
     this.validatingForm = new FormGroup({
       nameControl: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
       lastNameControl: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
@@ -101,7 +102,7 @@ export class MyAccountDoctorComponent implements OnInit {
     this.typesOfExamination.forEach(type => {
       if(type.checked) this.user.specializations.push(type.id);
     })
-    console.log(this.user.specializations);
+    this.user.dateOfBirth = this.datepipe.transform(this.user.dateOfBirth, 'yyyy-MM-dd')
     this.userService.updateUser(this.user).subscribe(
       (data: User) => {
         this.successModal.show();

@@ -47,7 +47,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Report createReport(Integer id, ReportRequestDTO reportRequestDTO) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("COuld not find examination with given id"));

@@ -39,7 +39,7 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TypeOfExamination createTypeOfExamination(TypeOfExaminationRequestDTO typeOfExaminationRequestDTO) {
         TypeOfExamination typeOfExamination = new TypeOfExamination();
         typeOfExamination.setName(typeOfExaminationRequestDTO.getName());
@@ -55,10 +55,11 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TypeOfExamination updateTypeOfExamination(Integer id, TypeOfExaminationRequestDTO typeOfExaminationRequestDTO) {
         TypeOfExamination typeOfExamination = typeOfExaminationRepository.findById(id)
                 .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id."));
+        typeOfExamination.setName(typeOfExaminationRequestDTO.getName());
         typeOfExamination.setDuration(typeOfExaminationRequestDTO.getDuration());
         typeOfExamination.setDescription(typeOfExaminationRequestDTO.getDescription());
         RoomType roomType = roomTypeRepository.findById(typeOfExaminationRequestDTO.getRoomTypeId())
@@ -75,7 +76,7 @@ public class TypeOfExaminationServiceImpl implements TypeOfExaminationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteTypeOfExamination(Integer id) {
         TypeOfExamination typeOfExamination = typeOfExaminationRepository.findById(id)
                 .orElseThrow(() -> new TypeOfExaminationNotFoundException("Could not find type of examination with given id."));

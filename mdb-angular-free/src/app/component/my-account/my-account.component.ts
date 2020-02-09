@@ -6,6 +6,7 @@ import { Country } from 'src/app/model/country';
 import { City } from 'src/app/model/city';
 import { ModalDirective } from 'angular-bootstrap-md';
 import { FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-my-account',
@@ -24,7 +25,7 @@ export class MyAccountComponent implements OnInit {
   errorMessage: string = '';
   validatingForm: FormGroup;
 
-  constructor(private userService: UserService, private addressService: AddressService) {
+  constructor(private userService: UserService, private addressService: AddressService, private datepipe: DatePipe) {
     this.validatingForm = new FormGroup({
       nameControl: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
       lastNameControl: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
@@ -73,7 +74,7 @@ export class MyAccountComponent implements OnInit {
   }
 
   updateUser() {
-    console.log('update ' + this.user.id);
+    this.user.dateOfBirth = this.datepipe.transform(this.user.dateOfBirth, 'yyyy-MM-dd')
     this.userService.updateUser(this.user).subscribe(
       (data: User) => {
         this.successModal.show();
