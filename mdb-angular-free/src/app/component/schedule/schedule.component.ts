@@ -19,7 +19,8 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   @ViewChild('newScheduleModal', {static: false}) newScheduleModal: ModalDirective;
   @ViewChild('editScheduleModal', {static: false}) editScheduleModal: ModalDirective;
   @ViewChild('confirmDeleteScheduleModal', {static: false}) confirmDeleteScheduleModal: ModalDirective;
-  
+  @ViewChild('errorModal', {static: false}) errorModal: ModalDirective;
+
   headElements = ['ID', 'Username', 'First Name', 'Last Name', 'From Date', 'To Date', 'Shift time', ''];
   headElementsModel = ['scheduleId', 'doctorUsername', 'doctorName', 'doctorLastName', 'startDate', 'endDate'];
 
@@ -33,7 +34,9 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   validatingEditForm: FormGroup;
   schedule:Schedule = new Schedule();
   buttonDisabled = false;
-
+  errorMessage: string = "";
+  fromDateSchedule: Date;
+  toDateSchedule: Date;
   constructor(private scheduleService: ScheduleService,
               private cdRef: ChangeDetectorRef, 
               public datepipe: DatePipe,
@@ -111,12 +114,14 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   }
 
   createSchedule() {
-    this.schedule.startDate = this.datepipe.transform(this.schedule.startDate, 'yyyy-MM-dd');
-    this.schedule.endDate = this.datepipe.transform(this.schedule.endDate, 'yyyy-MM-dd');
+    this.schedule.startDate = this.datepipe.transform(this.fromDateSchedule, 'yyyy-MM-dd');
+    this.schedule.endDate = this.datepipe.transform(this.toDateSchedule, 'yyyy-MM-dd');
     this.scheduleService.createSchedule(this.schedule).subscribe(res => {
       this.newScheduleModal.hide();
       this.getSchedules();
-    });
+    },
+    error => { this.errorMessage = error.error.message;  this.errorModal.show(); }
+    );
   }
   updateScheduleModal(schedule: Schedule) {
     this.schedule = schedule;

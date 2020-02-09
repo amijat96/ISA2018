@@ -2,10 +2,7 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dto.request.ScheduleRequestDTO;
 import com.example.backend.dto.request.SchedulesRequestDTO;
-import com.example.backend.exception.ClinicNotFoundException;
-import com.example.backend.exception.ScheduleNotFoundException;
-import com.example.backend.exception.UserHaveVacationException;
-import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.exception.*;
 import com.example.backend.model.Clinic;
 import com.example.backend.model.Schedule;
 import com.example.backend.model.User;
@@ -50,16 +47,37 @@ public class ScheduleServiceImpl implements ScheduleService {
         User user = userRepository.findById(scheduleRequestDTO.getDoctorId())
                 .orElseThrow(() -> new UserNotFoundException("Could nod find doctor with id : " + scheduleRequestDTO.getDoctorId()));
         schedule.setUser(user);
-        if(schedule.getUser().getRole().getRoleId() != 3 && schedule.getUser().getRole().getRoleId() != 4) throw new UserNotFoundException("User with id=" + schedule.getUser().getUserId() + " is not doctor or nurse.");
+        if(schedule.getUser().getRole().getRoleId() != 3 && schedule.getUser().getRole().getRoleId() != 4) throw new UserNotFoundException("User with id " + schedule.getUser().getUserId() + " is not doctor or nurse.");
 
+        //check work time of clinic
+        if(user.getClinic().getWorkTimeStart().getMillisOfDay() > scheduleRequestDTO.getShiftStartTime().getMillisOfDay() ||
+                user.getClinic().getWorkTimeEnd().getMillisOfDay() < scheduleRequestDTO.getShiftEndTime().getMillisOfDay() ) {
+            throw new ClinicNotWorkException("Clinic's work time is from " + user.getClinic().getWorkTimeStart() + " to " + user.getClinic().getWorkTimeEnd() + ".");
+        }
+
+        //check user's vacations or vacation requests
         if(user.getVacations()
                 .stream()
+                .filter(v -> v.isAccepted() || v.getDescription() == null)
                 .filter(v -> ( (v.getStartDate().isAfter(scheduleRequestDTO.getStartDate()) || v.getStartDate().isEqual(scheduleRequestDTO.getStartDate()))
                             && (v.getStartDate().isBefore(scheduleRequestDTO.getEndDate()) || v.getStartDate().isEqual(scheduleRequestDTO.getEndDate())) ) ||
                             ( (v.getEndDate().isAfter(scheduleRequestDTO.getStartDate()) || v.getEndDate().isEqual(scheduleRequestDTO.getStartDate()))
-                            && (v.getEndDate().isBefore(scheduleRequestDTO.getEndDate()) || v.getEndDate().isEqual(scheduleRequestDTO.getEndDate())) ) )
+                            && (v.getEndDate().isBefore(scheduleRequestDTO.getEndDate()) || v.getEndDate().isEqual(scheduleRequestDTO.getEndDate())) ) ||
+                        (v.getStartDate().isBefore(scheduleRequestDTO.getStartDate()) && v.getEndDate().isAfter(scheduleRequestDTO.getEndDate())))
                 .collect(Collectors.toList())
-                .size() > 0 ) { throw new UserHaveVacationException("User have vacation in that period"); }
+                .size() > 0 ) { throw new UserHaveVacationException("User have vacation or unresolved vacation request during that period"); }
+
+        if(user.getSchedules()
+            .stream()
+                .filter(s -> !s.isDeleted())
+                .filter(s -> ( (s.getStartDateSchedule().isAfter(scheduleRequestDTO.getStartDate()) || s.getStartDateSchedule().isEqual(scheduleRequestDTO.getStartDate()))
+                        && (s.getStartDateSchedule().isBefore(scheduleRequestDTO.getEndDate()) || s.getStartDateSchedule().isEqual(scheduleRequestDTO.getEndDate())) ) ||
+                        ( (s.getEndDateSchedule().isAfter(scheduleRequestDTO.getStartDate()) || s.getEndDateSchedule().isEqual(scheduleRequestDTO.getStartDate()))
+                                && (s.getEndDateSchedule().isBefore(scheduleRequestDTO.getEndDate()) || s.getEndDateSchedule().isEqual(scheduleRequestDTO.getEndDate())) ) ||
+                        (s.getStartDateSchedule().isBefore(scheduleRequestDTO.getStartDate()) && s.getEndDateSchedule().isAfter(scheduleRequestDTO.getEndDate())))
+                .collect(Collectors.toList()).size() > 0) {
+            throw new DoctorNotFreeException("Doctor or nurse isn't free during that period");
+        }
 
         schedule.setStartDateSchedule(scheduleRequestDTO.getStartDate());
         schedule.setEndDateSchedule(scheduleRequestDTO.getEndDate());

@@ -70,11 +70,13 @@ public class UserResponseDTO {
         if(user.getClinic() != null)
             this.clinicId = user.getClinic().getClinicId();
         LocalDate date = LocalDate.now();
-        this.numberOfSchedules = user.getSchedules()
-                .stream()
-                .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
-                .collect(Collectors.toList())
-                .size();
+        if(user.getSchedules() != null) {
+            this.numberOfSchedules = user.getSchedules()
+                    .stream()
+                    .filter(s -> s.getStartDateSchedule().isAfter(date) || s.getStartDateSchedule().isEqual(date) || s.getEndDateSchedule().isAfter(date) || s.getEndDateSchedule().isEqual(date))
+                    .collect(Collectors.toList())
+                    .size();
+        } else this.numberOfSchedules = 0;
         if(user.getDoctorSpecialization() != null) {
             this.specializations.addAll(user.getDoctorSpecialization()
                     .stream()

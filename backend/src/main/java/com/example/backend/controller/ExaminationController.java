@@ -37,8 +37,7 @@ public class ExaminationController {
     @PostMapping
     public ResponseEntity<ExaminationResponseDTO> createExamination(@Valid @RequestBody ExaminationRequestDTO examinationRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.
-                                                            createExamination(authentication.getName(), examinationRequestDTO)));
+        return ResponseEntity.ok(new ExaminationResponseDTO(examinationService.createExamination(authentication.getName(), examinationRequestDTO)));
     }
 
     @Transactional

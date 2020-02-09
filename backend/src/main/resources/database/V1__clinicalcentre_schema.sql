@@ -171,6 +171,7 @@ create table PRICELIST
 create table REPORT
 (
    ID_REPORT            int not null AUTO_INCREMENT,
+   ID_EXAMINATION       int not null,
    ID_USER              int,
    DESCRIPTION          varchar(1024),
    MEDICINE_CERTIFIED   bool not null,
@@ -283,7 +284,8 @@ create table USER
    DELETED              bool not null,
    USERNAME             varchar(128) not null,
    DATE_OF_BIRTH        date not null,
-   ADMIN_APPROVED       bool not null
+   ADMIN_APPROVED       bool not null,
+   GENDER               int not null,
    primary key (ID_USER)
 );
 
@@ -338,6 +340,9 @@ alter table PRICELIST add constraint FK_RELATIONSHIP_21 foreign key (ID_TYPE_OF_
 alter table REPORT add constraint FK_AUTHENTICATION foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
 
+alter table REPORT add constraint FK_REPORTEXAMINATION foreign key (ID_EXAMINATION)
+references EXAMINATION (ID_EXAMINATION) on delete restrict on update restrict;
+
 alter table REPORTDIAGNOSIS add constraint FK_REPORTDIAGNOSIS foreign key (ID_DIAGNOSIS)
       references DIAGNOSIS (ID_DIAGNOSIS) on delete restrict on update restrict;
 
@@ -376,20 +381,3 @@ alter table USER add constraint FK_WORK foreign key (ID_CLINIC)
 
 alter table VACATION add constraint FK_RELATIONSHIP_23 foreign key (ID_USER)
       references USER (ID_USER) on delete restrict on update restrict;
-
-INSERT INTO `clinical_center_db`.`role` (`ID_ROLE`, `NAME`) VALUES ('1', 'ROLE_ADMIN_SYSTEM');
-INSERT INTO `clinical_center_db`.`role` (`ID_ROLE`, `NAME`) VALUES ('2', 'ROLE_ADMIN_CLINIC');
-INSERT INTO `clinical_center_db`.`role` (`ID_ROLE`, `NAME`) VALUES ('3', 'ROLE_DOCTOR');
-INSERT INTO `clinical_center_db`.`role` (`ID_ROLE`, `NAME`) VALUES ('4', 'ROLE_NURSE');
-INSERT INTO `clinical_center_db`.`role` (`ID_ROLE`, `NAME`) VALUES ('5', 'ROLE_USER');
-
-INSERT INTO `clinical_center_db`.`roomtype` (`ID_ROOM_TYPE`, `NAME`) VALUES ('1', 'EXAMINATION');
-INSERT INTO `clinical_center_db`.`roomtype` (`ID_ROOM_TYPE`, `NAME`) VALUES ('2', 'OPERATION');
-
-INSERT INTO COUNTRY(ID_COUNTRY, NAME)
-VALUES (1, 'Serbia');
-
-INSERT INTO CITY(ID_CITY, NAME, ID_COUNTRY) VALUES (1, 'Novi Sad', '1');
-INSERT INTO `clinical_center_db`.`city` (`ID_CITY`, `ID_COUNTRY`, `NAME`) VALUES ('2', '1', 'Belgrade');
-
-INSERT INTO `clinical_center_db`.`user` (`ID_USER`, `ID_ROLE`, `ID_CITY`, `NAME`, `LASTNAME`, `EMAIL`, `PASSWORD`, `PASSWORD_CHANGED`, `STREET`, `VERIFIED`, `DELETED`, `USERNAME`, `ADMIN_APPROVED`, `GENDER`) VALUES ('1', '1', '1', 'Dragan', 'Jovic', 'draganjovic96@hotmail.rs', '$2y$10$Wchw26xG1ZR92xiOL5qE6ujILmlpnq7rvh/dV5Rp3Uz.kjULKdcEm', '0', 'Jovana Subiotica 4, 3.4', '1', '0', 'admin', '1', '0');

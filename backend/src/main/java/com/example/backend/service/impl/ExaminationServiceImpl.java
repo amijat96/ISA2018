@@ -61,6 +61,7 @@ public class ExaminationServiceImpl implements ExaminationService {
             user = userRepository.findById(examinationRequestDTO.getUserId())
                     .orElseThrow(() -> new UserNotFoundException("Could not find user with given id."));
             isUserFree(user, examinationRequestDTO.getUserId(), examinationRequestDTO, priceList);
+            examination.setUser(user);
         }
         if(examinationRequestDTO.getRoomId() != 0)
             examination.setRoom(roomRepository.findById(examinationRequestDTO.getRoomId())
@@ -75,7 +76,6 @@ public class ExaminationServiceImpl implements ExaminationService {
         examination.setDoctor(doctor);
         examination.setPriceList(priceList);
         examination.setDateTime(examinationRequestDTO.getDateTime());
-        examination.setUser(user);
         Integer loggedUserRoleId = userRepository.findByUsername(username).getRole().getRoleId();
         //if logged user is clinic admin
         if(loggedUserRoleId == 2)
@@ -131,7 +131,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         DateTime endDateTime = UserServiceImpl.createDateTime(examinationRequestDTO.getDateTime().toLocalDate(), schedule.getShiftEndTime());
 
 
-        if(examinationRequestDTO.getDateTime().getMillis() <= startDateTime.getMillis() || examinationRequestDTO.getDateTime().getMillis() + duration.getMillisOfDay()> endDateTime.getMillis()){
+        if(examinationRequestDTO.getDateTime().getMillis() < startDateTime.getMillis() || examinationRequestDTO.getDateTime().getMillis() + duration.getMillisOfDay() > endDateTime.getMillis()){
             throw new DoctorNotWorkException("Doctor with given id doesn't work at that time.");
         }
 

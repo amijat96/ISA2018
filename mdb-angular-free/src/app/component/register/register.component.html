@@ -67,8 +67,8 @@
                     <mat-form-field class="form-full-width">
                       <mat-select [(ngModel)]="register.gender" name="gender" id="gender" placeholder="Gender" required>
                         <mat-option value="-1">--</mat-option>
-                        <mat-option value="0">Female</mat-option>
-                        <mat-option value="1">Male</mat-option>
+                        <mat-option value="0">Male</mat-option>
+                        <mat-option value="1">Female</mat-option>
                         <mat-option value="2">Other</mat-option>
                       </mat-select>
                       <mat-error *ngIf="register.gender < 0">Please choose country</mat-error>
@@ -189,7 +189,7 @@
       <!--Body-->
       <div class="modal-body">
         <div class="md-form">
-          <label class="m1-0">Your registration request was successful!</label>
+          <label class="m1-0" style="width: 200x;">Your registration request was successful!</label>
         </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">

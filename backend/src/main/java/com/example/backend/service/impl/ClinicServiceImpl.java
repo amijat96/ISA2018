@@ -250,7 +250,7 @@ public class ClinicServiceImpl implements ClinicService {
                             .size());
                 }
                 else {
-                    reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate,  new LocalDate(startDate.plusMonths(1).getYear(), startDate.getMonthOfYear() + 1, 1 ))
+                    reportByFrequency.setNumberOfExaminations(getClinicExaminationsFromDateToDate(id, startDate,  new LocalDate(startDate.plusMonths(1).getYear(), startDate.plusMonths(1).getMonthOfYear(), 1 ))
                             .stream()
                             .filter(e -> !e.isDeleted())
                             .collect(Collectors.toList())
@@ -263,7 +263,7 @@ public class ClinicServiceImpl implements ClinicService {
                         reportByFrequency.setPeriod(startDate.toString("MMM"));
                     }
                 }
-                startDate = new LocalDate(startDate.plusMonths(1).getYear(), startDate.getMonthOfYear() + 1, 1 );
+                startDate = new LocalDate(startDate.plusMonths(1).getYear(), startDate.plusMonths(1).getMonthOfYear(), 1 );
                 if(!periodLesThanMonth){
                     //if end date isn't last day of month, show it on diagram
                     if (!startDate.isBefore(endDate) && endDate.getDayOfMonth() < endDate.dayOfMonth().getMaximumValue()) {

@@ -27,6 +27,7 @@ export class ExaminationsComponent implements OnInit, AfterViewInit{
 
   ngOnInit() {
     this.clinicService.getClinicExaminations().subscribe(res => {
+      console.log(res);
       res.forEach(examination => {
         if(examination.roomId != null && examination.roomId != 0) this.confirmedExaminations.push(examination);
         else this.requestedExaminations.push(examination);

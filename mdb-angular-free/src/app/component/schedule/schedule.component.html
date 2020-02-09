@@ -99,12 +99,12 @@
                 </div> 
                 <div class="md-form mt-0">
                     <mat-form-field class="form-full-width"  [formGroup]="validatingForm"> 
-                        <input matInput [(ngModel)]="schedule.startDate" formControlName="startDateControl" name="scheduleStartDate" [matDatepicker]="picker3" required placeholder="Start Date" (dateChange)="OnDateTimeChange($event)">
+                        <input matInput [(ngModel)]="fromDateSchedule" formControlName="startDateControl" name="scheduleStartDate" [matDatepicker]="picker3" required placeholder="Start Date" (dateChange)="OnDateTimeChange($event)">
                         <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
                         <mat-datepicker #picker3></mat-datepicker>
                     </mat-form-field>s
                     <mat-form-field class="form-full-width"  [formGroup]="validatingForm"> 
-                        <input matInput [(ngModel)]="schedule.endDate" formControlName="endDateControl" name="scheduleEndDate" [matDatepicker]="picker4" required placeholder="End Date" (dateChange)="OnDateTimeChange($event)">
+                        <input matInput [(ngModel)]="toDateSchedule" formControlName="endDateControl" name="scheduleEndDate" [matDatepicker]="picker4" required placeholder="End Date" (dateChange)="OnDateTimeChange($event)">
                         <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
                         <mat-datepicker #picker4></mat-datepicker>
                     </mat-form-field>
@@ -121,7 +121,7 @@
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-center">
-                <button mdbWavesEffect type="submit" class="btn btn-primary" [disabled]="validatingForm.invalid || schedule.doctorId==0 || createDisabled">Create</button>
+                <button mdbWavesEffect type="submit" class="btn btn-primary" [disabled]="validatingForm.invalid || schedule.doctorId==0 || createDisabled || toDateSchedule < fromDateSchedule">Create</button>
             </div>
             </form>
         </div>
@@ -208,3 +208,30 @@
         </div>
     </div>
 </div>
+
+<!-- Error Modal -->
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100">Creating schedule failed</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+          <div class="md-form mt-0">
+            <textarea mdbInput mdbValidate type="text" id="description" [(ngModel)]="errorMessage" required class="form-control md-textarea"></textarea>
+        </div>
+        </div>
+  
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>

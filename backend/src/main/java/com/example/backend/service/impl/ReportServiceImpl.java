@@ -52,8 +52,6 @@ public class ReportServiceImpl implements ReportService {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ExaminationNotFoundException("COuld not find examination with given id"));
         Report report = new Report();
-        reportRepository.save(report);
-        System.out.println(report.getReportId() + " aaaaaaaaaaaaa");
         report.setExamination(examination);
         report.setDescription(reportRequestDTO.getDescription());
         report.setDiagnoses(new ArrayList<>());
@@ -66,7 +64,6 @@ public class ReportServiceImpl implements ReportService {
             report.getDiagnoses().add(d);
             }
         }
-
         if(reportRequestDTO.getMedicines() != null) {
             for (Integer medicine : reportRequestDTO.getMedicines()) {
                 Medicine m = medicineRepository.findById(medicine)

@@ -89,11 +89,11 @@ export class RoomsComponent implements OnInit, AfterViewInit{
 
   createRoom() {
     this.roomService.createRoom(this.room).subscribe(
-      (data: Room) => console.log('success'),
+      (data: Room) => { this.newRoomModal.hide();
+                        this.ngOnInit(); },
       error => {this.errorMessage = error.error.message;  console.log(this.errorMessage); }
     );
-    this.newRoomModal.hide();
-    this.ngOnInit();
+   
   }
 
   //action for showing modal for editing room
@@ -110,11 +110,11 @@ export class RoomsComponent implements OnInit, AfterViewInit{
 
   updateRoom() {
     this.roomService.updateRoom(this.roomEdit).subscribe(
-      (data: Room) => console.log('successfully updated'),
+      (data: Room) => { this.editRoomModal.hide();
+                        window.location.reload(); },
       error => { this.errorMessage = error.error.message;  console.log(this.errorMessage); }
     )
-    this.editRoomModal.hide();
-    window.location.reload();
+   
   }
 
   deleteRoomModal(roomId: number) {
@@ -124,10 +124,9 @@ export class RoomsComponent implements OnInit, AfterViewInit{
 
   deleteRoom() {
     this.roomService.deleteRoom(this.deleteRoomId).subscribe(
-      (data: boolean) => { if(data) console.log('successfully updated');
-                            else console.log('can not delete room')}
+      (data: boolean) => { this.confirmDeleteRoomModal.hide();
+        this.ngOnInit();}
     )
-    this.confirmDeleteRoomModal.hide();
-    this.ngOnInit();
+    
   }
 }

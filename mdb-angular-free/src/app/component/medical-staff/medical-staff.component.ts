@@ -17,7 +17,7 @@ export class MedicalStaffComponent implements OnInit, AfterViewInit {
   @ViewChild('deleteUserModal', {static: false}) deleteUserModal: ModalDirective;
 
   headElements = ['ID', 'Name', 'Last Name', 'Username', 'E-mail', 'Grade', 'Commands'];
-  headElementsModel = ['userId', 'name', 'lastName', 'username', 'email', 'doctorGrade'];
+  headElementsModel = ['id', 'name', 'lastName', 'username', 'email', 'doctorGrade'];
   medicalStaff: User[] = [];
   previous: any = [];
   searchText: string = '';

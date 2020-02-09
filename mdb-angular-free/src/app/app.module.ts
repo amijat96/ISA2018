@@ -41,7 +41,7 @@ import { CalendarComponent } from './component/doctor-profile/calendar/calendar.
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { DoctorVacationsComponent } from './component/doctor-profile/doctor-vacations/doctor-vacations.component';
-
+import { AuthGuardService } from './service/auth-guard.service';
 const routes: Routes = [
   {
     path: '',
@@ -50,6 +50,7 @@ const routes: Routes = [
   {
     path: "admin-profile",
     component: AdminComponent,
+    canActivate: [AuthGuardService],
     children: [
       {
         path: '',
@@ -141,6 +142,7 @@ const routes: Routes = [
   {
     path: 'doctor-profile',
     component: DoctorComponent,
+    canActivate: [AuthGuardService],
     children:
     [
       {
@@ -249,7 +251,7 @@ const routes: Routes = [
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   exports: [RouterModule],
-  providers: [httpInterceptorProviders, GoogleMapsAPIWrapper, DatePipe],
+  providers: [httpInterceptorProviders, GoogleMapsAPIWrapper, DatePipe, AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

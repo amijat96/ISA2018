@@ -52,7 +52,6 @@ public class RegisterRequestDTO {
     @Size(min = 6, max = 128)
     private String street;
 
-    @Size(min = 13, max = 13)
     private String jbo;
 
     @MyDateFormat

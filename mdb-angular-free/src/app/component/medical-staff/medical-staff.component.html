@@ -23,14 +23,14 @@
             </thead>
             <tbody>
               <tr *ngFor="let user of medicalStaff; let i = index" style="text-align: center;">
-                <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{user.userId}}</th>
+                <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{user.id}}</th>
                 <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.name}}</td>
                 <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.lastName}}</td>
                 <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.username}}</td>
                 <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.email}}</td>
                 <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.doctorGrade}}</td>
                 <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" style="width: 250px;">
-                  <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="user.numberOfSchedules != 0" (click)="deleteModal(user.userId)">Delete</button>
+                  <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="user.numberOfSchedules != 0" (click)="deleteModal(user.id)">Delete</button>
                 </td>
               </tr>
             </tbody>
@@ -51,7 +51,7 @@
       <div class="modal-content">
 
         <div class="modal-header text-center">
-          <h4 class="modal-title white-text w-100 font-weight-bold py-2">New room</h4>
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">New medical staff</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="newMedicalStaffModal.hide()">
             <span aria-hidden="true" class="white-text">&times;</span>
           </button>
