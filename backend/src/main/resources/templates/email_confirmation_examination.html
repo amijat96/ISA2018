@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<br>
+<h2 th:text="${title}">Title</h2>
+<h4 style="display: inline-block;">Hello</h4> <h4 th:text="${firstName}" style="display: inline-block;"></h4>,<br/>
+    Your <h4 th:text="${type}" style="display: inline-block;"></h4> is approved,
+    <h4 th:text="${type}" style="display: inline-block;"></h4> <h4 th:text="${typeOfExamination}" style="display: inline-block;"></h4>,
+    on <h4 th:text="${date}" style="display: inline-block;"></h4> at <h4 th:text="${time}" style="display: inline-block;"></h4>,
+    will be performed in room <h4 th:text="${roomNumber}" style="display: inline-block;"></h4>, by doctor <h4 th:text="${doctorName}" style="display: inline-block;"></h4> <h4 th:text="${doctorLastName}" style="display: inline-block;"></h4>.
+<br/>
+<div id="btn">
+<a th:href="${emailConfirmLink}" th:style="${patient} ? 'display: none' : 'display: inline-block'"><button type="button" style="background-color: #008CBA;
+  padding: 15px 32px;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;">Accept</button></a>
+</div>
+<br/>
+<h4>Best regards!</h4>
+<h4 style="display: inline-block;">Clinic </h4> <h4 th:text="${clinicName}" style="display: inline-block;"></h4>
+</body>
+</html>

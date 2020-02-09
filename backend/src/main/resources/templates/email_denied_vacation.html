@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<br>
+<h2 th:text="${title}">Title</h2>
+<h4 style="display: inline-block;">Hello</h4> <h4 th:text="${firstName}" style="display: inline-block;"></h4>,<br/>
+Your <h4 th:text="${type}" style="display: inline-block;"></h4>, from date: <h4 th:text="${fromDate}" style="display: inline-block;"></h4>, to date: <h4 th:text="${toDate}" style="display: inline-block;"></h4> is denied.
+<br/>
+Description : <h4 th:text="${description}" style="display: inline-block;"></h4>
+<br/>
+<h4>Best regards!</h4>
+<h4 style="display: inline-block;">Clinic </h4> <h4 th:text="${clinicName}" style="display: inline-block;"></h4>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<div class="container">
+    <div class="row"><p></p></div>
+    <div class="row">
+        <div class="col-4">
+            <mdb-card >
+                <div class="view rgba-white-slight waves-light" mdbWavesEffect>
+                <!-- Card img -->
+                <mdb-card-img src="/assets/images/avatar_doctor.png" alt="Card image cap"></mdb-card-img>
+                <a>
+                    <div class="mask"></div>
+                </a>
+                </div>
+                <!--Card content-->
+                <mdb-card-body>
+                <!--Title-->
+                <mdb-card-title>
+                    <h4>{{user.name + ' ' + user.lastName}}</h4>
+                </mdb-card-title>
+            
+                <!--Text-->
+                <hr/>
+                <mdb-card-text>Username: {{user.username}}
+                </mdb-card-text>
+                <mdb-card-text>E-mail: {{user.email}}
+                </mdb-card-text>
+                <mdb-card-text>Phone: {{user.phone}}
+                </mdb-card-text>
+                </mdb-card-body>
+            </mdb-card>
+        </div>
+        <div class="col-8">
+            <form class="text-center border border-light p-5 white" (ngSubmit)="updateUser()" >
+                <div class="form-row">
+                    <div class="col md-form mt-0" [formGroup]="validatingForm">
+                        <!-- First name -->
+                        <input mdbInput [(ngModel)]="user.name" type="text" formControlName="nameControl" id="name" class="form-control">
+                        <label for="name">First name *</label>
+                        <mdb-error *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)">Size 2-40 chars</mdb-error>
+                        <mdb-success *ngIf="nameInput.valid && (nameInput.dirty || nameInput.touched)">ok</mdb-success>
+                    </div>
+                    <div class="col md-form mt-0" [formGroup]="validatingForm">
+                        <!-- Last name -->
+                        <input mdbInput [(ngModel)]="user.lastName" type="text" formControlName="lastNameControl" id="lastName" class="form-control">
+                        <label for="lastName">Last name *</label>
+                        <mdb-error *ngIf="lastNameInput.invalid && (lastNameInput.dirty || lastNameInput.touched)">Size 2-40 chars</mdb-error>
+                        <mdb-success *ngIf="lastNameInput.valid && (lastNameInput.dirty || lastNameInput.touched)">ok</mdb-success>
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div class="md-form mt-0">
+                    <input mdbInput mdbValidate [(ngModel)]="user.username" disabled type="text" name ="username" id="username" class="form-control">
+                    <label for="username">Username *</label>
+                </div>
+                
+                <!-- E-mail -->
+                <div class="md-form mt-0" [formGroup]="validatingForm">
+                    <input mdbInput [(ngModel)]="user.email" type="email" id="email" formControlName="emailControl" class="form-control">
+                    <label for="email">E-mail *</label>
+                    <mdb-error *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)">invalid e-mail</mdb-error>
+                    <mdb-success *ngIf="emailInput.valid && (emailInput.dirty || emailInput.touched)">ok</mdb-success>
+                </div>
+                <!-- Date of birth -->
+                <div class="md-form mt-0">
+                  <mat-form-field class="form-full-width"> 
+                    <input matInput [(ngModel)]="user.dateOfBirth" name="dateOfBirth" [matDatepicker]="picker" required placeholder="Date of birth" class="form-control">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <!-- Gender -->
+                <div class="md-form mt-0">
+                    <mat-form-field class="form-full-width">
+                      <mat-select [(ngModel)]="user.gender" [compareWith]="compare" name="gender" id="gender" placeholder="Gender" required>
+                        <mat-option value="-1">--</mat-option>
+                        <mat-option value="0">Male</mat-option>
+                        <mat-option value="1">Female</mat-option>
+                        <mat-option value="2">Other</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="user.gender < 0">Please choose country</mat-error>
+                    </mat-form-field>
+                </div>
+                <!-- Address -->
+                <div class="row md-form mt-0">
+                  <div class="col">
+                    <mat-form-field class="form-full-width">
+                      <mat-select [(ngModel)]="user.countryId" placeholder="Country" required name="countryId" id="countryId" (selectionChange)="onCountryChanged($event)">
+                        <mat-option value="0">--</mat-option>
+                        <mat-option  *ngFor="let country of countries" [value]="country.countryId">{{country.name}}</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="countryId < 1">Please choose country</mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col">
+                    <mat-form-field class="form-full-width">
+                      <mat-select [(ngModel)]="user.cityId" name="cityId" id="cityId" placeholder="City" required>
+                        <mat-option value="0">--</mat-option>
+                        <mat-option *ngFor="let city of cities" [value]="city.cityId">{{city.name}}</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="user.cityId < 1">Please choose city</mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <!-- Street -->
+                <div class="md-form mt-0" [formGroup]="validatingForm">
+                  <input mdbInput [(ngModel)]="user.street" type="text" formControlName="streetControl" id="street" class="form-control">
+                  <label for="street">Street *</label>
+                  <mdb-success *ngIf="streetInput.valid && (streetInput.dirty || streetInput.touched)">ok</mdb-success>
+                  <mdb-error *ngIf="streetInput.invalid && (streetInput.dirty || streetInput.touched)">Size 6-128 chars</mdb-error>
+                </div>  
+                <!-- Phone number -->
+                <div class="md-form mt-0">
+                    <input mdbInput [(ngModel)]="user.phone" type="text" name="phone" id="phone" class="form-control">
+                    <label for="phone">Phone</label>
+                </div>
+                
+                <!-- Table with types of examination-->
+                
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+                        <thead class="black white-text">
+                        <tr>
+                            <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="typesOfExamination" [sortBy]="headElementsModel[i]">
+                            {{head}} <mdb-icon fas *ngIf="i < 3" icon="sort"></mdb-icon>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let type of typesOfExamination; let i = index" style="text-align: center;">
+                            <th scope="row">{{type.id}}</th>
+                            <td>{{type.name}}</td>
+                            <td>{{type.typeName}}</td>
+                            <td><mdb-checkbox (change)="change(type)" [checked]="type.checked"  [default]="true"></mdb-checkbox></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Update and Abort button -->
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6 d-flex justify-content-center">
+                        <button mdbBtn class="btn btn-info" type="submit" [disabled]="validatingForm.invalid || user.dateOfBirth == null || user.cityId == 0 || user.countryId == 0">Update</button>
+                        <a type="button" mdbBtn color="info" outline="true" class="waves-effect" mdbWavesEffec (click)="ngOnInit()">Abort</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row"><p></p></div>
+</div>
+
+<!--Success modal-->
+<div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-success" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">Price list item successfully created.</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="reload()" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+        <div class="md-form">
+          <label class="m1-0">Profile updated successfully.</label>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-success" (click)="reload()">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error modal -->
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100">Updating profile failed.</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+          <div class="md-form mb-5">
+            <label class="ml-0">{{errorMessage}}</label>
+          </div>
+        </div>
+  
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+        </div>
+      </div>
+    </div>
+</div>

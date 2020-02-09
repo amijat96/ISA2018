@@ -1,0 +1,206 @@
+<div style="min-height: 100vh;">
+    <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div class="md-form">
+      <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect (click)="createPriceListItemModal()">New</button>
+      </div>
+    </div>  
+    <div class="col-md-4 mx-auto">
+      <div class="md-form">
+        <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+        <label for="search">Search by name or type</label>
+      </div>
+    </div>
+    </div>
+    <div class="mx-3">
+    <table #tableEl="mdbTable" mdbTable id="priceListTable" style="margin-bottom: 0px;" striped="true">
+        <thead class="black white-text">
+          <tr>
+            <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="priceListTable" [mdbTableSort]="priceList" [sortBy]="headElementsModel[i]">
+              {{head}} <mdb-icon fas *ngIf="i < 3" icon="sort"></mdb-icon>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of priceList; let i = index" style="text-align: center;">
+            <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{item.priceListId}}</th>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{item.typeOfExaminationName}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{item.price}}</td>
+            <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" style="width: 250px;">
+              <button mdbBtn color="warning" size="sm" mdbWavesEffect type="button" class="btn-warning btn-sm btn" [disabled]="item.priceListExaminations != 0" (click)="updatePriceListItemModal(item)">Edit</button>
+              <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="item.priceListExaminations != 0" (click)="removePriceListItemModal(item.priceListId)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot class="grey lighten-5 w-100">
+          <tr>
+            <td colspan="4">
+              <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="priceList"></mdb-table-pagination>
+            </td>
+          </tr>
+        <tfoot>
+      </table>      
+    </div>
+</div>
+
+<!-- Create new price list item -->
+<div mdbModal #newPriceListItemModal="mdbModal"  class="modal fade top" id="newPriceListItemModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">New price list item</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="newPriceListeItemModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <form #createTypeOfExaminationForm="ngForm" (ngSubmit)="createPriceListItem()">
+        <!--Body-->
+        <div class="modal-body"  >
+          
+          <div class="md-form mt-0">
+            <mat-form-field class="col-12">
+              <mat-select name="typeOfExaminationId" [(ngModel)] ="priceListItem.typeOfExaminationId" id="typeOfExaminationId" placeholder="Type of examination" required>
+                <mat-option value="0">--</mat-option>
+                <mat-option *ngFor="let type of typesOfExamination" [value]="type.typeOfExaminationId">{{type.typeOfExaminationId + ' ' + type.name}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="priceListItem.typeOfExaminationId < 0">Please choose type</mat-error>
+            </mat-form-field>
+          </div>      
+            <div class="md-form mt-0" [formGroup]="validatingForm">
+                <input mdbInput mdbValidate [(ngModel)]="priceListItem.price" type="number" id="price" name="price" formControlName="priceControl" class="form-control">
+                <label for="price">Price *</label>
+                <mdb-error *ngIf="priceInput.invalid && (priceInput.dirty || priceInput.touched)">Value > 0</mdb-error>
+                <mdb-success *ngIf="priceInput.valid && (priceInput.dirty || priceInput.touched)">ok</mdb-success>
+            </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="submit" class="btn btn-primary" [disabled]="!validatingForm.valid || priceListItem.typeOfExaminationId == 0" >Create</button>
+        </div>
+      </form>
+      </div>
+    </div>
+</div>
+
+<!-- Edit price list item -->
+<div mdbModal #editPriceListItemModal="mdbModal"  class="modal fade top" id="editPriceListItemModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-warning" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">Edit price list item</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="editPriceListItemModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <form #editPriceListItemForm="ngForm" (ngSubmit)="updatePriceListItem()">
+        <!--Body-->
+        <div class="modal-body"  >
+          
+          <div class="md-form mt-0">
+            <mat-form-field class="col-12">
+              <mat-select name="typeOfExaminationId" [(ngModel)] ="editPriceListItem.typeOfExaminationId" id="typeOfExaminationId" placeholder="Type of examination" required>
+                <mat-option value="0">--</mat-option>
+                <mat-option *ngFor="let type of typesOfExamination" [value]="type.id">{{type.id + ' ' + type.name}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="editPriceListItem.typeOfExaminationId < 0">Please choose type</mat-error>
+            </mat-form-field>
+          </div>      
+            <div class="md-form mt-0" [formGroup]="validatingEditForm">
+                <input mdbInput mdbValidate [(ngModel)]="editPriceListItem.price" type="number" id="editPrice" name="editPrice" formControlName="editPriceControl" class="form-control">
+                <label for="editPrice">Price *</label>
+                <mdb-error *ngIf="editPriceInput.invalid && (editPriceInput.dirty || editPriceInput.touched)">Value > 0</mdb-error>
+                <mdb-success *ngIf="editPriceInput.valid && (editPriceInput.dirty || editPriceInput.touched)">ok</mdb-success>
+            </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="submit" class="btn btn-warning" [disabled]="!validatingEditForm.valid || editPriceListItem.typeOfExaminationId == 0" >Update</button>
+        </div>
+      </form>
+      </div>
+    </div>
+</div>
+
+<!-- Delete price list item -->
+<div mdbModal #deletePriceListItemModal="mdbModal"  class="modal fade top" id="deletePriceListItemModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">Confirm deleting</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="deletePriceListItemModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+        <!--Body-->
+        <div class="modal-body"  >        
+          <div class="md-form mt-0">
+            <label>Are you sure you want to delete price list item permanently?</label>
+          </div>     
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="button" class="btn btn-danger" (click)="removePriceListItem()">Yes</button>
+            <a type="button" mdbBtn color="danger" outline="true" class="waves-effect" mdbWavesEffec (click)="deletePriceListItemModal.hide()">No</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--Success modal-->
+<div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-success" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">Price list item successfully created.</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="successModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+        <div class="md-form">
+          <label class="m1-0">{{successModalMessage}}</label>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-success" (click)="successModal.hide()">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error modal -->
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100">Creating new price list item failed</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+          <div class="md-form mb-5">
+            <label class="ml-0">{{errorMessage}}</label>
+          </div>
+        </div>
+  
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>

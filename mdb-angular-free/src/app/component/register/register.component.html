@@ -1,0 +1,201 @@
+<!-- Default form register -->
+<div class="container">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <form #registerForm="ngForm" (ngSubmit)="onSubmit()"  class="text-center border border-light p-5 white">
+
+                <p class="h4 mb-4">Register</p>
+
+                <div class="form-row"  [formGroup]="validatingForm">
+                    <div class="col md-form mt-0">
+                        <!-- First name -->
+                        <input mdbInput mdbValidate [(ngModel)]="register.name" type="text" name ="name" id="name" class="form-control" formControlName="nameControl">
+                        <label for="name">First name *</label>
+                        <mdb-error *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)">Size 2-40 chars</mdb-error>
+                        <mdb-success *ngIf="nameInput.valid && (nameInput.dirty || nameInput.touched)">ok</mdb-success>
+                    </div>
+                    <div class="col md-form mt-0">
+                        <!-- Last name -->
+                        <input mdbInput mdbValidate [(ngModel)]="register.lastName" type="text" name ="lastName" id="lastName" class="form-control" formControlName="lastNameControl">
+                        <label for="lastName">Last name *</label>
+                        <mdb-error *ngIf="lastNameInput.invalid && (lastNameInput.dirty || lastNameInput.touched)">Size 2-40 chars</mdb-error>
+                        <mdb-success *ngIf="lastNameInput.valid && (lastNameInput.dirty || lastNameInput.touched)">ok</mdb-success>
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div [formGroup]="validatingForm" class="md-form mt-0">
+                    <input mdbInput mdbValidate [(ngModel)]="register.username" type="text" name ="username" id="username" class="form-control" formControlName="usernameControl" >
+                    <label for="username">Username *</label>
+                    <mdb-error *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched)">Size 3-20 chars</mdb-error>
+                    <mdb-success *ngIf="usernameInput.valid && (usernameInput.dirty || usernameInput.touched)">ok</mdb-success>
+                </div>
+                
+                <!-- E-mail -->
+                <div [formGroup]="validatingForm" class="md-form mt-0">
+                    <input mdbInput mdbValidate [(ngModel)]="register.email" type="email" id="email" name="email" class="form-control" formControlName="emailControl">
+                    <label for="email">E-mail *</label>
+                    <mdb-error *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)">invalid e-mail</mdb-error>
+                    <mdb-success *ngIf="emailInput.valid && (emailInput.dirty || emailInput.touched)">ok</mdb-success>
+                </div>
+                <!-- Password -->
+                <div [formGroup]="passwordForm">
+                    <div class="md-form mt-0" > 
+                        <input mdbInput mdbValidate [(ngModel)]="register.password" formControlName="passwordControl" type="password" name="password" id="password" class="form-control">
+                        <label for="password">Password *</label>
+                        <mdb-error *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)">Size 8-20 chars</mdb-error>
+                        <mdb-success *ngIf="passwordInput.valid && (passwordInput.dirty || passwordInput.touched)">ok</mdb-success>
+                    </div>
+                    <div class="md-form mt-0">
+                        <input mdbInput mdbValidate formControlName="confirmPasswordControl" type="password" name="confirmPassword" id="confirmPassword" class="form-control">
+                        <label for="confirmPassword">Confirm password</label>
+                        <mdb-success *ngIf="confirmPasswordInput.valid && (passwordInput.dirty || passwordInput.touched)">Passwords match</mdb-success>
+                        <mdb-error *ngIf="confirmPasswordInput.invalid && (passwordInput.dirty || passwordInput.touched)">Passwords do not match</mdb-error>
+                    </div>
+                </div>
+                <!-- Date of birth -->
+                <div class="md-form mt-0">
+                  <mat-form-field class="form-full-width"> 
+                    <input matInput [(ngModel)]="dateOfBirth" name="dateOfBirth" [matDatepicker]="picker" required placeholder="Date of birth" >
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <!-- Gender -->
+                <div class="md-form mt-0">
+                    <mat-form-field class="form-full-width">
+                      <mat-select [(ngModel)]="register.gender" name="gender" id="gender" placeholder="Gender" required>
+                        <mat-option value="-1">--</mat-option>
+                        <mat-option value="0">Male</mat-option>
+                        <mat-option value="1">Female</mat-option>
+                        <mat-option value="2">Other</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="register.gender < 0">Please choose country</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Role -->
+                <div class="row mt-0" [hidden]="hidden">
+                  <div class="col">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" class="custom-control-input" id="defaultChecked" [checked]="doctor" (change)="changeRole(true)" name="defaultExampleRadios" mdbInput>
+                      <label class="custom-control-label" for="defaultChecked">Doctor</label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" class="custom-control-input" id="defaultUnchecked" [checked]="!doctor" (change)="changeRole(false)" name="defaultExampleRadios"  mdbInput>
+                      <label class="custom-control-label" for="defaultUnchecked">Nurse</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Address -->
+                <div class="row md-form mt-0">
+                  <div class="col">
+                    <mat-form-field class="form-full-width">
+                      <mat-select [(ngModel)]="countryId" placeholder="Country" required name="countryId" id="countryId" (selectionChange)="onCountryChanged($event)">
+                        <mat-option value="0">--</mat-option>
+                        <mat-option  *ngFor="let country of countries" [value]="country.countryId">{{country.name}}</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="countryId < 1">Please choose country</mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col">
+                    <mat-form-field class="form-full-width">
+                      <mat-select [(ngModel)]="register.cityId" name="cityId" id="cityId" placeholder="City" required>
+                        <mat-option value="0">--</mat-option>
+                        <mat-option *ngFor="let city of cities" [value]="city.cityId">{{city.name}}</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="register.cityId < 1">Please choose city</mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <!-- Street -->
+                <div [formGroup]="validatingForm" class="md-form mt-0">
+                  <input mdbInput mdbValidate [(ngModel)]="register.street" formControlName="streetControl" type="text" name="street" id="street" class="form-control">
+                  <label for="street">Street *</label>
+                  <mdb-success *ngIf="streetInput.valid && (streetInput.dirty || streetInput.touched)">ok</mdb-success>
+                  <mdb-error *ngIf="streetInput.invalid && (streetInput.dirty || streetInput.touched)">Size 6-128 chars</mdb-error>
+              </div>  
+                <!-- Phone number -->
+                <div class="md-form mt-0">
+                    <input mdbInput [(ngModel)]="register.phone" type="text" name="phone" id="phone" class="form-control">
+                    <label for="phone">Phone</label>
+                </div>
+                <!-- JBO -->
+                <div [formGroup]="validatingForm" class="md-form mt-0">
+                  <input mdbInput mdbValidate [(ngModel)]="register.jbo" formControlName="jboControl" type="text" name="jbo" id="jbo" class="form-control">
+                  <label for="jbo">JBO *</label>
+                  <mdb-success *ngIf="jboInput.valid && (jboInput.dirty || jboInput.touched)">ok</mdb-success>
+                  <mdb-error *ngIf="jboInput.invalid && (jboInput.dirty || jboInput.touched)">Size 13 chars</mdb-error>
+              </div>
+                   
+                <!-- Sign up button -->
+                <button mdbBtn color="info" block="true" class="my-4" type="submit" mdbWavesEffect [disabled]="!registerForm.form.valid || dateOfBirth == null || register.cityId == 0 || register.countryId == 0 || register.gender == -1">Register</button>
+                <hr>
+
+                <!-- Terms of service -->
+                <p>By clicking
+                <em>Register</em> you agree to our
+                <a href="" target="_blank">terms of service</a></p>
+
+            </form>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+
+<div mdbModal #errorModal="mdbModal" class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-danger" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100">Registration failed</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="errorModal.hide()">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+        <div class="md-form mb-5">
+          <label class="ml-0">{{errorMessage}}</label>
+        </div>
+      </div>
+
+      <div class="modal-footer d-flex justify-content-center">
+        <button mdbWavesEffect type="button" class="btn btn-danger" data-dismiss="modal" (click)="errorModal.hide()">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mdbModal #successModal="mdbModal" class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-success" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">Registration successfull</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+        <div class="md-form">
+          <label class="m1-0" style="width: 200x;">Your registration request was successful!</label>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-success" [routerLink]="link">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+

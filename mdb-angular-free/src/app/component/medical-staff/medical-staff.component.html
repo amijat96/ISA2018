@@ -1,0 +1,92 @@
+<div style="min-height: 100vh;">
+    <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div class="md-form">
+      <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect routerLink="register">New</button>
+      </div>
+    </div>  
+    <div class="col-md-4 mx-auto">
+      <div class="md-form">
+        <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+        <label for="search">Search by name, last name or username</label>
+      </div>
+    </div>
+    </div>
+    <div class="mx-3">
+        <table #tableEl="mdbTable" mdbTable id="medicalStaffTable" style="margin-bottom: 0px;" striped="true">
+            <thead class="black white-text">
+              <tr>
+                <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="medicalStaffTable" [mdbTableSort]="medicalStaff" [sortBy]="headElementsModel[i]">
+                  {{head}} <mdb-icon fas *ngIf="i < 6" icon="sort"></mdb-icon>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of medicalStaff; let i = index" style="text-align: center;">
+                <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{user.id}}</th>
+                <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.name}}</td>
+                <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.lastName}}</td>
+                <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.username}}</td>
+                <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.email}}</td>
+                <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{user.doctorGrade}}</td>
+                <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" style="width: 250px;">
+                  <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" [disabled]="user.numberOfSchedules != 0" (click)="deleteModal(user.id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot class="grey lighten-5 w-100">
+              <tr>
+                <td colspan="7">
+                  <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="medicalStaff"></mdb-table-pagination>
+                </td>
+              </tr>
+            <tfoot>
+        </table>      
+    </div>
+  </div>
+
+  <div mdbModal #newMedicalStaffModal="mdbModal"  class="modal fade top" id="newMedicalStaffModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+      <!--Content-->
+      <div class="modal-content">
+
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">New medical staff</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="newMedicalStaffModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body"  >
+          <app-register></app-register>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div mdbModal #deleteUserModal="mdbModal"  class="modal fade top" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2" (click)="deleteUser()">Confirm deleting</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="deleteUserModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+        <!--Body-->
+        <div class="modal-body"  >        
+          <div class="md-form mt-0">
+            <label>Are you sure you want to delete user permanently?</label>
+          </div>     
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="button" class="btn btn-danger" (click)="deleteUser()">Yes</button>
+            <a type="button" mdbBtn color="danger" outline="true" class="waves-effect" mdbWavesEffec (click)="deleteUserModal.hide()">No</a>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,164 @@
+<div style="min-height: 100vh;">
+  <div class="row">
+  <div class="col-md-6 mx-auto">
+    <div class="md-form">
+    <button type="button" mdbBtn color="success" class="my-3" size="sm" mdbWavesEffect (click)="createRoomModal()">New</button>
+    </div>
+  </div>  
+  <div class="col-md-4 mx-auto">
+    <div class="md-form">
+      <input type="text" [(ngModel)]="searchText" class="form-control black-text" id="search" mdbInput />
+      <label for="search">Search by number or type</label>
+    </div>
+  </div>
+  </div>
+  <div class="mx-3">
+  <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+      <thead class="black white-text">
+        <tr>
+          <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable" [mdbTableSort]="elements" [sortBy]="headElementsModel[i]">
+            {{head}} <mdb-icon fas *ngIf="i < 4" icon="sort"></mdb-icon>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let room of elements; let i = index" style="text-align: center;">
+          <th *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" scope="row">{{room.roomId}}</th>
+          <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{room.floor}}</td>
+          <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{room.number}}</td>
+          <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">{{room.roomType}}</td>
+          <td *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex" style="width: 250px;">
+            <button mdbBtn color="warning" size="sm" mdbWavesEffect type="button" class="btn-warning btn-sm btn" (click)="updateRoomModal(room)" [disabled]="room.numberOfExaminations != 0">Edit</button>
+            <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" (click)="deleteRoomModal(room.roomId)" [disabled]="room.numberOfExaminations != 0">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot class="grey lighten-5 w-100">
+        <tr>
+          <td colspan="5">
+            <mdb-table-pagination [tableEl]="tableEl" [searchDataSource]="elements"></mdb-table-pagination>
+          </td>
+        </tr>
+      <tfoot>
+    </table>
+    
+  </div>
+</div>
+
+  <!-- Create Room Modal-->
+<div mdbModal #newRoomModal="mdbModal"  class="modal fade top" id="newRoomModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-info" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">New room</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="newRoomModal.hide()">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+
+      <form #createRoomForm="ngForm" (ngSubmit)="createRoom()">
+      <!--Body-->
+      <div class="modal-body"  >
+        <div class="md-form mt-0" [formGroup]="validatingForm">
+          <input mdbInput mdbValidate [(ngModel)]="room.floor" formControlName="floorControl" type="number" id="floor" name="floor" class="form-control">
+          <label for="floor">Floor *</label>
+          <mdb-error *ngIf="floorInput.invalid && (floorInput.dirty || floorInput.touched)">Numbers 0-999</mdb-error>
+          <mdb-success *ngIf="floorInput.valid && (floorInput.dirty || floorInput.touched)">ok</mdb-success>
+        </div>
+        <div class="md-form mt-0" [formGroup]="validatingForm">
+          <input mdbInput mdbValidate [(ngModel)]="room.number" formControlName="numberControl" type="text" id="number" name="number" class="form-control">
+          <label for="number">Number *</label>
+          <mdb-error *ngIf="numberInput.invalid && (numberInput.dirty || numberInput.touched)">Size 1-10 chars</mdb-error>
+          <mdb-success *ngIf="numberInput.valid && (numberInput.dirty || numberInput.touched)">ok</mdb-success>
+        </div>
+        <div class="md-form mt-0">
+          <mat-form-field class="col-12">
+            <mat-select name="roomTypeId" [(ngModel)] ="room.roomTypeId" id="roomTypeId" placeholder="Type" required>
+              <mat-option value="0">--</mat-option>
+              <mat-option *ngFor="let type of roomTypes" [value]="type.roomTypeId">{{type.name}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="room.roomTypeId < 0">Please choose type</mat-error>
+          </mat-form-field>
+        </div>      
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="submit" class="btn btn-primary" [disabled]="!validatingForm.valid || room.roomTypeId == 0">Create</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+  <!-- Edit Room Modal-->
+<div mdbModal #editRoomModal="mdbModal"  class="modal fade" id="editRoomModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-warning" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header text-center">
+          <h4 class="modal-title white-text w-100 font-weight-bold py-2">Edit room</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="editRoomModal.hide()">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+        
+        <form #editRoomForm="ngForm" (ngSubmit)="updateRoom()">
+        <!--Body-->
+        <div class="modal-body"  >
+          <div class="text-center">
+            <div class="md-form mt-0" [formGroup]="validatingEditForm">
+              <input mdbInput mdbValidate [(ngModel)]="roomEdit.floor" formControlName="editFloorControl" type="number" id="editFloor" name="editFloor" class="form-control">
+              <label for="editFloor">Floor *</label>
+              <mdb-error *ngIf="editFloorInput.invalid && (editFloorInput.dirty || editFloorInput.touched)">Numbers 0-999</mdb-error>
+            <mdb-success *ngIf="editFloorInput.valid && (editFloorInput.dirty || editFloorInput.touched)">ok</mdb-success>
+            </div>
+            <div class="md-form mt-0" [formGroup]="validatingEditForm">
+              <input mdbInput mdbValidate [(ngModel)]="roomEdit.number" formControlName="editNumberControl" type="text" id="editNumber" name="editNumber" class="form-control">
+              <label for="editNumber">Number *</label>
+              <mdb-error *ngIf="editNumberInput.invalid && (editNumberInput.dirty || editNumberInput.touched)">Size 1-10 chars</mdb-error>
+              <mdb-success *ngIf="editNumberInput.valid && (editNumberInput.dirty || editNumberInput.touched)">ok</mdb-success>
+            </div>
+            <div class="md-form mt-0">
+              <mat-form-field class="col-12">
+                <mat-select name="editRoomTypeId" [(ngModel)]="roomEdit.roomTypeId" id="editRoomTypeId" placeholder="Type" required>
+                  <mat-option value="0">--</mat-option>
+                  <mat-option *ngFor="let type of roomTypes" [value]="type.roomTypeId">{{type.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="roomEdit.roomTypeId < 0">Please choose type</mat-error>
+              </mat-form-field>
+            </div>
+          </div>      
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+            <button mdbWavesEffect type="submit" class="btn btn-warning" [disabled]="!validatingEditForm.valid || roomEdit.roomTypeId == 0">Update</button>
+        </div>
+        </form>
+      </div>
+    </div>
+</div>
+<!-- Delete Room Modal-->
+<div mdbModal #confirmDeleteRoomModal="mdbModal"  class="modal fade top" id="confirmDeleteRoomModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notify modal-danger" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header text-center">
+        <h4 class="modal-title white-text w-100 font-weight-bold py-2">Confirm deleting</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="confirmDeleteRoomModal.hide()">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body"  >        
+        <div class="md-form mt-0" [formGroup]="validatingForm">
+          <label>Are you sure you want to delete room permanently?</label>
+        </div>     
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <button mdbWavesEffect type="button" class="btn btn-danger" (click)="deleteRoom()">Yes</button>
+          <a type="button" mdbBtn color="danger" outline="true" class="waves-effect" mdbWavesEffec (click)="confirmDeleteRoomModal.hide()">No</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h2 th:text="${title}">Title</h2>
+<h4 style="display: inline-block;">Hello &nbsp;<h4 th:text="${firstName}" style="display: inline-block;"></h4>,<br/>
+    Your registration is approved. Please click the link below to confirm Your email and finish the registration process.
+    <br/>
+    This link is valid for 24h. <br/>
+</h4>
+<br/>
+<a th:href="${emailConfirmLink}" th:text="${emailConfirmLink}" style="display: block;"></a>
+</body>
+</html>

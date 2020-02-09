@@ -1,0 +1,173 @@
+<div style="min-height: 100vh;">
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <!-- Examination info -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Examination:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6">
+            <!-- Username -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="examination.userUsername" type="text" name="patientUsername" id="patientUsername" class="form-control" disabled>
+                <label for="patientUsername">Username</label>
+            </div>
+            <!-- Name -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="examination.typeName" type="text" name ="examinationName" id="examinationName" class="form-control" disabled>
+                <label for="examinationName">Name</label>
+            </div>
+            <!-- Type -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="examination.roomType" type="text" id="examinationType" name="examinationType" class="form-control" disabled>
+                <label for="examinationType">Type</label>
+            </div>
+            <!-- Requested date & time -->
+            <div class="md-form mt-0">
+                <input mdbInput [(ngModel)]="dateTime" type="text" id="examinationDateTime" name="examinationDateTime" class="form-control" disabled>
+                <label for="examinationDateTime">Date & time</label>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Description -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Description:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6">
+            <textarea mdbInput mdbValidate type="text" id="description" [(ngModel)]="report.description" class="form-control md-textarea"></textarea>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Diagnoses -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Diagnoses:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6 table-wrapper-scroll-y my-custom-scrollbar">
+            <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+                <thead class="black white-text ">
+                    <tr>
+                        <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable">{{head}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let diagnosis of diagnoses; let i = index" style="text-align: center;">
+                        <th>{{diagnosis.diagnosisId}}</th>
+                        <td>{{diagnosis.name}}</td>
+                        <td>{{diagnosis.description}}</td>
+                        <td>
+                        <button mdbBtn color="success" size="sm" mdbWavesEffect type="button" class="btn-succes btn-sm btn" (click)="addDiagnosis(diagnosis)">Select</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>  
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Selected diagnoses:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6 table-wrapper-scroll-y my-custom-scrollbar">
+            <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+                <thead class="black white-text">
+                    <tr>
+                        <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable">{{head}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let diagnosis of selectedDiagnoses; let i = index" style="text-align: center;">
+                        <th>{{diagnosis.diagnosisId}}</th>
+                        <td>{{diagnosis.name}}</td>
+                        <td>{{diagnosis.description}}</td>
+                        <td>
+                        <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" (click)="removeDiagnosis(diagnosis)">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>  
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <hr/>
+    <!-- Medicines -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Medicines:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6 table-wrapper-scroll-y my-custom-scrollbar">
+            <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+                <thead class="black white-text ">
+                    <tr>
+                        <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable">{{head}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let medicine of medicines; let i = index" style="text-align: center;">
+                        <th>{{medicine.medicineId}}</th>
+                        <td>{{medicine.name}}</td>
+                        <td>{{medicine.description}}</td>
+                        <td>
+                        <button mdbBtn color="success" size="sm" mdbWavesEffect type="button" class="btn-succes btn-sm btn" (click)="addMedicine(medicine)">Select</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>  
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-3">
+            <h4>Selected medicines:</h4>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6 table-wrapper-scroll-y my-custom-scrollbar">
+            <table #tableEl="mdbTable" mdbTable id="roomTable" style="margin-bottom: 0px;" striped="true">
+                <thead class="black white-text">
+                    <tr>
+                        <th *ngFor="let head of headElements; let i = index" scope="col" style="text-align: center;" aria-controls="roomTable">{{head}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let medicine of selectedMedicines; let i = index" style="text-align: center;">
+                        <th>{{medicine.medicineId}}</th>
+                        <td>{{medicine.name}}</td>
+                        <td>{{medicine.description}}</td>
+                        <td>
+                        <button mdbBtn color="danger" size="sm" mdbWavesEffect type="button" class="btn-danger btn-sm btn" (click)="removeMedicine(medicine)">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>  
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-7"></div>
+        <div class="col-3 d-flex justify-content-center">
+            <button mdbBtn class="btn btn-info" type="button" (click)="createReport()">Confirm</button>
+            <a type="button" mdbBtn color="info" outline="true" class="waves-effect" mdbWavesEffec href="/doctor-profile/patients">Cancel</a>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+</div>
